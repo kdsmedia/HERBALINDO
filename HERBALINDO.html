@@ -1,0 +1,1264 @@
+BAB 1 — KONSEP DAN IDENTITAS APLIKASI
+
+1.1 Konsep Utama
+
+Aplikasi merupakan platform Android yang menggabungkan:
+
+- Toko produk herbal diet alami
+- Sistem member
+- Referral 1 tingkat
+- Sistem poin
+- Daily task
+- Rewarded Ads
+- Saldo Rupiah
+- Withdrawal
+- Panel Admin
+- Sistem pembelian seperti online shop
+
+Aplikasi dibuat ringan dan santai sehingga member tidak harus terus-menerus berada di dalam aplikasi.
+
+1.2 Target Pengguna
+
+Target utama adalah pengguna umum, terutama ibu rumah tangga yang ingin menggunakan aplikasi pada waktu senggang.
+
+Aktivitas dibuat sederhana dan tidak mengharuskan pengguna online sepanjang hari.
+
+1.3 Produk
+
+Produk yang dijual hanya beberapa produk ramuan herbal diet alami yang memang tersedia.
+
+Jumlah produk tidak harus banyak. Admin dapat menambahkan produk baru kapan saja melalui panel admin.
+
+1.4 Mata Uang
+
+Seluruh harga menggunakan:
+
+Rp — Rupiah Indonesia
+
+1.5 Konversi Poin
+
+Ketentuan dasar:
+
+10.000 poin = Rp1.000
+
+Dengan demikian:
+
+- 1 poin = Rp0,10
+- 10.000 poin = Rp1.000
+- 100.000 poin = Rp10.000
+- 500.000 poin = Rp50.000
+- 1.000.000 poin = Rp100.000
+
+
+BAB 2 — SISTEM REGISTRASI DAN MEMBER
+
+2.1 Registrasi
+
+Member melakukan pendaftaran melalui form:
+
+- Nama
+- Nomor HP/email
+- Password
+- Referral ID, jika memiliki referral
+
+2.2 Referral ID
+
+Setiap member mendapatkan Referral ID otomatis berupa tepat 6 digit angka.
+
+Contoh:
+
+482731
+
+Ketentuan:
+
+- Tepat 6 digit
+- Hanya angka
+- Unik
+- Dibuat otomatis oleh server
+- Tidak dapat diubah member
+
+2.3 Login
+
+Satu form login digunakan untuk semua pengguna.
+
+Email / Nomor HP
+Password
+
+[ MASUK ]
+
+Setelah login, server menentukan role:
+
+- MEMBER → Dashboard Member
+- ADMIN → Dashboard Admin
+
+Tidak perlu menampilkan tombol khusus "Login Admin".
+
+2.4 Profil Member
+
+Member dapat melihat dan mengelola:
+
+- Nama
+- Nomor HP
+- Email
+- Referral ID
+- Status akun
+- Poin
+- Saldo
+- Riwayat transaksi
+- Riwayat withdrawal
+
+
+BAB 3 — SISTEM REFERRAL 1 TINGKAT
+
+3.1 Tidak Menggunakan MLM Bertingkat
+
+Aplikasi tidak menggunakan struktur upline/downline.
+
+Hanya terdapat:
+
+Pengundang → Member yang diundang
+
+3.2 Cara Referral
+
+Contoh:
+
+SITI
+Referral ID: 482731
+       ↓
+Mengundang ANI
+       ↓
+ANI mendaftar
+       ↓
+ANI membeli produk
+       ↓
+Transaksi memenuhi syarat
+       ↓
+ANI VERIFIED
+       ↓
+SITI mendapatkan bonus
+
+3.3 Tidak Ada Bonus Berantai
+
+Jika Ani kemudian mengundang Rina:
+
+SITI
+  ↓
+ANI
+  ↓
+RINA
+
+Siti tidak mendapatkan bonus dari Rina.
+
+Bonus hanya diberikan kepada orang yang melakukan referral langsung.
+
+3.4 Syarat Bonus Referral
+
+Member baru harus:
+
+1. Berhasil mendaftar.
+2. Menggunakan Referral ID pengundang.
+3. Membeli produk yang memenuhi syarat.
+4. Pembayaran berhasil.
+5. Pesanan memenuhi kondisi transaksi yang ditetapkan.
+6. Tidak melakukan pembatalan/refund yang menggugurkan bonus.
+
+Setelah valid, referral berubah menjadi:
+
+VERIFIED
+
+Kemudian bonus diberikan.
+
+
+BAB 4 — SISTEM PRODUK HERBAL
+
+4.1 Katalog Produk
+
+Produk utama adalah ramuan herbal diet alami.
+
+Jumlah produk dapat sedikit.
+
+Contoh:
+
+Herbal A
+Herbal B
+Herbal C
+
+4.2 Data Produk
+
+Setiap produk memiliki:
+
+- Product ID
+- Nama produk
+- Foto produk
+- Deskripsi
+- Komposisi
+- Harga
+- Harga promo
+- Stok
+- Berat
+- SKU
+- Status aktif/nonaktif
+- Poin pembelian
+- Informasi penggunaan
+- Peringatan
+- Tanggal dibuat
+- Tanggal diperbarui
+
+4.3 Foto Produk
+
+Firebase Storage tidak digunakan.
+
+Foto produk dapat menggunakan:
+
+- URL gambar eksternal, atau
+- aset aplikasi untuk produk tertentu.
+
+Database hanya menyimpan URL/path gambar.
+
+4.4 Informasi Kesehatan
+
+Informasi produk harus mengikuti label dan ketentuan yang berlaku.
+
+Aplikasi tidak boleh membuat klaim seperti:
+
+- Pasti turun sekian kilogram
+- Pasti membakar lemak
+- 100% tanpa efek samping
+- Menyembuhkan penyakit
+
+Informasi komposisi, aturan penggunaan, peringatan, dan status perizinan harus ditampilkan secara jelas sesuai kondisi produk.
+
+
+BAB 4 — SISTEM PRODUK HERBAL
+
+4.1 Katalog Produk
+
+Produk utama adalah ramuan herbal diet alami.
+
+Jumlah produk dapat sedikit.
+
+Contoh:
+
+Herbal A
+Herbal B
+Herbal C
+
+4.2 Data Produk
+
+Setiap produk memiliki:
+
+- Product ID
+- Nama produk
+- Foto produk
+- Deskripsi
+- Komposisi
+- Harga
+- Harga promo
+- Stok
+- Berat
+- SKU
+- Status aktif/nonaktif
+- Poin pembelian
+- Informasi penggunaan
+- Peringatan
+- Tanggal dibuat
+- Tanggal diperbarui
+
+4.3 Foto Produk
+
+Firebase Storage tidak digunakan.
+
+Foto produk dapat menggunakan:
+
+- URL gambar eksternal, atau
+- aset aplikasi untuk produk tertentu.
+
+Database hanya menyimpan URL/path gambar.
+
+4.4 Informasi Kesehatan
+
+Informasi produk harus mengikuti label dan ketentuan yang berlaku.
+
+Aplikasi tidak boleh membuat klaim seperti:
+
+- Pasti turun sekian kilogram
+- Pasti membakar lemak
+- 100% tanpa efek samping
+- Menyembuhkan penyakit
+
+Informasi komposisi, aturan penggunaan, peringatan, dan status perizinan harus ditampilkan secara jelas sesuai kondisi produk.
+
+
+BAB 5 — SISTEM TOKO / ONLINE SHOP
+
+Pembelian produk dibuat seperti online shop pada umumnya.
+
+5.1 Halaman Produk
+
+Member dapat:
+
+- Melihat katalog
+- Mencari produk
+- Melihat detail
+- Memilih jumlah
+- Menambahkan ke keranjang
+- Membeli sekarang
+
+5.2 Keranjang
+
+Member dapat:
+
+- Menambah produk
+- Mengurangi jumlah
+- Menghapus produk
+- Melihat subtotal
+- Melihat ongkos kirim
+- Melihat total pembayaran
+
+5.3 Checkout
+
+Checkout memiliki:
+
+- Alamat penerima
+- Nama penerima
+- Nomor HP
+- Produk
+- Jumlah
+- Harga
+- Ongkos kirim
+- Total pembayaran
+- Metode pembayaran
+
+5.4 Order
+
+Setiap pembelian mendapatkan nomor order.
+
+Contoh:
+
+ORD-20260920-000123
+
+5.5 Status Order
+
+PENDING
+↓
+WAITING_PAYMENT
+↓
+PAID
+↓
+PROCESSING
+↓
+SHIPPED
+↓
+DELIVERED
+↓
+COMPLETED
+
+Status lain:
+
+- CANCELLED
+- REFUNDED
+
+5.6 Riwayat Pesanan
+
+Member dapat melihat seluruh pesanan dan statusnya.
+
+5.7 Detail Pesanan
+
+Menampilkan:
+
+- Nomor order
+- Produk
+- Jumlah
+- Harga
+- Alamat
+- Ongkir
+- Total
+- Pembayaran
+- Status
+- Waktu transaksi
+- Nomor resi jika tersedia
+
+
+BAB 6 — SISTEM POIN
+
+6.1 Sumber Poin
+
+Member mendapatkan poin dari:
+
+1. Check-in
+2. Rewarded Ads
+3. Pembelian produk
+4. Referral tervalidasi
+5. Aktivitas lain yang ditentukan Admin
+
+6.2 Contoh Reward
+
+Check-in:
++10 poin
+
+Rewarded Ads:
++5 poin / iklan
+
+Maksimal:
+20 iklan / hari
+
+Total maksimum iklan:
+100 poin / hari
+
+Pembelian:
+Poin sesuai produk.
+
+Referral:
+Bonus lebih besar, misalnya:
+
++5.000 poin
+
+Nilai tersebut dapat diubah Admin.
+
+6.3 Ledger Poin
+
+Setiap poin masuk/keluar dicatat.
+
+Contoh:
+
++10    Check-in
++100   Rewarded Ads
++5.000 Referral
++500   Pembelian
+-1.000 Penukaran
+
+6.4 Anti Manipulasi
+
+Member tidak boleh dapat mengubah poin dari aplikasi Android.
+
+Penambahan/pengurangan poin harus dilakukan melalui backend/server.
+
+
+BAB 7 — DAILY TASK
+
+7.1 Check-in Harian
+
+Member dapat melakukan check-in satu kali sehari.
+
+Contoh:
+
++10 poin
+
+7.2 Rewarded Ads
+
+Member dapat menonton maksimal:
+
+20 iklan per hari
+
+Setiap iklan yang valid:
+
++5 poin
+
+Reward hanya diberikan setelah sistem iklan mengonfirmasi iklan selesai.
+
+7.3 Referral
+
+Member dapat mengundang orang menggunakan Referral ID 6 digit.
+
+Bonus diberikan setelah member baru memenuhi syarat pembelian.
+
+7.4 Pembelian
+
+Pembelian produk dapat menghasilkan poin sesuai konfigurasi produk.
+
+7.5 Tampilan
+
+DAILY TASK
+
+📅 Check-in
+✅ Selesai
+
+📺 Rewarded Ads
+20/20
+
+👥 Referral
+1 Verified
+
+🛍️ Pembelian
++500 Poin
+
+Daily Task tidak perlu memaksa member online sepanjang hari.
+
+
+
+BAB 8 — SALDO DAN KONVERSI POIN
+
+8.1 Konversi Otomatis
+
+Nilai:
+
+10.000 poin = Rp1.000
+
+Saldo dihitung otomatis berdasarkan poin valid.
+
+Contoh:
+
+100.000 poin = Rp10.000
+500.000 poin = Rp50.000
+1.000.000 poin = Rp100.000
+
+8.2 Halaman Saldo
+
+SALDO SAYA
+
+Rp125.500
+
+1.255.000 POIN
+
+Konversi:
+10.000 poin = Rp1.000
+
+[ TARIK SALDO ]
+
+8.3 Riwayat Saldo
+
+Menampilkan:
+
+- Bonus referral
+- Reward iklan
+- Poin pembelian
+- Check-in
+- Penyesuaian admin
+- Withdrawal
+- Pengurangan poin
+
+
+BAB 9 — WITHDRAWAL
+
+9.1 Minimum
+
+Minimum withdrawal:
+
+Rp50.000
+
+Setara:
+
+500.000 poin
+
+9.2 Syarat Harian
+
+Sebelum melakukan withdrawal:
+
+- Saldo minimal Rp50.000
+- Member wajib menyelesaikan 20 rewarded ads pada hari tersebut
+- Akun aktif
+- Tidak terkena pembatasan fraud
+- Maksimal 1 withdrawal per hari
+
+9.3 Alur
+
+Saldo ≥ Rp50.000
+        ↓
+Ads hari ini = 20/20
+        ↓
+Cek status akun
+        ↓
+Ajukan withdrawal
+        ↓
+PENDING
+        ↓
+ADMIN REVIEW
+        ↓
+APPROVED / REJECTED
+        ↓
+PAID
+
+9.4 Data Withdrawal
+
+- Withdrawal ID
+- User ID
+- Jumlah
+- Metode pembayaran
+- Nama penerima
+- Nomor rekening/e-wallet
+- Status
+- Waktu pengajuan
+- Waktu diproses
+- Admin pemroses
+- Catatan
+
+
+BAB 10 — PANEL ADMIN
+
+Panel Admin tidak ditampilkan dalam menu member.
+
+Admin masuk menggunakan form login yang sama.
+
+10.1 Dashboard
+
+Menampilkan:
+
+- Total member
+- Member aktif
+- Member terverifikasi
+- Total poin
+- Total saldo
+- Total produk
+- Total order
+- Order pending
+- Order diproses
+- Withdrawal pending
+- Total referral
+- Aktivitas iklan
+
+10.2 Manajemen Member
+
+Admin dapat:
+
+- Mencari member
+- Melihat detail
+- Melihat poin
+- Melihat saldo
+- Melihat referral
+- Melihat pembelian
+- Melihat withdrawal
+- Menonaktifkan akun
+- Mengaktifkan akun
+
+10.3 Edit Saldo
+
+Admin dapat menambah/mengurangi saldo.
+
+Wajib memasukkan:
+
+- Jumlah
+- Alasan
+
+Setiap perubahan masuk audit log.
+
+10.4 Pengaturan Poin
+
+Admin dapat mengatur:
+
+- Poin check-in
+- Poin per iklan
+- Maksimum iklan harian
+- Poin pembelian
+- Bonus referral
+- Konversi poin
+- Minimum withdrawal
+
+10.5 Pengaturan Referral
+
+Admin dapat mengatur bonus referral dan syarat verifikasinya.
+
+
+
+BAB 11 — ADMIN PRODUK DAN MANAJEMEN TOKO
+
+Admin memiliki kontrol penuh terhadap katalog produk.
+
+11.1 Tambah Produk
+
+Admin dapat menambahkan:
+
+- Nama
+- SKU
+- Harga
+- Harga promo
+- Stok
+- Berat
+- Deskripsi
+- Komposisi
+- Aturan penggunaan
+- Peringatan
+- Poin pembelian
+- URL foto
+- Status produk
+
+Tombol:
+
+[ + TAMBAH PRODUK ]
+
+11.2 Edit Produk
+
+Admin dapat mengubah:
+
+- Nama
+- Harga
+- Promo
+- Stok
+- Deskripsi
+- Poin
+- Foto/URL
+- Status
+
+11.3 Hapus Produk
+
+Produk yang sudah pernah memiliki transaksi sebaiknya tidak benar-benar dihapus dari database.
+
+Gunakan:
+
+ACTIVE / INACTIVE
+
+Dengan demikian riwayat transaksi tetap aman.
+
+11.4 Kelola Stok
+
+Admin dapat:
+
+- Menambah stok
+- Mengurangi stok
+- Melihat stok
+- Menentukan stok minimum
+
+11.5 Promo
+
+Admin dapat menentukan:
+
+- Harga normal
+- Harga promo
+- Periode promo
+- Status promo
+
+11.6 Kategori
+
+Walaupun produk hanya beberapa, sistem tetap dapat menyediakan kategori agar mudah dikembangkan.
+
+11.7 Order Management
+
+Admin dapat mengelola transaksi seperti online shop pada umumnya:
+
+SEMUA
+PENDING
+MENUNGGU PEMBAYARAN
+DIBAYAR
+DIPROSES
+DIKIRIM
+SELESAI
+DIBATALKAN
+REFUND
+
+Admin dapat membuka detail order dan melihat:
+
+- Member
+- Produk
+- Jumlah
+- Harga
+- Alamat
+- Ongkir
+- Total
+- Status pembayaran
+- Status order
+- Nomor resi
+- Catatan
+
+11.8 Pengiriman
+
+Admin dapat memasukkan:
+
+- Kurir
+- Nomor resi
+- Waktu pengiriman
+
+Setelah dikirim:
+
+PROCESSING → SHIPPED
+
+Member dapat melihat nomor resi di aplikasi.
+
+11.9 Pembatalan dan Refund
+
+Admin dapat memproses pembatalan/refund sesuai aturan toko.
+
+Jika pembelian menghasilkan poin atau bonus referral, sistem harus menentukan apakah poin/bonus tersebut dibatalkan ketika transaksi di-refund.
+
+
+BAB 12 — DATABASE FIREBASE TANPA STORAGE
+
+12.1 Firebase Authentication
+
+Digunakan untuk:
+
+- Register
+- Login
+- Logout
+- Reset password
+- Session
+
+12.2 Firestore
+
+Collection utama:
+
+users
+products
+categories
+orders
+order_items
+payments
+points_ledger
+referrals
+ad_rewards
+daily_tasks
+withdrawals
+settings
+admin_logs
+stock_movements
+
+12.3 Users
+
+users/{userId}
+
+name
+email
+phone
+referralId
+referredBy
+role
+status
+verified
+points
+balance
+createdAt
+updatedAt
+
+12.4 Products
+
+products/{productId}
+
+name
+sku
+description
+price
+promoPrice
+stock
+weight
+imageUrl
+points
+status
+createdAt
+updatedAt
+
+12.5 Orders
+
+orders/{orderId}
+
+userId
+orderNumber
+items
+subtotal
+shippingCost
+total
+paymentStatus
+orderStatus
+shippingCourier
+trackingNumber
+shippingAddress
+createdAt
+updatedAt
+
+12.6 Referral
+
+referrals/{referralId}
+
+inviterId
+invitedUserId
+status
+qualifyingOrderId
+bonusPoints
+createdAt
+verifiedAt
+
+12.7 Withdrawal
+
+withdrawals/{withdrawalId}
+
+userId
+amount
+method
+destination
+status
+adminId
+note
+createdAt
+processedAt
+
+12.8 Firebase Storage
+
+Tidak digunakan pada versi awal.
+
+Gambar produk menggunakan URL eksternal atau aset lokal aplikasi.
+
+
+
+BAB 13 — KEAMANAN DAN ANTI-FRAUD
+
+13.1 Saldo
+
+Saldo tidak boleh dapat diubah langsung dari Android.
+
+Perubahan dilakukan melalui backend/Cloud Functions.
+
+13.2 Poin
+
+Semua poin masuk/keluar dicatat pada ledger.
+
+13.3 Rewarded Ads
+
+Maksimal:
+
+20 rewarded ads/member/hari
+
+Sistem memvalidasi reward dari provider iklan.
+
+13.4 Referral Fraud
+
+Sistem dapat mendeteksi aktivitas tidak wajar seperti:
+
+- Akun duplikat
+- Referral mencurigakan
+- Transaksi berulang yang tidak wajar
+- Pembatalan/refund setelah bonus
+- Penyalahgunaan reward
+
+13.5 Withdrawal
+
+Withdrawal harus melalui validasi server.
+
+Tidak cukup hanya menyembunyikan tombol atau mengubah tampilan aplikasi.
+
+13.6 Admin Security
+
+Role admin ditentukan di backend.
+
+Setiap tindakan sensitif dicatat:
+
+Admin
+↓
+Action
+↓
+Target
+↓
+Amount/Data
+↓
+Timestamp
+↓
+Audit Log
+
+
+BAB 14 — UI/UX ANDROID MODERN DAN PROFESIONAL
+
+14.1 Gaya Visual
+
+- Modern
+- Bersih
+- Natural
+- Ramah
+- Tidak terlalu ramai
+- Mudah digunakan
+- Responsif
+
+Nuansa warna dapat menggunakan:
+
+- Hijau herbal
+- Putih
+- Beige
+- Aksen emas secukupnya
+
+14.2 Bottom Navigation
+
+🏠 Home
+🛍️ Produk
+🎯 Tugas
+💰 Saldo
+👤 Profil
+
+14.3 Home
+
+Menampilkan:
+
+- Saldo
+- Poin
+- Referral ID
+- Daily Task
+- Progress iklan
+- Produk unggulan
+- Tombol referral
+- Status withdrawal
+
+14.4 Produk
+
+Menampilkan kartu produk:
+
+[ FOTO ]
+
+Herbal Diet A
+Rp100.000
+
++500 Poin
+
+[ BELI ]
+
+14.5 Keranjang
+
+KERANJANG
+
+Herbal A × 2
+Rp200.000
+
+Ongkir
+Rp15.000
+
+TOTAL
+Rp215.000
+
+[ CHECKOUT ]
+
+14.6 Saldo
+
+Menampilkan:
+
+Rp125.500
+1.255.000 Poin
+
+Ads Hari Ini
+20/20
+
+[ TARIK SALDO ]
+
+14.7 Referral
+
+REFERRAL SAYA
+
+482731
+
+[ SALIN ]
+[ BAGIKAN ]
+
+Verified Referral
+5
+
+Bonus Diperoleh
+25.000 Poin
+
+
+
+BAB 15 — ALUR SISTEM LENGKAP DAN ATURAN BISNIS
+
+15.1 Alur Member
+
+REGISTER
+↓
+Mendapat Referral ID 6 digit
+↓
+HOME
+↓
+Check-in
+↓
+Tonton maksimal 20 iklan
+↓
+Dapat poin
+↓
+Beli produk jika diperlukan
+↓
+Dapat poin pembelian
+↓
+Undang member
+↓
+Member baru membeli produk
+↓
+Referral VERIFIED
+↓
+Bonus referral
+↓
+Poin bertambah
+↓
+Konversi otomatis ke saldo Rp
+↓
+Saldo minimal Rp50.000
+↓
+20 iklan hari tersebut selesai
+↓
+Withdrawal
+↓
+Admin memproses
+↓
+Saldo dibayarkan
+
+15.2 Alur Pembelian
+
+PILIH PRODUK
+↓
+KERANJANG
+↓
+CHECKOUT
+↓
+ALAMAT
+↓
+METODE PEMBAYARAN
+↓
+PEMBAYARAN
+↓
+PAID
+↓
+ADMIN MEMPROSES
+↓
+PACKING
+↓
+SHIPPED
+↓
+RESI
+↓
+DELIVERED
+↓
+COMPLETED
+
+15.3 Alur Referral
+
+MEMBER A
+↓
+Bagikan Referral ID
+↓
+MEMBER B daftar
+↓
+Member B membeli produk
+↓
+Order memenuhi syarat
+↓
+B VERIFIED
+↓
+A + BONUS POIN
+
+Tidak ada bonus dari jaringan tingkat kedua.
+
+15.4 Alur Admin
+
+LOGIN
+↓
+ROLE ADMIN
+↓
+ADMIN DASHBOARD
+
+├── Member
+├── Produk
+├── Stok
+├── Pesanan
+├── Pembayaran
+├── Referral
+├── Poin
+├── Withdrawal
+├── Pengaturan
+└── Audit Log
+
+15.5 Aturan Utama
+
+1. Referral hanya satu tingkat.
+2. Referral ID tepat 6 digit.
+3. Bonus referral diberikan setelah transaksi produk memenuhi syarat.
+4. Maksimal 20 rewarded ads per hari.
+5. Minimum withdrawal Rp50.000.
+6. Untuk withdrawal wajib menyelesaikan 20 rewarded ads pada hari tersebut.
+7. Maksimal withdrawal 1 kali per hari.
+8. Konversi 10.000 poin = Rp1.000.
+9. Admin dapat menambah, mengedit, mengaktifkan, menonaktifkan, dan mengelola produk.
+10. Admin dapat mengelola order seperti online shop.
+11. Admin dapat mengelola stok.
+12. Admin dapat memproses pembayaran, pengiriman, pembatalan, dan refund sesuai kewenangan.
+13. Setiap perubahan saldo dan poin harus memiliki riwayat.
+14. Firebase Storage tidak digunakan pada versi awal.
+15. Saldo dan poin dikontrol oleh server/backend.
+16. Produk harus merupakan produk nyata dan transaksi harus nyata.
+17. Informasi serta klaim produk herbal harus mengikuti ketentuan yang berlaku.
+18. Sistem harus memiliki perlindungan terhadap akun palsu, manipulasi poin, manipulasi iklan, dan penyalahgunaan referral.
+19. Syarat bonus dan withdrawal harus ditampilkan secara transparan kepada member.
+20. Semua aktivitas penting Admin dicatat dalam audit log.
+
+
+
+untuk petode pembayaran pembelian produk gunakan qr:
+‎
+‎<script>
+‎    const QRIS_BASE = "00020101021126610014COM.GO-JEK.WWW01189360091439663050810210G9663050810303UMI51440014ID.CO.QRIS.WWW0215ID10254671365660303UMI5204549953033605802ID5917ALTOMEDIA, Grosir6008KARAWANG61054136162070703A016304D21A";
+‎    let qrisTimer;
+‎
+‎    function setNominal(val) {
+‎        document.getElementById('amount-input').value = val;
+‎        document.querySelectorAll('.btn-nominal').forEach(b => b.classList.remove('active'));
+‎        event.currentTarget.classList.add('active');
+‎    }
+‎
+‎    function crc16(data) {
+‎        let crc = 0xFFFF;
+‎        for (let i = 0; i < data.length; i++) {
+‎            crc ^= data.charCodeAt(i) << 8;
+‎            for (let j = 0; j < 8; j++) {
+‎                if ((crc & 0x8000) !== 0) crc = (crc << 1) ^ 0x1021;
+‎                else crc <<= 1;
+‎            }
+‎        }
+‎        return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+‎    }
+‎
+‎    function generateQR() {
+‎        const amount = document.getElementById('amount-input').value;
+‎        const name = document.getElementById('sender-name').value || "Supporter";
+‎        const message = document.getElementById('sender-message').value || "";
+‎        
+‎        if (!amount || amount < 10000) return alert("Minimal Topup Rp 10.000");
+‎
+‎        document.getElementById('cheer-sound').play();
+‎        const msgVoice = new SpeechSynthesisUtterance("silahkan simpan atau screenshoot kris untuk pembayaran");
+‎        msgVoice.lang = 'id-ID';
+‎        window.speechSynthesis.speak(msgVoice);
+‎        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#c5a059', '#fff'] });
+‎
+‎        let qrisTanpaCRC = QRIS_BASE.split("6304")[0];
+‎        let tagNominal = "54" + amount.length.toString().padStart(2, '0') + amount;
+‎        let dataSiapCRC = qrisTanpaCRC + tagNominal + "6304";
+‎        let fullQRIS = dataSiapCRC + crc16(dataSiapCRC);
+‎
+‎        document.getElementById('qrcode').innerHTML = "";
+‎        new QRCode(document.getElementById('qrcode'), { text: fullQRIS, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.M });
+‎
+‎        document.getElementById('total-display').innerText = "Rp " + parseInt(amount).toLocaleString('id-ID');
+‎        document.getElementById('tr-id').innerText = "TRX-ID: " + Math.floor(Date.now()/1000);
+‎        document.getElementById('qr-container').style.display = 'block';
+‎
+‎        // Firebase Push Logic
+‎        if (window.saveDonation) {
+‎            window.saveDonation(name, amount, message);
+‎        }
+‎
+‎        let time = 180;
+‎        clearInterval(qrisTimer);
+‎        qrisTimer = setInterval(() => {
+‎            let m = Math.floor(time/60), s = time%60;
+‎            document.getElementById('pay-timer').innerText = `Selesaikan dalam ${m}:${s<10?'0':''}${s}`;
+‎            if(time-- <= 0) { clearInterval(qrisTimer); document.getElementById('qr-container').style.opacity="0.5"; alert("Waktu habis."); }
+‎        }, 1000);
+‎
+‎        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+‎    }
+‎
+‎    function downloadQR() {
+‎        html2canvas(document.getElementById('capture-area')).then(canvas => {
+‎            const link = document.createElement('a');
+‎            link.download = `QRIS-ALTOMEDIA-${Date.now()}.png`;
+‎            link.href = canvas.toDataURL();
+‎            link.click();
+‎        });
+‎    }
+‎
+‎    const canvas = document.getElementById('stars');
+‎    const ctx = canvas.getContext('2d');
+‎    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+‎    const stars = Array(30).fill().map(() => ({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*0.4 }));
+‎    function draw() {
+‎        ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = "#c5a059";
+‎        stars.forEach(s => { ctx.beginPath(); ctx.arc(s.x, s.y, 1.2, 0, Math.PI*2); ctx.fill(); s.y -= s.s; if(s.y<0) s.y=canvas.height; });
+‎        requestAnimationFrame(draw);
+‎    }
+‎    draw();
+‎</script>
+
+
+
+
+tambahkan banner admob di tempat yang strategis agar selalu terlihat.
+tambahkan fungsi pultorefresh.
+pastikan aplikasi ringan dan tidak berat saat di gunakan.
