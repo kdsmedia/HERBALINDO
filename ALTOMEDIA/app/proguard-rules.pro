@@ -1,0 +1,5 @@
+-keep class com.altomedia.herbalindo.data.** { *; }
+-keep class com.altomedia.herbalindo.core.** { *; }
+-keepattributes *Annotation*
+-dontwarn org.bouncycastle.**
+-dontwarn org.conscrypt.**

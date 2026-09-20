@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HERBALINDO</string>
+    <string name="app_tagline">Herbal diet alami · Poin · Referral · Saldo</string>
+    <string name="developer">ALTOMEDIA</string>
+    <string name="contact_email">altomediaindonesia@gmail.com</string>
+
+    <!-- AdMob -->
+    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="admob_banner_unit">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="admob_rewarded_unit">ca-app-pub-3940256099942544/5224354917</string>
+
+    <!-- Auth -->
+    <string name="login">Masuk</string>
+    <string name="register">Daftar</string>
+    <string name="email_or_phone">Email / Nomor HP</string>
+    <string name="password">Password</string>
+    <string name="name">Nama Lengkap</string>
+    <string name="referral_optional">Referral ID (opsional)</string>
+    <string name="role_hint">Satu form untuk Member &amp; Admin. Role ditentukan server.</string>
+    <string name="referral_hint">Referral ID dibuat otomatis 6 digit oleh server dan tidak dapat diubah.</string>
+
+    <!-- Member -->
+    <string name="home">Home</string>
+    <string name="products">Produk</string>
+    <string name="tasks">Tugas</string>
+    <string name="balance">Saldo</string>
+    <string name="profile">Profil</string>
+    <string name="cart">Keranjang</string>
+    <string name="points">Poin</string>
+    <string name="referral">Referral</string>
+    <string name="logout">Keluar</string>
+    <string name="checkin">Check-in Harian</string>
+    <string name="watch_ad">Tonton Iklan</string>
+    <string name="withdraw">Ajukan Withdrawal</string>
+    <string name="add_to_cart">Tambah ke Keranjang</string>
+    <string name="checkout">Checkout</string>
+    <string name="pay_now">Bayar Sekarang</string>
+
+    <!-- Admin -->
+    <string name="admin_panel">Panel Admin</string>
+
+    <!-- Umum -->
+    <string name="loading">Memuat…</string>
+    <string name="empty_data">Belum ada data</string>
+    <string name="save">Simpan</string>
+    <string name="cancel">Batal</string>
+    <string name="close">Tutup</string>
+    <string name="delete">Hapus</string>
+    <string name="edit">Ubah</string>
+    <string name="search">Cari</string>
+    <string name="confirm">Konfirmasi</string>
+</resources>

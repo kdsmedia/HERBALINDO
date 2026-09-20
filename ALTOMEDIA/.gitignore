@@ -1,0 +1,21 @@
+# Gradle
+.gradle/
+build/
+app/build/
+
+# Android Studio / IDE
+.idea/
+*.iml
+.DS_Store
+
+# Berkas hasil build
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# Berkas rahasia lokal (jangan pernah di-commit)
+local.properties
+*.keystore
+*.jks
+keystore/*.properties

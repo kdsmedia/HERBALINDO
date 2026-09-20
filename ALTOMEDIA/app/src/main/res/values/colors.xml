@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="brand_green_dark">#1B5E20</color>
+    <color name="brand_green">#2E7D32</color>
+    <color name="brand_green_light">#66BB6A</color>
+    <color name="brand_green_pale">#E8F5E9</color>
+    <color name="brand_accent">#F9A825</color>
+    <color name="brand_accent_dark">#C17900</color>
+
+    <color name="bg">#F6F8F6</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_alt">#F1F4F1</color>
+    <color name="divider">#E0E5E0</color>
+
+    <color name="text_primary">#1A241A</color>
+    <color name="text_secondary">#5C6B5C</color>
+    <color name="text_on_brand">#FFFFFF</color>
+
+    <color name="success">#2E7D32</color>
+    <color name="warning">#EF6C00</color>
+    <color name="danger">#C62828</color>
+    <color name="info">#1565C0</color>
+
+    <color name="status_pending">#EF6C00</color>
+    <color name="status_paid">#1565C0</color>
+    <color name="status_shipped">#6A1B9A</color>
+    <color name="status_done">#2E7D32</color>
+    <color name="status_cancel">#C62828</color>
+
+    <color name="splash_bg">#1B5E20</color>
+</resources>
