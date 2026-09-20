@@ -1,0 +1,13 @@
+{
+  "name": "herbalindo-functions",
+  "description": "Trusted backend for HERBALINDO — points, balance, referrals, orders, withdrawal",
+  "main": "index.js",
+  "engines": {
+    "node": "20"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.7.0",
+    "firebase-functions": "^6.1.1"
+  },
+  "private": true
+}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="herbal_green_dark">#155734</color>
+    <color name="herbal_green">#228B4A</color>
+    <color name="herbal_green_light">#4CAF6E</color>
+    <color name="herbal_green_pale">#E4F3E9</color>
+    <color name="herbal_beige">#F5F0E4</color>
+    <color name="herbal_beige_dark">#E8DFC8</color>
+    <color name="herbal_gold">#C5A059</color>
+    <color name="herbal_gold_light">#E0C68C</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="text_primary">#1B2B22</color>
+    <color name="text_secondary">#5C6B62</color>
+    <color name="text_hint">#9AA69E</color>
+    <color name="divider">#E2E6E3</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="background">#F7F8F5</color>
+
+    <color name="status_pending">#F0A202</color>
+    <color name="status_paid">#228B4A</color>
+    <color name="status_shipped">#1976D2</color>
+    <color name="status_completed">#155734</color>
+    <color name="status_cancelled">#C62828</color>
+    <color name="status_refunded">#6A1B9A</color>
+
+    <color name="danger">#C62828</color>
+    <color name="warning">#EF6C00</color>
+    <color name="success">#228B4A</color>
+</resources>

@@ -1,0 +1,12 @@
+rules_version = '2';
+
+// Firebase Storage is intentionally NOT used by HERBALINDO (BAB 12.8).
+// Product images reference external URLs or bundled app assets. Rules exist only to
+// close storage entirely so nothing can be uploaded if the bucket is ever provisioned.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
