@@ -208,3 +208,40 @@ Spesifikasi pada Bab 12 memang menyebut Firebase. Apabila di kemudian hari
 aplikasi akan dihubungkan ke Firebase, diperlukan proyek Firebase yang nyata
 beserta berkas `google-services.json` yang sah, serta penyelarasan aturan
 Firestore dengan aturan yang saat ini dijalankan di `Repository`.
+
+## Artefak rilis tidak ikut git; paket di GitHub Release harus diganti manual
+
+`ALTOMEDIA/.gitignore` mengabaikan `*.apk` dan `*.aab`. Jadi `git push` **tidak
+pernah** memperbarui paket yang diunduh pengguna. Paket hanya berubah bila aset
+GitHub Release diganti lewat API.
+
+Akibatnya pernah terjadi: Release `v1.0.0` dibuat pukul 18:00 dengan APK hasil
+build **sebelum** perbaikan pembukaan aplikasi. Semua perbaikan berikutnya
+hanya masuk ke git, sementara APK di Release tetap versi lama dan menutup
+sendiri saat dibuka di Android 5.x. Setelah mengganti aset, barulah pengguna
+menerima build yang benar.
+
+Setiap kali artefak dibangun ulang:
+
+1. Ganti `ALTOMEDIA/release/HERBALINDO-1.0.0.apk` dan `.aab` dengan hasil build.
+2. Perbarui `SHA256SUMS.txt`.
+3. Unggah ulang ketiga berkas ke Release dengan token bercakupan `repo`.
+4. Unduh kembali dari Release dan periksa checksumnya.
+
+## `Activity.getColor` tetap dapat masuk lewat library, dibawa oleh R8
+
+Perbaikan di kode sendiri tidak cukup. R8 pernah memindahkan panggilan
+`Activity.getColor` milik kode aplikasi ke dalam kelas paket
+`com.google.android.gms.internal.ads` (`be1.a`), sehingga pemeriksaan
+`grep ContextCompat` pada dex tidak menemukan apa pun dan bug tampak hilang
+padahal masih ada.
+
+Cara memeriksa yang benar adalah mencari langsung rujukan tanpa penjaga versi
+di seluruh dex, bukan mencari nama `ContextCompat`:
+
+```
+dexdump -d classes.dex | grep -c "Activity;.getColor"   # harus 0
+```
+
+Jalur yang aman harus memuat `sget ... Build$VERSION;.SDK_INT` sebelum memilih
+antara `Context.getColor` (API 23) dan `Resources.getColor` (API 1).
