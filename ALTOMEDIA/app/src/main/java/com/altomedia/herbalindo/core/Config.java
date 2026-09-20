@@ -1,5 +1,7 @@
 package com.altomedia.herbalindo.core;
 
+import com.altomedia.herbalindo.BuildConfig;
+
 /**
  * Konstanta aplikasi HERBALINDO.
  * Nilai default mengikuti Bab 8, 9, dan 15 pada dokumen spesifikasi.
@@ -29,10 +31,30 @@ public final class Config {
     public static final String QRIS_BASE =
         "00020101021126610014COM.GO-JEK.WWW01189360091439663050810210G9663050810303UMI51440014ID.CO.QRIS.WWW0215ID10254671365660303UMI5204549953033605802ID5917ALTOMEDIA, Grosir6008KARAWANG61054136162070703A016304D21A";
 
-    // AdMob. Unit test resmi Google agar build tidak memicu pelanggaran saat QA.
-    public static final String ADMOB_APP_ID = "ca-app-pub-3940256099942544~3347511713";
-    public static final String ADMOB_BANNER_UNIT = "ca-app-pub-3940256099942544/6300978111";
-    public static final String ADMOB_REWARDED_UNIT = "ca-app-pub-3940256099942544/5224354917";
+    // AdMob — unit produksi milik akun ALTOMEDIA.
+    public static final String ADMOB_APP_ID_PROD = "ca-app-pub-6881903056221433~4194258778";
+    public static final String ADMOB_BANNER_UNIT_PROD = "ca-app-pub-6881903056221433/9657593588";
+    public static final String ADMOB_REWARDED_UNIT_PROD = "ca-app-pub-6881903056221433/4720872385";
+    public static final String ADMOB_INTERSTITIAL_UNIT_PROD = "ca-app-pub-6881903056221433/3693811302";
+
+    // Unit uji resmi Google. Build debug memakai unit ini agar penayangan saat
+    // pengembangan tidak tercatat sebagai klik tidak sah pada akun produksi.
+    public static final String ADMOB_BANNER_UNIT_TEST = "ca-app-pub-3940256099942544/6300978111";
+    public static final String ADMOB_REWARDED_UNIT_TEST = "ca-app-pub-3940256099942544/5224354917";
+    public static final String ADMOB_INTERSTITIAL_UNIT_TEST = "ca-app-pub-3940256099942544/1033173712";
+
+    /** Build debug memakai unit uji; build rilis memakai unit produksi. */
+    public static String adUnit(String prod, String test) {
+        return BuildConfig.DEBUG ? test : prod;
+    }
+
+    public static String bannerUnit() { return adUnit(ADMOB_BANNER_UNIT_PROD, ADMOB_BANNER_UNIT_TEST); }
+
+    public static String rewardedUnit() { return adUnit(ADMOB_REWARDED_UNIT_PROD, ADMOB_REWARDED_UNIT_TEST); }
+
+    public static String interstitialUnit() {
+        return adUnit(ADMOB_INTERSTITIAL_UNIT_PROD, ADMOB_INTERSTITIAL_UNIT_TEST);
+    }
 
     public static final String PREFS = "herbalindo_prefs";
     public static final String DB_NAME = "herbalindo.db";

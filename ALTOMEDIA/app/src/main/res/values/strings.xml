@@ -6,9 +6,10 @@
     <string name="contact_email">altomediaindonesia@gmail.com</string>
 
     <!-- AdMob -->
-    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
-    <string name="admob_banner_unit">ca-app-pub-3940256099942544/6300978111</string>
-    <string name="admob_rewarded_unit">ca-app-pub-3940256099942544/5224354917</string>
+    <string name="admob_app_id">ca-app-pub-6881903056221433~4194258778</string>
+    <string name="admob_banner_unit">ca-app-pub-6881903056221433/9657593588</string>
+    <string name="admob_rewarded_unit">ca-app-pub-6881903056221433/4720872385</string>
+    <string name="admob_interstitial_unit">ca-app-pub-6881903056221433/3693811302</string>
 
     <!-- Auth -->
     <string name="login">Masuk</string>

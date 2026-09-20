@@ -60,6 +60,15 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/member_banner"
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/surface"
+        ads:adSize="BANNER" />
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"

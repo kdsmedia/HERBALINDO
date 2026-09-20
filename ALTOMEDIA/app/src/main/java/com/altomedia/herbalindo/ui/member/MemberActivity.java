@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.altomedia.herbalindo.R;
+import com.altomedia.herbalindo.ads.AdsManager;
 import com.altomedia.herbalindo.core.Session;
 import com.altomedia.herbalindo.core.Ui;
 import com.altomedia.herbalindo.core.Util;
@@ -62,6 +63,10 @@ public class MemberActivity extends BaseActivity {
             return true;
         });
         headerCart.setOnClickListener(v -> startActivity(new Intent(this, CartActivity.class)));
+
+        AdsManager.get(this).loadBanner(findViewById(R.id.member_banner));
+        // Disiapkan lebih awal agar interstitial sudah siap saat checkout selesai.
+        AdsManager.get(this).preloadInterstitial();
 
         show("home");
     }

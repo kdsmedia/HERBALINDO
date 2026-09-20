@@ -101,6 +101,41 @@ konsistensi statis, dan pemeriksaan isi APK.
   (`onUserEarnedReward`), bukan saat iklan mulai tampil.
 - Password disimpan sebagai hash bersalt (`PasswordHasher`), bukan teks asli.
 
+## Iklan (AdMob)
+
+Tiga format dipakai: banner, rewarded, interstitial.
+
+| Format | ID produksi | Tempat pemasangan |
+| --- | --- | --- |
+| App ID | `ca-app-pub-6881903056221433~4194258778` | `strings.xml` → `admob_app_id` (dibaca manifest) |
+| Banner | `ca-app-pub-6881903056221433/9657593588` | `activity_member.xml` (bawah konten), `activity_product_detail.xml` |
+| Rewarded | `ca-app-pub-6881903056221433/4720872385` | `TasksTab` — sumber poin iklan |
+| Interstitial | `ca-app-pub-6881903056221433/3693811302` | `CheckoutActivity` setelah pesanan dibuat |
+
+Build **debug** otomatis memakai unit uji resmi Google; build **release** memakai unit
+produksi. Pemilihan ada di `Config.adUnit(...)` dan diterapkan lewat
+`AdsManager.loadBanner(...)` yang memanggil `setAdUnitId` dari kode.
+
+Karena itu, `ads:adUnitId` pada layout **diabaikan** untuk banner. Jangan
+mengandalkan nilai di XML dan jangan menyalin unit uji ke berkas layout.
+
+Hal yang mudah salah:
+
+1. **Poin iklan tidak boleh diberikan saat iklan mulai tampil.** `onRewarded`
+   hanya dipanggil dari `onUserEarnedReward`. Callback `onAdFailedToShow` dan
+   `onAdDismissedFullScreenContent` tanpa reward harus memanggil `onFailed`,
+   bukan memberi poin.
+2. **Jangan tampilkan interstitial saat aplikasi dibuka.** Penayangan langsung
+   pada peluncuran melanggar kebijakan AdMob. Interstitial hanya dipasang pada
+   jeda alami (setelah checkout selesai).
+3. **Iklan yang gagal dimuat tidak boleh menahan alur pengguna.**
+   `showInterstitial` selalu menjalankan `onClosed`, dan `showRewarded`
+   melaporkan kegagalan lewat `onFailed` sehingga antarmuka dapat menampilkan
+   pesan tanpa membeku.
+4. **Jangan memakai unit uji pada build rilis.** Unit uji
+   `ca-app-pub-3940256099942544/...` hanya sah untuk pengembangan; memakainya di
+   produksi meniadakan pendapatan dan dapat menimbulkan pelanggaran.
+
 ## Rilis
 
 - Versi saat ini: **1.0.0**, versionCode **1**, minSdk **21**, targetSdk **36**.

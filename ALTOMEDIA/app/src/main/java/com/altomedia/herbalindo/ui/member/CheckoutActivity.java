@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.altomedia.herbalindo.R;
+import com.altomedia.herbalindo.ads.AdsManager;
 import com.altomedia.herbalindo.core.Ui;
 import com.altomedia.herbalindo.core.Util;
 import com.altomedia.herbalindo.data.Models;
@@ -100,8 +101,12 @@ public class CheckoutActivity extends BaseActivity {
             Ui.hideKeyboard(this);
             Intent i = new Intent(this, PaymentActivity.class);
             i.putExtra("orderId", order.orderId);
-            startActivity(i);
-            finish();
+            // Interstitial ditampilkan pada jeda alami setelah pesanan dibuat.
+            // Navigasi tetap berjalan bila iklan belum siap atau gagal tayang.
+            AdsManager.get(this).showInterstitial(this, () -> {
+                startActivity(i);
+                finish();
+            });
         } catch (Repository.RuleException e) {
             Ui.error(this, e.getMessage());
         }
