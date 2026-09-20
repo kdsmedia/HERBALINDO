@@ -243,6 +243,26 @@ public class Repository {
         } catch (Exception e) { throw new IllegalStateException(e); }
     }
 
+    /**
+     * Mengganti kata sandi pengguna. Kata sandi lama wajib benar agar pengguna
+     * yang menemukan perangkat dalam keadaan terbuka tidak dapat mengambil alih
+     * akun. Salt baru dibuat setiap perubahan sehingga hash lama tidak berlaku.
+     */
+    public void changePassword(String userId, String oldPassword, String newPassword, String confirm) throws RuleException {
+        Models.User u = user(userId);
+        if (u == null) throw new RuleException("Akun tidak ditemukan");
+        if (Util.isBlank(oldPassword)) throw new RuleException("Isi password lama");
+        if (!PasswordHasher.verify(oldPassword, u.salt, u.passwordHash)) throw new RuleException("Password lama salah");
+        if (newPassword == null || newPassword.length() < 6) throw new RuleException("Password baru minimal 6 karakter");
+        if (!newPassword.equals(confirm)) throw new RuleException("Konfirmasi password tidak sama");
+        if (newPassword.equals(oldPassword)) throw new RuleException("Password baru harus berbeda dari password lama");
+        String salt = PasswordHasher.newSalt();
+        u.salt = salt;
+        u.passwordHash = PasswordHasher.hash(newPassword, salt);
+        saveUser(u);
+        log(u.userId, "UBAH_PASSWORD", u.userId, "Password akun diperbarui");
+    }
+
     /* ================= PRODUK ================= */
     public List<Models.Product> allProducts() {
         List<Models.Product> out = new ArrayList<>();

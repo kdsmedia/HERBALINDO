@@ -2,9 +2,13 @@ package com.altomedia.herbalindo.core;
 
 import android.app.Activity;
 import android.content.Context;
+import android.text.InputType;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -59,6 +63,52 @@ public final class Ui {
     public static void setText(View parent, int id, String value) {
         TextView tv = parent.findViewById(id);
         if (tv != null) tv.setText(value == null ? "-" : value);
+    }
+
+    /** Dialog formulir sederhana berisi beberapa kolom masukan (kata sandi dsb). */
+    public interface FormHandler {
+        /** Mengembalikan pesan kesalahan, atau null apabila data diterima. */
+        String onSubmit(String[] values);
+    }
+
+    public static void form(Context ctx, String title, String[] labels, boolean[] secret,
+                            FormHandler handler) {
+        LinearLayout box = new LinearLayout(ctx);
+        box.setOrientation(LinearLayout.VERTICAL);
+        int pad = (int) (20 * ctx.getResources().getDisplayMetrics().density);
+        box.setPadding(pad, pad / 2, pad, 0);
+
+        final EditText[] inputs = new EditText[labels.length];
+        for (int i = 0; i < labels.length; i++) {
+            EditText et = new EditText(ctx);
+            et.setHint(labels[i]);
+            et.setInputType(secret[i]
+                    ? (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)
+                    : InputType.TYPE_CLASS_TEXT);
+            box.addView(et);
+            inputs[i] = et;
+        }
+
+        AlertDialog dialog = new AlertDialog.Builder(ctx)
+                .setTitle(title)
+                .setView(box)
+                .setNegativeButton("Batal", (d, w) -> d.dismiss())
+                .setPositiveButton("Simpan", null)
+                .create();
+        dialog.show();
+
+        // Ditangani manual agar dialog tidak tertutup ketika validasi gagal.
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String[] values = new String[inputs.length];
+            for (int i = 0; i < inputs.length; i++) values[i] = inputs[i].getText().toString();
+            String err = handler.onSubmit(values);
+            if (err == null) {
+                dialog.dismiss();
+            } else {
+                inputs[0].requestFocus();
+                Toast.makeText(ctx, err, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     /** Menulis berkas ke cache dan mengembalikan File (untuk dibagikan via FileProvider). */

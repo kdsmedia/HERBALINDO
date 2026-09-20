@@ -6,8 +6,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.altomedia.herbalindo.R;
+import com.altomedia.herbalindo.core.Ui;
 import com.altomedia.herbalindo.core.Util;
 import com.altomedia.herbalindo.data.Models;
+import com.altomedia.herbalindo.data.Repository;
 
 /** Tab Profil: data akun, referral, riwayat pesanan, dan riwayat poin. */
 class ProfileTab {
@@ -21,8 +23,25 @@ class ProfileTab {
         if (root == null) {
             root = LayoutInflater.from(a).inflate(R.layout.tab_profile, null, false);
             root.findViewById(R.id.prof_logout).setOnClickListener(v -> a.logout());
+            root.findViewById(R.id.prof_change_password).setOnClickListener(v -> changePassword());
         }
         return root;
+    }
+
+    /** Mengganti password akun. Password lama wajib benar sebelum perubahan disimpan. */
+    private void changePassword() {
+        Ui.form(a, "Ubah Password",
+                new String[]{"Password lama", "Password baru (min. 6 karakter)", "Ulangi password baru"},
+                new boolean[]{true, true, true},
+                values -> {
+                    try {
+                        a.repo().changePassword(a.user.userId, values[0], values[1], values[2]);
+                        Ui.ok(a, "Password berhasil diubah");
+                        return null;
+                    } catch (Repository.RuleException e) {
+                        return e.getMessage();
+                    }
+                });
     }
 
     void refresh() {

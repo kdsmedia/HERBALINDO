@@ -422,4 +422,83 @@ public class RepositoryTest {
         assertEquals(3, again.allProducts().size());
         assertEquals(1, again.allUsers().size()); // hanya admin
     }
+
+    /* ---------------- Validasi form ---------------- */
+
+    /* ---------------- Ubah password ---------------- */
+
+    @Test public void changePasswordAcceptsCorrectOldPassword() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        repo.changePassword(u.userId, "rahasia1", "rahasia2", "rahasia2");
+        assertNotNull(repo.login("081234567890", "rahasia2"));
+    }
+
+    @Test public void changePasswordRejectsWrongOldPassword() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        try {
+            repo.changePassword(u.userId, "salah", "rahasia2", "rahasia2");
+            fail("harus gagal");
+        } catch (Repository.RuleException e) {
+            assertTrue(e.getMessage().contains("Password lama salah"));
+        }
+        assertNotNull(repo.login("081234567890", "rahasia1"));
+    }
+
+    @Test public void changePasswordRejectsMismatchedConfirmation() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        try {
+            repo.changePassword(u.userId, "rahasia1", "rahasia2", "rahasia3");
+            fail("harus gagal");
+        } catch (Repository.RuleException e) {
+            assertTrue(e.getMessage().contains("Konfirmasi"));
+        }
+    }
+
+    @Test public void changePasswordRejectsShortNewPassword() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        try {
+            repo.changePassword(u.userId, "rahasia1", "123", "123");
+            fail("harus gagal");
+        } catch (Repository.RuleException e) {
+            assertTrue(e.getMessage().contains("minimal 6 karakter"));
+        }
+    }
+
+    @Test public void changePasswordRejectsReusingOldPassword() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        try {
+            repo.changePassword(u.userId, "rahasia1", "rahasia1", "rahasia1");
+            fail("harus gagal");
+        } catch (Repository.RuleException e) {
+            assertTrue(e.getMessage().contains("berbeda"));
+        }
+    }
+
+    @Test public void changePasswordRotatesSaltSoOldHashNoLongerMatches() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        String saltBefore = u.salt;
+        String hashBefore = u.passwordHash;
+        repo.changePassword(u.userId, "rahasia1", "rahasia2", "rahasia2");
+        Models.User after = repo.user(u.userId);
+        assertFalse("salt harus diperbarui", saltBefore.equals(after.salt));
+        assertFalse("hash harus berubah", hashBefore.equals(after.passwordHash));
+    }
+
+    @Test public void adminCanChangeSeededPassword() throws Exception {
+        Models.User admin = repo.login("admin@herbalindo.id", "admin123");
+        repo.changePassword(admin.userId, "admin123", "adminBaru1", "adminBaru1");
+        assertNotNull(repo.login("admin@herbalindo.id", "adminBaru1"));
+        try { repo.login("admin@herbalindo.id", "admin123"); fail("password lama harus tidak berlaku"); }
+        catch (Repository.RuleException e) { assertTrue(e.getMessage().contains("Password salah")); }
+    }
+
+    @Test public void changePasswordIsRecordedInAuditLog() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        repo.changePassword(u.userId, "rahasia1", "rahasia2", "rahasia2");
+        boolean found = false;
+        for (org.json.JSONObject o : repo.adminLogs(0)) {
+            if ("UBAH_PASSWORD".equals(o.optString("action"))) { found = true; break; }
+        }
+        assertTrue("perubahan password harus tercatat pada audit log", found);
+    }
 }

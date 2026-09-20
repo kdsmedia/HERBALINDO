@@ -57,7 +57,7 @@ class TasksTab {
                 "Rewarded Ads +" + s.adPoints + " poin · maksimal " + s.adMaxPerDay + " per hari");
         ((TextView) root.findViewById(R.id.task_ads_note)).setText(
                 "Poin diberikan hanya setelah iklan ditonton sampai selesai. "
-                        + "Maksimal 20 (dua puluh) iklan berhadiah per hari.");
+                        + "Maksimal " + s.adMaxPerDay + " iklan berhadiah per hari.");
         ProgressBar pb = root.findViewById(R.id.task_ads_progress);
         pb.setMax((int) s.adMaxPerDay);
         pb.setProgress(t.adsWatched);

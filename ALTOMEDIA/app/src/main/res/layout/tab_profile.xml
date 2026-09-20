@@ -162,11 +162,19 @@
             android:orientation="vertical" />
 
         <Button
-            android:id="@+id/prof_logout"
+            android:id="@+id/prof_change_password"
             style="@style/Widget.Herbalindo.Button.Outlined"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:text="@string/change_password" />
+
+        <Button
+            android:id="@+id/prof_logout"
+            style="@style/Widget.Herbalindo.Button.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:text="@string/logout" />
 
         <TextView

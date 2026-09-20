@@ -70,15 +70,15 @@ public final class Config {
 
     public static String orderLabel(String status) {
         switch (status) {
-            case "PENDING": return "PENDING";
+            case "PENDING": return "TERTUNDA";
             case "WAITING_PAYMENT": return "MENUNGGU PEMBAYARAN";
             case "PAID": return "DIBAYAR";
             case "PROCESSING": return "DIPROSES";
             case "SHIPPED": return "DIKIRIM";
-            case "DELIVERED": return "DELIVERED";
+            case "DELIVERED": return "DITERIMA";
             case "COMPLETED": return "SELESAI";
             case "CANCELLED": return "DIBATALKAN";
-            case "REFUNDED": return "REFUND";
+            case "REFUNDED": return "DIKEMBALIKAN";
             default: return status;
         }
     }
