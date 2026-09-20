@@ -10,6 +10,11 @@ const functions = require("firebase-functions/v2/https");
 const admin = require("firebase-admin");
 const { logger } = require("firebase-functions");
 
+// All callables are pinned to the same region the Android client uses
+// (Config.FUNCTIONS_REGION). A mismatch here makes every call fail with NOT_FOUND.
+const REGION = "asia-southeast2";
+functions.setGlobalOptions({ region: REGION });
+
 admin.initializeApp();
 const db = admin.firestore();
 const FieldValue = admin.firestore.FieldValue;
@@ -957,7 +962,11 @@ exports.saveSettings = functions.onCall(async (request) => {
   if (data.referralRequiresPurchase !== undefined) {
     payload.referralRequiresPurchase = data.referralRequiresPurchase === true;
   }
+  if (data.maintenanceMode !== undefined) {
+    payload.maintenanceMode = data.maintenanceMode === true;
+  }
   if (data.supportEmail !== undefined) payload.supportEmail = String(data.supportEmail);
+  if (data.adminWhatsapp !== undefined) payload.adminWhatsapp = String(data.adminWhatsapp);
 
   await db.collection(SETTINGS).doc("app").set(payload, { merge: true });
   await writeAdminLog(adminId, "SAVE_SETTINGS", "settings/app", 0, JSON.stringify(payload));
