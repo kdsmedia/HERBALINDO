@@ -70,7 +70,7 @@ class BalanceTab {
             TextView value = row.findViewById(R.id.info_value);
             boolean ok = "1".equals(c[0]);
             value.setText(ok ? "OK" : "BELUM");
-            value.setTextColor(a.getColor(ok ? R.color.success : R.color.warning));
+            value.setTextColor(androidx.core.content.ContextCompat.getColor(a, ok ? R.color.success : R.color.warning));
             checks.addView(row);
         }
 
@@ -91,7 +91,7 @@ class BalanceTab {
                         Util.dateTime(w.createdAt) + " · " + w.method);
                 TextView v = row.findViewById(R.id.info_value);
                 v.setText(Util.rupiah(w.amountRupiah) + " · " + w.status);
-                v.setTextColor(a.getColor("PAID".equals(w.status) ? R.color.success
+                v.setTextColor(androidx.core.content.ContextCompat.getColor(a, "PAID".equals(w.status) ? R.color.success
                         : "REJECTED".equals(w.status) ? R.color.danger : R.color.warning));
                 hist.addView(row);
             }

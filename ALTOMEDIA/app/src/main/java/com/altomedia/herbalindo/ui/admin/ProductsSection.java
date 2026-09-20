@@ -40,7 +40,7 @@ class ProductsSection {
             ((TextView) card.findViewById(R.id.ac_title)).setText(p.name + (p.active() ? "" : " (nonaktif)"));
             ((TextView) card.findViewById(R.id.ac_sub)).setText(p.sku + " · " + p.category);
             ((TextView) card.findViewById(R.id.ac_badge)).setText("Stok " + p.stock);
-            ((TextView) card.findViewById(R.id.ac_badge)).setTextColor(a.getColor(
+            ((TextView) card.findViewById(R.id.ac_badge)).setTextColor(androidx.core.content.ContextCompat.getColor(a, 
                     p.stock <= p.minStock ? R.color.danger : R.color.success));
             ((TextView) card.findViewById(R.id.ac_body)).setText(
                     "Harga " + Util.rupiah(p.price)
@@ -91,7 +91,7 @@ class ProductsSection {
         b.setPadding(18, 6, 18, 6);
         b.setTextSize(12);
         b.setBackgroundResource(R.drawable.bg_box);
-        b.setTextColor(a.getColor(colorRes));
+        b.setTextColor(androidx.core.content.ContextCompat.getColor(a, colorRes));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.setMargins(0, 0, 8, 4);

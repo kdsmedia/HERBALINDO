@@ -31,7 +31,7 @@ public final class Ui {
     public static void error(Activity a, String msg) {
         if (a == null || a.isFinishing()) return;
         Snackbar sb = Snackbar.make(a.findViewById(android.R.id.content), msg, Snackbar.LENGTH_LONG);
-        sb.setBackgroundTint(a.getColor(com.altomedia.herbalindo.R.color.danger));
+        sb.setBackgroundTint(androidx.core.content.ContextCompat.getColor(a, com.altomedia.herbalindo.R.color.danger));
         sb.show();
     }
 

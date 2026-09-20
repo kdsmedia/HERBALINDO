@@ -104,7 +104,7 @@ class ProfileTab {
                 View row = Rows.info(a, l.type + " · " + Util.dateOnly(l.createdAt),
                         (l.amount >= 0 ? "+" : "") + Util.num(l.amount));
                 ((TextView) row.findViewById(R.id.info_value)).setTextColor(
-                        a.getColor(l.amount >= 0 ? R.color.success : R.color.danger));
+                        androidx.core.content.ContextCompat.getColor(a, l.amount >= 0 ? R.color.success : R.color.danger));
                 ledger.addView(row);
             }
         }

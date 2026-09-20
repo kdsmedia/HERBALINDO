@@ -29,8 +29,10 @@ public class OrderDetailActivity extends BaseActivity {
 
         order = repo.order(getIntent().getStringExtra("orderId"));
         if (order == null) { Ui.error(this, "Pesanan tidak ditemukan"); finish(); return; }
-        if (!order.userId.equals(com.altomedia.herbalindo.core.Session.current(this).userId)
-                && !"ADMIN".equals(com.altomedia.herbalindo.core.Session.current(this).role)) {
+        com.altomedia.herbalindo.data.Models.User me =
+                com.altomedia.herbalindo.core.Session.current(this);
+        if (me == null) { toAuth(); return; }
+        if (!order.userId.equals(me.userId) && !"ADMIN".equals(me.role)) {
             Ui.error(this, "Pesanan ini bukan milik Anda");
             finish();
             return;

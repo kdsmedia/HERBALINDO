@@ -119,7 +119,7 @@ public class AdminActivity extends BaseActivity {
         ((TextView) v.findViewById(R.id.info_label)).setText(label);
         TextView tv = v.findViewById(R.id.info_value);
         tv.setText(value);
-        tv.setTextColor(a.getColor(colorRes));
+        tv.setTextColor(androidx.core.content.ContextCompat.getColor(a, colorRes));
         return v;
     }
 }

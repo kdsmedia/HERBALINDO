@@ -48,7 +48,7 @@ class WithdrawalsSection {
                     w.withdrawalId + "\nDiajukan " + Util.dateTime(w.createdAt));
             TextView badge = card.findViewById(R.id.ac_badge);
             badge.setText(w.status);
-            badge.setTextColor(a.getColor("PAID".equals(w.status) ? R.color.success
+            badge.setTextColor(androidx.core.content.ContextCompat.getColor(a, "PAID".equals(w.status) ? R.color.success
                     : "REJECTED".equals(w.status) ? R.color.danger : R.color.warning));
             if ("PENDING".equals(w.status)) pending++;
 
@@ -87,7 +87,7 @@ class WithdrawalsSection {
         b.setPadding(18, 6, 18, 6);
         b.setTextSize(12);
         b.setBackgroundResource(R.drawable.bg_box);
-        b.setTextColor(a.getColor(colorRes));
+        b.setTextColor(androidx.core.content.ContextCompat.getColor(a, colorRes));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.setMargins(0, 0, 8, 4);

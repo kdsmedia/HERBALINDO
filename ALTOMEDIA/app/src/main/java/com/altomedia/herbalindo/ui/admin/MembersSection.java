@@ -42,7 +42,7 @@ class MembersSection {
                     u.contact() + " · REF " + u.referralId + "\nDaftar " + Util.dateOnly(u.createdAt));
             TextView badge = card.findViewById(R.id.ac_badge);
             badge.setText(u.status + (u.fraudFlag ? " · FRAUD" : ""));
-            badge.setTextColor(a.getColor(u.fraudFlag ? R.color.danger
+            badge.setTextColor(androidx.core.content.ContextCompat.getColor(a, u.fraudFlag ? R.color.danger
                     : "ACTIVE".equals(u.status) ? R.color.success : R.color.warning));
 
             Models.User inviter = a.repo().user(u.referredBy);
@@ -76,7 +76,7 @@ class MembersSection {
         b.setPadding(18, 6, 18, 6);
         b.setTextSize(12);
         b.setBackgroundResource(R.drawable.bg_box);
-        b.setTextColor(a.getColor(colorRes));
+        b.setTextColor(androidx.core.content.ContextCompat.getColor(a, colorRes));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.setMargins(0, 0, 8, 4);

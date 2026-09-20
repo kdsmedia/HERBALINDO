@@ -61,7 +61,7 @@ class OrdersSection {
                             + "\n" + Util.dateTime(o.createdAt));
             TextView badge = card.findViewById(R.id.ac_badge);
             badge.setText(Config.orderLabel(o.orderStatus));
-            badge.setTextColor(a.getColor("PAID".equals(o.paymentStatus) ? R.color.success : R.color.warning));
+            badge.setTextColor(androidx.core.content.ContextCompat.getColor(a, "PAID".equals(o.paymentStatus) ? R.color.success : R.color.warning));
 
             StringBuilder items = new StringBuilder();
             for (Models.OrderItem it : o.items) items.append("• ").append(it.name).append(" × ").append(it.qty)
@@ -112,7 +112,7 @@ class OrdersSection {
         b.setPadding(18, 6, 18, 6);
         b.setTextSize(12);
         b.setBackgroundResource(R.drawable.bg_box);
-        b.setTextColor(a.getColor(colorRes));
+        b.setTextColor(androidx.core.content.ContextCompat.getColor(a, colorRes));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.setMargins(0, 0, 8, 4);

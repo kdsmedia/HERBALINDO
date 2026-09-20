@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.os.Build;
@@ -15,6 +16,12 @@ import com.altomedia.herbalindo.data.MemoryStore;
 import com.altomedia.herbalindo.data.Models;
 import com.altomedia.herbalindo.data.Repository;
 import com.altomedia.herbalindo.ui.AuthActivity;
+import com.altomedia.herbalindo.ui.admin.AdminActivity;
+import com.altomedia.herbalindo.ui.member.CartActivity;
+import com.altomedia.herbalindo.ui.member.CheckoutActivity;
+import com.altomedia.herbalindo.ui.member.OrderDetailActivity;
+import com.altomedia.herbalindo.ui.member.PaymentActivity;
+import com.altomedia.herbalindo.ui.member.ProductDetailActivity;
 import com.altomedia.herbalindo.ui.SplashActivity;
 import com.altomedia.herbalindo.ui.member.MemberActivity;
 
@@ -93,5 +100,66 @@ public class StartupLifecycleTest {
         assertEquals(AuthActivity.class.getName(),
                 shadow.getNextStartedActivity().getComponent().getClassName());
         c.destroy();
+    }
+
+    /** Seluruh layar member harus dapat dibuka tanpa menjatuhkan aplikasi. */
+    @Test public void semuaLayarMemberDapatDibuka() throws Exception {
+        Models.User u = Repository.get(ctx).register("Budi Santoso", "081234567890", "rahasia1", null);
+        Session.set(ctx, u);
+
+        buka(MemberActivity.class);
+        buka(CartActivity.class);
+
+        Models.User u2 = Repository.get(ctx).user(u.userId);
+        Repository.get(ctx).cartAdd("PRD-HBA-001", 2);
+        // Checkout dibuka selagi keranjang berisi. createOrder mengosongkan keranjang,
+        // sehingga layar checkout yang dibuka setelahnya memang selesai sendiri.
+        buka(CheckoutActivity.class);
+
+        Models.Order order = Repository.get(ctx).createOrder(u2, u2.name, u2.contact(),
+                "Jl. Melati No. 12", "Karawang", "41361", "");
+
+        buka(ProductDetailActivity.class, "productId", "PRD-HBA-001");
+        buka(PaymentActivity.class, "orderId", order.orderId);
+        buka(OrderDetailActivity.class, "orderId", order.orderId);
+    }
+
+    /** Panel admin harus dapat dibuka dengan sesi admin. */
+    @Test public void panelAdminDapatDibuka() {
+        Models.User admin = Repository.get(ctx).user("USR-ADMIN");
+        assertNotNull("Akun admin awal tidak tersedia", admin);
+        Session.set(ctx, admin);
+        buka(AdminActivity.class);
+    }
+
+    /** Layar detail tanpa data yang sah harus menutup diri dengan rapi, bukan menjatuhkan aplikasi. */
+    @Test public void layarDetailTanpaDataSahTidakMenjatuhkanAplikasi() throws Exception {
+        Models.User u = Repository.get(ctx).register("Siti Aminah", "081234567891", "rahasia1", null);
+        Session.set(ctx, u);
+        ActivityController<ProductDetailActivity> c1 =
+                buka(ProductDetailActivity.class, "productId", "PRD-TIDAK-ADA");
+        assertTrue("Layar produk tanpa data seharusnya menutup diri", c1.get().isFinishing());
+        ActivityController<OrderDetailActivity> c2 =
+                buka(OrderDetailActivity.class, "orderId", "ORD-TIDAK-ADA");
+        assertTrue("Layar pesanan tanpa data seharusnya menutup diri", c2.get().isFinishing());
+    }
+
+    /** Membuka layar tanpa data tambahan. */
+    private <T extends androidx.appcompat.app.AppCompatActivity> ActivityController<T> buka(
+            Class<T> cls, String extraKey, String extraValue) {
+        org.robolectric.shadows.ShadowLooper.idleMainLooper();
+        ActivityController<T> c = Robolectric.buildActivity(cls);
+        if (extraKey != null) {
+            c.get().getIntent().putExtra(extraKey, extraValue);
+        }
+        c.setup();
+        assertFalse(cls.getSimpleName() + " berhenti tak terduga saat dibuka",
+                c.get().isFinishing() && extraValue == null);
+        c.pause().stop().destroy();
+        return c;
+    }
+
+    private <T extends androidx.appcompat.app.AppCompatActivity> ActivityController<T> buka(Class<T> cls) {
+        return buka(cls, null, null);
     }
 }
