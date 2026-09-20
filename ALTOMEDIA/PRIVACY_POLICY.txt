@@ -1,0 +1,311 @@
+================================================================================
+KEBIJAKAN PRIVASI (PRIVACY POLICY)
+APLIKASI HERBALINDO
+================================================================================
+
+Nama Aplikasi    : HERBALINDO
+Nama Paket       : com.altomedia.herbalindo
+Pengembang       : ALTOMEDIA
+Kontak           : altomediaindonesia@gmail.com
+Alamat           : Karawang, Jawa Barat, Indonesia
+Versi Dokumen    : 1.0
+Tanggal Berlaku  : 20 September 2026
+
+--------------------------------------------------------------------------------
+1. PENDAHULUAN
+--------------------------------------------------------------------------------
+
+Kebijakan Privasi ini menjelaskan bagaimana aplikasi HERBALINDO ("Aplikasi",
+"kami") memperoleh, menggunakan, menyimpan, dan melindungi informasi ketika Anda
+menggunakan Aplikasi. Kebijakan ini berlaku untuk seluruh pengguna Aplikasi,
+baik yang berperan sebagai Member maupun Administrator.
+
+Dengan mengunduh, memasang, dan menggunakan Aplikasi, Anda menyatakan telah
+membaca, memahami, dan menyetujui seluruh ketentuan dalam Kebijakan Privasi
+ini. Apabila Anda tidak menyetujui sebagian atau seluruh ketentuan di dalamnya,
+mohon untuk tidak menggunakan Aplikasi.
+
+Kami berkomitmen untuk menjaga kerahasiaan data Anda dan hanya mengumpulkan
+informasi yang benar-benar diperlukan agar Aplikasi dapat berfungsi dengan baik.
+
+--------------------------------------------------------------------------------
+2. INFORMASI YANG KAMI KUMPULKAN
+--------------------------------------------------------------------------------
+
+2.1 Informasi yang Anda Berikan Secara Langsung
+
+Saat melakukan pendaftaran akun, Anda memberikan:
+
+    a. Nama lengkap atau nama panggilan;
+    b. Nomor telepon dan/atau alamat email sebagai identitas login;
+    c. Kata sandi akun Anda;
+    d. Kode Referral ID (opsional), apabila Anda mendaftar atas undangan
+       member lain.
+
+Saat melakukan pembelian dan pengiriman, Anda memberikan:
+
+    e. Nama penerima paket;
+    f. Nomor telepon penerima;
+    g. Alamat lengkap pengiriman, termasuk kota dan kode pos;
+    h. Catatan tambahan pada pesanan (opsional).
+
+Saat mengajukan penarikan saldo (withdrawal), Anda memberikan:
+
+    i. Metode pembayaran tujuan, misalnya transfer bank atau dompet digital;
+    j. Nomor rekening atau nomor dompet digital tujuan;
+    k. Nama pemilik rekening.
+
+2.2 Informasi yang Tersimpan Secara Otomatis
+
+Aplikasi menyimpan catatan aktivitas Anda untuk keperluan operasional, antara
+lain:
+
+    a. Saldo poin dan riwayat mutasi poin;
+    b. Riwayat tugas harian, termasuk waktu check-in dan jumlah iklan berhadiah
+       yang telah ditonton;
+    c. Riwayat pesanan beserta status pembayaran dan pengiriman;
+    d. Riwayat pengajuan withdrawal beserta statusnya;
+    e. Riwayat referral, yaitu catatan member yang Anda undang;
+    f. Waktu pembuatan akun dan pembaruan terakhir akun.
+
+2.3 Informasi Teknis
+
+Aplikasi dapat memperoleh informasi teknis terbatas seperti status koneksi
+jaringan (terhubung atau tidak) untuk memastikan proses pemuatan data berjalan
+semestinya.
+
+--------------------------------------------------------------------------------
+3. BAGAIMANA KATA SANDI ANDA DILINDUNGI
+--------------------------------------------------------------------------------
+
+Kami tidak pernah menyimpan kata sandi Anda dalam bentuk teks asli. Kata sandi
+diproses melalui fungsi hash kriptografis dengan penguatan berulang dan
+ditambah nilai salt acak yang unik untuk setiap akun. Dengan cara ini, isi kata
+sandi asli tidak dapat dibaca kembali meskipun seseorang memiliki akses
+terhadap berkas penyimpanan Aplikasi.
+
+Karena alasan keamanan tersebut, kami tidak dapat menampilkan kembali kata sandi
+lama Anda. Apabila Anda lupa kata sandi, Anda perlu menghubungi kami untuk
+proses pemulihan.
+
+--------------------------------------------------------------------------------
+4. DI MANA DATA ANDA DISIMPAN
+--------------------------------------------------------------------------------
+
+4.1 Penyimpanan Lokal pada Perangkat
+
+Seluruh data operasional Aplikasi — termasuk data akun, produk, pesanan, poin,
+referral, dan withdrawal — disimpan di dalam basis data lokal pada perangkat
+Anda sendiri dalam bentuk berkas terstruktur.
+
+Data ini tidak dikirimkan secara otomatis ke server kami. Konsekuensi dari
+rancangan ini adalah:
+
+    a. Data Anda tetap dapat diakses meskipun perangkat sedang tidak terhubung
+       ke internet;
+    b. Apabila Anda menghapus data Aplikasi atau melakukan pembersihan data
+       melalui pengaturan perangkat, seluruh data tersebut akan hilang dan
+       tidak dapat kami pulihkan;
+    c. Apabila Anda memasang ulang Aplikasi, data lama tidak otomatis kembali.
+
+4.2 Pembayaran QRIS
+
+Aplikasi menampilkan kode QRIS beserta nominal tagihan pada layar pembayaran.
+Pemindaian kode tersebut beserta proses transfer dana dilakukan sepenuhnya di
+dalam aplikasi bank atau dompet digital milik Anda. Kami tidak menerima, tidak
+menyimpan, dan tidak memproses data rekening, nomor kartu, maupun kredensial
+perbankan Anda.
+
+4.3 Iklan Pihak Ketiga
+
+Aplikasi menampilkan iklan melalui layanan Google AdMob, baik berupa banner
+maupun iklan berhadiah (rewarded ads). Dalam rangka penyajian iklan tersebut,
+Google dapat mengumpulkan data tertentu sesuai kebijakan privasi Google,
+termasuk pengenal periklanan perangkat. Kami tidak menerima data pribadi Anda
+dari Google.
+
+Untuk informasi lebih lanjut mengenai pengumpulan data oleh Google, silakan
+membaca kebijakan privasi Google pada laman resmi Google.
+
+--------------------------------------------------------------------------------
+5. TUJUAN PENGGUNAAN INFORMASI
+--------------------------------------------------------------------------------
+
+Informasi yang terkumpul kami gunakan secara terbatas untuk:
+
+    a. Membuat dan memverifikasi akun Anda saat login;
+    b. Menentukan peran akun Anda di dalam Aplikasi, yaitu Member atau
+       Administrator;
+    c. Memproses pesanan, menghitung ongkos kirim, dan meneruskan paket ke
+       alamat tujuan;
+    d. Menghitung serta memperbarui saldo poin, saldo rupiah, dan bonus
+       referral Anda;
+    e. Menyelenggarakan tugas harian dan pemberian hadiah iklan;
+    f. Memverifikasi kelayakan pengajuan withdrawal Anda;
+    g. Menampilkan riwayat transaksi dan riwayat penarikan saldo kepada Anda;
+    h. Mencegah penyalahgunaan, kecurangan, dan pendaftaran ganda;
+    i. Menyusun catatan audit internal bagi Administrator Aplikasi.
+
+--------------------------------------------------------------------------------
+6. DASAR HUKUM PENGOLAHAN DATA
+--------------------------------------------------------------------------------
+
+Pengolahan data Anda kami dasarkan pada:
+
+    a. Persetujuan Anda, yang diberikan pada saat Anda mendaftar dan
+       menggunakan Aplikasi;
+    b. Pelaksanaan hubungan transaksi, yaitu dalam rangka memenuhi pesanan dan
+       kewajiban terkait pembelian produk;
+    c. Kepentingan sah kami, yaitu menjaga keamanan Aplikasi serta mencegah
+       penyalahgunaan dan kecurangan.
+
+--------------------------------------------------------------------------------
+7. PEMBAGIAN DATA KEPADA PIHAK KETIGA
+--------------------------------------------------------------------------------
+
+Kami tidak menjual, menyewakan, dan tidak memperdagangkan data pribadi Anda
+kepada pihak lain. Data Anda hanya dapat tersampaikan kepada pihak ketiga dalam
+keadaan berikut:
+
+    a. Penyedia layanan periklanan, dalam hal ini Google AdMob, untuk keperluan
+       penayangan iklan sebagaimana dijelaskan pada bagian 4.3;
+    b. Jasa pengiriman, sebatas nama penerima, nomor telepon, dan alamat
+       pengiriman, yang memang diperlukan agar paket dapat sampai kepada Anda;
+    c. Penyedia layanan pembayaran, sebatas keterangan pembayaran yang Anda
+       lakukan sendiri melalui aplikasi bank atau dompet digital Anda;
+    d. Aparat penegak hukum atau instansi berwenang, apabila terdapat kewajiban
+       hukum yang mengharuskan kami menyerahkan data.
+
+--------------------------------------------------------------------------------
+8. HAK ANDA SEBAGAI PENGGUNA
+--------------------------------------------------------------------------------
+
+Sepanjang data tersimpan pada perangkat Anda, Anda memiliki kendali penuh atas
+data tersebut. Anda berhak untuk:
+
+    a. Melihat data akun, poin, riwayat transaksi, dan riwayat withdrawal Anda
+       melalui halaman Profil dan Saldo di dalam Aplikasi;
+    b. Memperbaiki data pribadi yang tidak akurat, misalnya nama dan nomor
+       telepon, melalui halaman Profil atau dengan menghubungi kami;
+    c. Meminta kepada Administrator untuk menghentikan sementara atau
+       mengaktifkan kembali akun Anda;
+    d. Menghapus seluruh data Anda dari perangkat dengan cara menghapus data
+       Aplikasi melalui pengaturan perangkat, atau dengan menghapus pemasangan
+       Aplikasi;
+    e. Mengajukan keberatan atau pertanyaan mengenai pengolahan data Anda
+       dengan menghubungi kami melalui alamat surel yang tercantum pada bagian
+       pertama dokumen ini.
+
+Apabila Anda meminta penghapusan data, mohon dipahami bahwa saldo poin dan
+saldo rupiah yang belum ditarik akan ikut terhapus dan tidak dapat dikembalikan.
+
+--------------------------------------------------------------------------------
+9. PENYIMPANAN DAN PEMUSNAHAN DATA
+--------------------------------------------------------------------------------
+
+Data Anda tersimpan selama akun masih digunakan. Karena penyimpanan bersifat
+lokal pada perangkat, jangka waktu penyimpanan sepenuhnya berada dalam kendali
+Anda. Penghapusan data dilakukan dengan cara:
+
+    a. Menghapus data Aplikasi melalui menu Pengaturan pada perangkat Anda; atau
+    b. Menghapus pemasangan Aplikasi dari perangkat.
+
+Setelah penghapusan tersebut, tidak ada salinan data yang kami simpan.
+
+--------------------------------------------------------------------------------
+10. KEAMANAN DATA
+--------------------------------------------------------------------------------
+
+Kami menerapkan beberapa langkah untuk melindungi data Anda, antara lain:
+
+    a. Penyimpanan kata sandi dalam bentuk hash bersalt, bukan teks asli;
+    b. Pembatasan halaman Administrator hanya dapat diakses oleh akun dengan
+       peran Administrator;
+    c. Pencatatan aktivitas penting, seperti perubahan status pesanan,
+       penyesuaian saldo, dan keputusan penarikan saldo, ke dalam catatan audit
+       yang tidak dapat diubah oleh Member;
+    d. Pembatasan pengajuan penarikan saldo dengan sejumlah syarat kelayakan,
+       termasuk batas jumlah pengajuan per hari.
+
+Meskipun demikian, perlu Anda ketahui bahwa tidak ada metode penyimpanan atau
+transmisi data yang sepenuhnya bebas dari risiko. Kami menyarankan Anda memakai
+kata sandi yang kuat dan tidak membagikan perangkat Anda kepada orang lain.
+
+--------------------------------------------------------------------------------
+11. PRIVASI ANAK
+--------------------------------------------------------------------------------
+
+Aplikasi ini ditujukan untuk pengguna dewasa, khususnya pengguna yang telah
+cakap melakukan transaksi jual beli. Aplikasi tidak ditujukan untuk anak di
+bawah usia 12 tahun, dan produk yang dijual tidak diperuntukkan bagi anak di
+bawah usia tersebut.
+
+Kami tidak dengan sengaja mengumpulkan data pribadi anak di bawah usia 12
+tahun. Apabila Anda mengetahui bahwa seorang anak telah memberikan data pribadi
+kepada kami, mohon menghubungi kami agar data tersebut dapat kami tindak
+lanjuti.
+
+--------------------------------------------------------------------------------
+12. PENYANGKALAN TENTANG PRODUK
+--------------------------------------------------------------------------------
+
+Produk yang dijual melalui Aplikasi merupakan ramuan herbal alami. Produk
+tersebut bukan obat dan tidak dimaksudkan untuk mendiagnosis, menyembuhkan,
+meringankan, atau mencegah penyakit apa pun. Informasi produk yang ditampilkan
+pada Aplikasi bersifat informatif dan bukan merupakan nasihat medis.
+
+Apabila Anda sedang hamil, menyusui, memiliki kondisi kesehatan tertentu, atau
+sedang mengonsumsi obat dari dokter, mohon berkonsultasi terlebih dahulu dengan
+tenaga kesehatan profesional sebelum mengonsumsi produk.
+
+Aplikasi tidak mengumpulkan data kesehatan pribadi Anda. Setiap keterangan
+tentang kondisi kesehatan yang Anda sampaikan kepada kami, apabila ada, bersifat
+sukarela dan hanya digunakan untuk menjawab pertanyaan Anda.
+
+--------------------------------------------------------------------------------
+13. PENGGUNAAN IKLAN BERHADIAH
+--------------------------------------------------------------------------------
+
+Aplikasi menyediakan fitur iklan berhadiah yang memberikan tambahan poin kepada
+Member. Untuk menjaga keadilan, berlaku ketentuan berikut:
+
+    a. Jumlah iklan yang dapat ditonton setiap hari dibatasi sesuai konfigurasi
+       yang ditetapkan Administrator;
+    b. Poin iklan hanya diberikan setelah iklan selesai ditonton dan syarat
+       penayangan terpenuhi;
+    c. Penontonan iklan secara otomatis, dengan bantuan program, atau dengan
+       cara yang tidak wajar dilarang dan dapat mengakibatkan pembatasan akun.
+
+--------------------------------------------------------------------------------
+14. PERUBAHAN KEBIJAKAN PRIVASI
+--------------------------------------------------------------------------------
+
+Kami dapat memperbarui Kebijakan Privasi ini dari waktu ke waktu untuk
+menyesuaikan diri dengan perkembangan fitur Aplikasi maupun ketentuan yang
+berlaku. Versi terbaru akan selalu disertakan bersama paket distribusi
+Aplikasi.
+
+Apabila terdapat perubahan yang bersifat mendasar, kami akan memberitahukan
+melalui pembaruan Aplikasi atau melalui keterangan pada halaman listing di toko
+aplikasi. Dengan tetap menggunakan Aplikasi setelah pembaruan tersebut, Anda
+dianggap menyetujui Kebijakan Privasi yang telah diperbarui.
+
+--------------------------------------------------------------------------------
+15. HUBUNGI KAMI
+--------------------------------------------------------------------------------
+
+Apabila Anda memiliki pertanyaan, keberatan, atau permintaan yang berkaitan
+dengan Kebijakan Privasi ini, atau apabila Anda ingin mengajukan permintaan
+terkait data pribadi Anda, silakan menghubungi:
+
+    Pengembang  : ALTOMEDIA
+    Surel       : altomediaindonesia@gmail.com
+    Lokasi      : Karawang, Jawa Barat, Indonesia
+
+Kami akan berusaha menanggapi setiap pertanyaan dalam waktu yang wajar pada hari
+kerja.
+
+================================================================================
+Dengan menggunakan aplikasi HERBALINDO, Anda menyatakan telah membaca dan
+memahami seluruh isi Kebijakan Privasi ini.
+================================================================================
