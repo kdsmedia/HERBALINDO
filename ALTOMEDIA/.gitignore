@@ -18,3 +18,6 @@ release/keystore.properties
 .idea/
 *.iml
 .DS_Store
+# Release signing key — never commit
+*.jks
+*.keystore
