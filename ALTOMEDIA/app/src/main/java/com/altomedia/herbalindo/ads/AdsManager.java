@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import com.altomedia.herbalindo.core.Config;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
@@ -57,10 +58,17 @@ public class AdsManager {
 
     public void loadBanner(@Nullable AdView view) {
         if (view == null) return;
-        // Unit iklan dipilih dari kode, bukan dari XML, agar build debug otomatis
-        // memakai unit uji tanpa perlu menyunting layout.
-        view.setAdUnitId(Config.bannerUnit());
-        view.loadAd(new AdRequest.Builder().build());
+        try {
+            // Ukuran dan unit iklan ditetapkan dari kode, tidak bergantung pada
+            // atribut XML. AdView melempar IllegalStateException bila keduanya
+            // belum lengkap saat loadAd dipanggil.
+            view.setAdSize(AdSize.BANNER);
+            view.setAdUnitId(Config.bannerUnit());
+            view.loadAd(new AdRequest.Builder().build());
+        } catch (RuntimeException e) {
+            // Banner gagal tidak boleh menjatuhkan layar yang memuatnya.
+            Log.w(TAG, "Banner gagal dimuat: " + e.getMessage());
+        }
     }
 
     /* ================= REWARDED ================= */

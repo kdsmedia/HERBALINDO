@@ -122,11 +122,4 @@ public class AdminActivity extends BaseActivity {
         tv.setTextColor(a.getColor(colorRes));
         return v;
     }
-
-    private void toAuth() {
-        Intent i = new Intent(this, AuthActivity.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(i);
-        finish();
-    }
 }

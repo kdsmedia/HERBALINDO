@@ -38,7 +38,11 @@ public class MemberActivity extends BaseActivity {
 
     @Override protected void onCreate(@Nullable Bundle s) {
         super.onCreate(s);
-        if (Session.current(this) == null) { toAuth(); return; }
+        // Sesi dibaca lebih awal karena show("home") di bawah langsung memakai
+        // data pengguna untuk tab pertama. Bila null, onResume akan mengalihkan
+        // ke layar masuk.
+        user = Session.current(this);
+        if (user == null) { toAuth(); return; }
         setContentView(R.layout.activity_member);
 
         container = findViewById(R.id.tab_container);
@@ -141,12 +145,5 @@ public class MemberActivity extends BaseActivity {
             Session.clear(this);
             toAuth();
         });
-    }
-
-    private void toAuth() {
-        Intent i = new Intent(this, AuthActivity.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(i);
-        finish();
     }
 }

@@ -58,6 +58,8 @@ public class AuthActivity extends BaseActivity {
 
     @Override protected void onSessionReady(Models.User user) { /* belum login saat layar ini tampil */ }
 
+    @Override protected boolean requiresSession() { return false; }
+
     private void showTab(boolean login) {
         formLogin.setVisibility(login ? View.VISIBLE : View.GONE);
         formRegister.setVisibility(login ? View.GONE : View.VISIBLE);

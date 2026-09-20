@@ -1,5 +1,6 @@
 package com.altomedia.herbalindo.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -28,13 +29,33 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override protected void onResume() {
         super.onResume();
+        if (!requiresSession()) return;
         Models.User u = Session.current(this);
         if (u == null) {
-            finish();
+            toAuth();
             return;
         }
         user = u;
         onSessionReady(u);
+    }
+
+    /**
+     * Apakah layar ini menuntut sesi login. Layar yang memang tampil tanpa login
+     * (mis. {@link AuthActivity}) mengembalikan {@code false}; jika tidak,
+     * pemeriksaan sesi akan menutup layar tersebut tepat saat dibuka.
+     */
+    protected boolean requiresSession() { return true; }
+
+    /**
+     * Mengembalikan pengguna ke layar masuk. Dipakai saat sesi hilang atau akun
+     * tidak lagi aktif, sehingga pengguna tidak tertahan di layar kosong.
+     */
+    protected void toAuth() {
+        if (this instanceof AuthActivity) return;
+        Intent i = new Intent(this, AuthActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+        finish();
     }
 
     protected abstract void onSessionReady(Models.User user);

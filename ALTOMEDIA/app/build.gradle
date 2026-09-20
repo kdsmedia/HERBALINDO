@@ -64,6 +64,12 @@ android {
         abortOnError false
         checkReleaseBuilds false
     }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -81,6 +87,8 @@ dependencies {
     implementation 'com.google.zxing:core:3.5.3'
 
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.13'
+    testImplementation 'androidx.test:core:1.6.1'
     // Implementasi JSON nyata untuk pengujian JVM (stub android.jar tidak berisi method).
     testImplementation 'org.json:json:20240303'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
