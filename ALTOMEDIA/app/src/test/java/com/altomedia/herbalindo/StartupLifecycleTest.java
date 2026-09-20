@@ -144,7 +144,27 @@ public class StartupLifecycleTest {
         assertTrue("Layar pesanan tanpa data seharusnya menutup diri", c2.get().isFinishing());
     }
 
-    /** Membuka layar tanpa data tambahan. */
+    /** Alur masuk dan daftar dari layar masuk sampai layar berikutnya. */
+    @Test public void alurDaftarDanMasukMengarahkanKeLayarYangTepat() throws Exception {
+        Repository.get(ctx).register("Budi Santoso", "081234567890", "rahasia1", null);
+        Session.clear(ctx);
+
+        ActivityController<AuthActivity> c = Robolectric.buildActivity(AuthActivity.class).setup();
+        AuthActivity a = c.get();
+        com.google.android.material.textfield.TextInputLayout tilId = a.findViewById(R.id.til_login_id);
+        com.google.android.material.textfield.TextInputLayout tilPass = a.findViewById(R.id.til_login_pass);
+        tilId.getEditText().setText("081234567890");
+        tilPass.getEditText().setText("rahasia1");
+        a.findViewById(R.id.btn_login).performClick();
+
+        assertNotNull("Sesi tidak tersimpan setelah masuk", Session.current(ctx));
+        assertEquals("Bukan layar member yang dibuka",
+                MemberActivity.class.getName(),
+                Shadows.shadowOf(a).getNextStartedActivity().getComponent().getClassName());
+        c.destroy();
+    }
+
+    /** Membuka layar dan memastikan aplikasi tidak berhenti karena kejadian tak terduga. */
     private <T extends androidx.appcompat.app.AppCompatActivity> ActivityController<T> buka(
             Class<T> cls, String extraKey, String extraValue) {
         org.robolectric.shadows.ShadowLooper.idleMainLooper();
