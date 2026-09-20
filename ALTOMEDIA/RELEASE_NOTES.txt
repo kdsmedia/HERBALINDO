@@ -1,0 +1,127 @@
+================================================================================
+CATATAN RILIS (RELEASE NOTES)
+APLIKASI HERBALINDO
+================================================================================
+
+Berkas ini mencatat riwayat pembaruan aplikasi HERBALINDO. Setiap kali
+diterbitkan build baru, tambahkan bagian baru di bagian paling atas.
+
+Untuk mengunggah ke Google Play Console, salin isi bagian versi terbaru ke kolom
+"Release notes" pada halaman pembuatan rilis. Play Console membatasi panjang
+catatan rilis sekitar 500 karakter, sehingga dapat disalin bagian ringkasnya
+saja.
+
+
+================================================================================
+VERSI 1.0.0 (versionCode 1)
+Tanggal: 20 September 2026
+================================================================================
+
+RILIS PERDANA
+
+Ringkasan untuk Play Console (salin bagian ini):
+
+    Rilis perdana HERBALINDO.
+
+    Fitur utama:
+    - Katalog produk herbal diet alami lengkap dengan komposisi dan aturan pakai
+    - Keranjang belanja dan pembayaran QRIS dengan nominal otomatis
+    - Sistem member dengan halaman masuk tunggal
+    - Poin harian, check-in, dan iklan berhadiah
+    - Referral satu tingkat tanpa sistem berjenjang
+    - Saldo rupiah dan pengajuan pencairan saldo
+    - Riwayat pesanan, mutasi poin, dan riwayat pencairan
+
+Rincian lengkap:
+
+Perbaikan dan Stabilitas
+    - Seluruh modul diuji melalui rangkaian pengujian otomatis; seluruh
+      pengujian lulus.
+    - Diperiksa konsistensi seluruh referensi antarmuka sehingga tidak ada
+      tombol atau halaman yang mengarah ke layar yang tidak tersedia.
+
+Toko dan Pembelian
+    - Katalog produk dengan pencarian dan penyaringan kategori.
+    - Halaman detail produk menampilkan komposisi, aturan pakai, dan peringatan
+      pemakaian.
+    - Keranjang belanja dengan pengaturan jumlah dan pemeriksaan persediaan.
+    - Proses checkout dengan validasi kelengkapan data pengiriman.
+    - Perhitungan subtotal, biaya kirim, dan ketentuan gratis ongkir.
+
+Pembayaran
+    - Kode QRIS dinamis dengan nominal menyesuaikan total pesanan.
+    - Kode QRIS memuat nomor pesanan sebagai referensi pembayaran.
+    - Status pembayaran dengan tahapan yang jelas dari belum dibayar hingga
+      lunas.
+
+Sistem Member
+    - Pendaftaran dengan validasi format nomor telepon dan surel.
+    - Kata sandi disimpan dalam bentuk hash bersalt, bukan teks asli.
+    - Satu halaman masuk untuk seluruh peran pengguna.
+    - Halaman member dengan lima menu utama: Beranda, Produk, Tugas, Saldo,
+      dan Profil.
+
+Poin, Tugas, dan Iklan
+    - Check-in harian yang hanya berlaku satu kali per hari.
+    - Poin dari pembelian produk sesuai jumlah poin tiap produk.
+    - Iklan berhadiah dengan batas harian yang dapat diatur.
+    - Riwayat mutasi poin yang mencatat setiap penambahan dan pengurangan.
+
+Referral Satu Tingkat
+    - Referral ID otomatis berupa enam digit angka yang unik.
+    - Bonus referral hanya berlaku satu tingkat, tanpa struktur berjenjang.
+    - Bonus diberikan setelah member yang diundang memenuhi syarat nilai
+      pembelian minimum.
+
+Saldo dan Pencairan
+    - Konversi poin menjadi saldo rupiah dengan perhitungan terbuka.
+    - Halaman pencairan menampilkan seluruh syarat kelayakan beserta status
+      terpenuhinya.
+    - Pengajuan pencairan dengan pembatasan jumlah per hari.
+    - Pencairan yang ditolak akan mengembalikan poin yang ditahan.
+
+Panel Admin
+    - Ringkasan operasional: jumlah member, pesanan, pencairan, poin, produk,
+      dan referral.
+    - Pengelolaan pesanan: verifikasi pembayaran, perubahan status, pengisian
+      nomor resi, dan pemrosesan pengembalian dana.
+    - Pengelolaan produk: harga, harga promo, poin, serta penyesuaian stok
+      dengan pencatatan alasan.
+    - Pengelolaan member: penyesuaian saldo, status akun, dan penandaan
+      indikasi kecurangan.
+    - Peninjauan pengajuan pencairan saldo beserta persetujuan atau penolakan.
+    - Pengaturan aturan bisnis: poin, iklan, referral, ongkir, dan pencairan.
+    - Catatan audit untuk seluruh tindakan penting administrator.
+
+Antarmuka dan Aset
+    - Ikon adaptif untuk seluruh kepadatan layar.
+    - Aset toko: ikon 512x512, feature graphic 1024x500, dan tangkapan layar
+      ponsel serta tablet sesuai persyaratan Play Store.
+
+Persyaratan Teknis
+    - Minimum SDK 21 (Android 5.0 Lollipop).
+    - Target SDK 36.
+    - Paket distribusi berupa APK dan AAB yang telah ditandatangani.
+
+
+================================================================================
+CARA MENAMBAH CATATAN RILIS BERIKUTNYA
+================================================================================
+
+1. Perbarui versionCode dan versionName pada berkas app/build.gradle.
+2. Bangun ulang paket rilis (APK dan AAB).
+3. Tambahkan bagian baru di bagian paling atas berkas ini dengan format:
+
+   ================================================================================
+   VERSI <x.y.z> (versionCode <n>)
+   Tanggal: <tanggal>
+   ================================================================================
+
+   <ringkasan> untuk Play Console
+   <rincian lengkap perubahan>
+
+4. Salin bagian ringkasan ke kolom "Release notes" pada Play Console.
+
+================================================================================
+AKHIR DOKUMEN
+================================================================================

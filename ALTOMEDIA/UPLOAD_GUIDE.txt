@@ -1,0 +1,277 @@
+================================================================================
+PANDUAN UPLOAD RILIS DAN UPLOAD LISTING
+APLIKASI HERBALINDO
+================================================================================
+
+Dokumen ini menjelaskan langkah teknis untuk membangun paket rilis HERBALINDO
+dan mengunggahnya ke Google Play Console, termasuk cara mengunggah listing.
+
+--------------------------------------------------------------------------------
+BAGIAN 1 — PERSIAPAN LINGKUNGAN BUILD
+--------------------------------------------------------------------------------
+
+Perangkat lunak yang diperlukan:
+
+    Java Development Kit (JDK)   : versi 17
+    Android SDK                  : platform API 36 dan build-tools terbaru
+    Gradle                       : versi 8.14.3 (atau memakai gradle wrapper)
+
+Periksa versi Java dengan perintah:
+
+    java -version
+
+Periksa ketersediaan Android SDK dengan memastikan berkas local.properties
+memuat baris berikut:
+
+    sdk.dir=<lokasi Android SDK pada komputer Anda>
+
+--------------------------------------------------------------------------------
+BAGIAN 2 — KONFIGURASI VERSI
+--------------------------------------------------------------------------------
+
+Sebelum membangun, buka berkas app/build.gradle dan pastikan:
+
+    defaultConfig {
+        applicationId "com.altomedia.herbalindo"
+        minSdk 21
+        targetSdk 36
+        versionCode 1          ← naikkan angka ini setiap rilis baru
+        versionName "1.0.0"    ← sesuaikan dengan versi yang diterbitkan
+    }
+
+Aturan penting:
+
+    a. versionCode harus selalu bertambah pada setiap rilis baru;
+    b. versionCode yang pernah diunggah tidak dapat dipakai ulang;
+    c. versionName bersifat bebas, disarankan mengikuti pola x.y.z.
+
+--------------------------------------------------------------------------------
+BAGIAN 3 — KONFIGURASI PENANDATANGANAN
+--------------------------------------------------------------------------------
+
+Penandatanganan rilis memakai berkas keystore. Pada berkas app/build.gradle:
+
+    signingConfigs {
+        release {
+            storeFile rootProject.file("keystore/ALTOMEDIA.jks")
+            storePassword "<kata sandi keystore>"
+            keyAlias "<alias kunci>"
+            keyPassword "<kata sandi kunci>"
+        }
+    }
+
+PENTING:
+
+    a. Letakkan berkas ALTOMEDIA.jks pada folder keystore di dalam proyek;
+    b. Jangan menyertakan berkas keystore dan kata sandinya ke repositori
+       publik. Berkas .gitignore pada proyek ini sudah mengecualikan berkas
+       *.jks dan *.keystore;
+    c. Simpan salinan cadangan keystore di tempat yang aman. Kehilangan
+       keystore berarti Anda tidak dapat menerbitkan pembaruan untuk aplikasi
+       yang telah terbit.
+
+--------------------------------------------------------------------------------
+BAGIAN 4 — MEMBANGUN PAKET RILIS
+--------------------------------------------------------------------------------
+
+Jalankan perintah dari folder akar proyek ALTOMEDIA.
+
+4.1 Menjalankan pengujian terlebih dahulu
+
+    gradle :app:testDebugUnitTest
+
+Pastikan seluruh pengujian lulus sebelum membangun paket rilis.
+
+4.2 Memeriksa konsistensi proyek
+
+    python3 tools/verify_project.py
+
+Perintah ini memeriksa apakah terdapat referensi tampilan atau sumber daya yang
+tidak terdefinisi, serta memastikan setiap halaman terdaftar memiliki berkas
+sumbernya.
+
+4.3 Membangun APK rilis
+
+    gradle :app:assembleRelease
+
+Hasil:
+
+    app/build/outputs/apk/release/app-release.apk
+
+4.4 Membangun AAB rilis
+
+    gradle :app:bundleRelease
+
+Hasil:
+
+    app/build/outputs/bundle/release/app-release.aab
+
+4.5 Membangun keduanya sekaligus
+
+    gradle :app:assembleRelease :app:bundleRelease
+
+--------------------------------------------------------------------------------
+BAGIAN 5 — MEMERIKSA PAKET RILIS
+--------------------------------------------------------------------------------
+
+5.1 Memeriksa tanda tangan APK
+
+    keytool -printcert -jarfile app/build/outputs/apk/release/app-release.apk
+
+Periksa bahwa informasi sertifikat menampilkan nama ALTOMEDIA dan masa berlaku
+yang benar.
+
+5.2 Memeriksa isi APK
+
+    aapt2 dump badging app/build/outputs/apk/release/app-release.apk
+
+Periksa bahwa keluaran menampilkan:
+
+    package: name='com.altomedia.herbalindo'
+    sdkVersion:'21'
+    targetSdkVersion:'36'
+
+5.3 Pemilihan format unggahan
+
+    Gunakan berkas AAB (app-release.aab) untuk diunggah ke Google Play. Format
+    APK hanya untuk keperluan pengujian langsung pada perangkat atau dibagikan
+    secara mandiri.
+
+--------------------------------------------------------------------------------
+BAGIAN 6 — MENGUNGGAH RILIS KE PLAY CONSOLE
+--------------------------------------------------------------------------------
+
+6.1 Masuk dan pilih aplikasi
+
+    1. Buka Google Play Console dan masuk dengan akun pengembang Anda;
+    2. Pilih aplikasi HERBALINDO. Apabila belum ada, buat aplikasi baru terlebih
+       dahulu.
+
+6.2 Memilih jalur rilis
+
+    Untuk rilis terbaru yang sudah terbukti, gunakan:
+        Production → Releases → Create new release
+
+    Untuk uji coba terbatas kepada sejumlah penguji:
+        Testing → Internal testing → Create new release
+
+6.3 Mengunggah berkas
+
+    1. Apabila diminta, aktifkan Play App Signing;
+    2. Unggah berkas app-release.aab pada bagian "App bundles";
+    3. Tunggu proses pemeriksaan berkas selesai. Apabila ada kesalahan, Play
+       Console akan menampilkan pesan beserta bagian yang bermasalah;
+    4. Isi nama rilis, misalnya "1.0.0 (1)";
+    5. Isi catatan rilis dengan menyalin isi bagian ringkas dari RELEASE_NOTES.txt;
+    6. Klik "Next", tinjau ringkasan, lalu "Save";
+    7. Klik "Review release", kemudian "Start rollout".
+
+--------------------------------------------------------------------------------
+BAGIAN 7 — MENGUNGGAH LISTING
+--------------------------------------------------------------------------------
+
+7.1 Membuka halaman Store Listing
+
+    Buka menu Grow → Store presence → Main store listing.
+
+7.2 Mengisi kolom teks
+
+    App name            : HERBALINDO
+    Short description   : Salin dari PLAY_STORE_LISTING_GUIDE.txt bagian 2.1
+    Full description    : Salin dari PLAY_STORE_LISTING_GUIDE.txt bagian 2.2
+
+7.3 Mengunggah aset grafis
+
+    App icon            : store-assets/play_icon_512.png
+    Feature graphic     : store-assets/feature_graphic_1024x500.png
+    Phone screenshots   : store-assets/screenshots/phone/ (unggah berurutan)
+    Tablet screenshots  : store-assets/screenshots/tablet7/ dan tablet10/
+
+7.4 Menyimpan
+
+    Klik "Save" pada setiap bagian, kemudian periksa pratinjau untuk memastikan
+    tampilan listing sudah sesuai.
+
+--------------------------------------------------------------------------------
+BAGIAN 8 — MENGISI KEAMANAN DATA DAN KLASIFIKASI KONTEN
+--------------------------------------------------------------------------------
+
+8.1 Data Safety
+
+    Buka Policy → App content → Data safety. Isi kuesioner dengan mengacu pada
+    PLAY_STORE_LISTING_GUIDE.txt bagian 5.
+
+8.2 Content Rating
+
+    Buka Policy → App content → Content rating. Isi kuesioner sesuai keadaan
+    sebenarnya dengan mengacu pada bagian 6 dokumen yang sama.
+
+8.3 Kebijakan Privasi
+
+    Buka Policy → App content → Privacy policy. Cantumkan tautan kebijakan
+    privasi yang dapat diakses publik. Isi berkas yang perlu dipublikasikan
+    terdapat pada PRIVACY_POLICY.txt dalam proyek ini.
+
+--------------------------------------------------------------------------------
+BAGIAN 9 — MENERBITKAN PEMBARUAN BERIKUTNYA
+--------------------------------------------------------------------------------
+
+Untuk setiap pembaruan, lakukan langkah berikut secara berurutan:
+
+    1. Lakukan perubahan kode;
+    2. Jalankan pengujian: gradle :app:testDebugUnitTest;
+    3. Jalankan pemeriksaan konsistensi: python3 tools/verify_project.py;
+    4. Naikkan versionCode dan sesuaikan versionName pada app/build.gradle;
+    5. Bangun ulang paket: gradle :app:assembleRelease :app:bundleRelease;
+    6. Tambahkan bagian baru pada RELEASE_NOTES.txt;
+    7. Unggah AAB baru ke Play Console pada jalur rilis yang sesuai;
+    8. Isi catatan rilis, lalu mulai peluncuran.
+
+--------------------------------------------------------------------------------
+BAGIAN 10 — PENYIMPANAN PAKET RILIS
+--------------------------------------------------------------------------------
+
+Simpan paket rilis pada halaman Releases di repositori GitHub agar mudah
+diunduh. Langkahnya:
+
+    1. Buka halaman repositori di GitHub;
+    2. Pilih menu "Releases", lalu "Draft a new release";
+    3. Isi tag, misalnya v1.0.0, dan judul rilis;
+    4. Salin isi RELEASE_NOTES.txt ke kolom deskripsi;
+    5. Lampirkan berkas berikut pada bagian "Attach binaries":
+           app-release.apk
+           app-release.aab
+    6. Klik "Publish release".
+
+PENTING: jangan melampirkan berkas ALTOMEDIA.jks maupun berkas berisi kata
+sandinya pada halaman rilis, karena halaman rilis bersifat publik.
+
+--------------------------------------------------------------------------------
+BAGIAN 11 — PEMECAHAN MASALAH
+--------------------------------------------------------------------------------
+
+11.1 Build gagal dengan pesan "Keystore file not found"
+    Periksa lokasi berkas ALTOMEDIA.jks dan pastikan penunjukannya tepat.
+    Pada konfigurasi proyek ini, berkas diletakkan pada folder keystore di akar
+    proyek ALTOMEDIA.
+
+11.2 Build gagal dengan pesan "Keystore was tampered with, or password was
+     incorrect"
+    Periksa kembali kata sandi keystore dan kata sandi kunci pada
+    app/build.gradle.
+
+11.3 Pengujian gagal setelah perubahan kode
+    Perbaiki terlebih dahulu penyebab kegagalan pengujian. Jangan mengunggah
+    paket rilis yang belum lulus pengujian.
+
+11.4 Play Console menolak dengan pesan "Version code already used"
+    Naikkan versionCode pada app/build.gradle, kemudian bangun ulang paket
+    rilis.
+
+11.5 Play Console menolak karena kebijakan privasi tidak dapat diakses
+    Pastikan tautan kebijakan privasi dapat dibuka tanpa login dan isinya sesuai
+    dengan data yang benar-benar dikumpulkan aplikasi.
+
+================================================================================
+AKHIR DOKUMEN
+================================================================================

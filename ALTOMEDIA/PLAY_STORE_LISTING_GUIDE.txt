@@ -1,0 +1,450 @@
+================================================================================
+PANDUAN STORE LISTING — GOOGLE PLAY CONSOLE
+APLIKASI HERBALINDO
+================================================================================
+
+Dokumen ini disusun sebagai panduan langkah demi langkah untuk mengunggah
+aplikasi HERBALINDO ke Google Play Console, mulai dari penyiapan akun hingga
+aplikasi terbit. Seluruh isi dokumen dapat disalin langsung ke kolom yang
+tersedia pada Play Console.
+
+--------------------------------------------------------------------------------
+BAGIAN 1 — DATA PRODUK
+--------------------------------------------------------------------------------
+
+Nama aplikasi (maks. 30 karakter):
+
+    HERBALINDO
+
+Nama paket:
+
+    com.altomedia.herbalindo
+
+Kategori aplikasi:
+
+    Belanja (Shopping)
+    Alternatif: Kesehatan & Kebugaran
+
+Jenis konten:
+
+    Aplikasi
+
+Harga:
+
+    Gratis
+
+Alamat surel dukungan:
+
+    altomediaindonesia@gmail.com
+
+Nomor telepon dukungan:
+
+    (isi sesuai nomor resmi ALTOMEDIA)
+
+Situs web:
+
+    (isi apabila tersedia; dapat dikosongkan pada versi awal)
+
+Kebijakan Privasi (URL publik):
+
+    Unggah berkas PRIVACY_POLICY.txt ke halaman web atau repositori publik,
+    kemudian cantumkan tautannya di kolom ini. Google Play mewajibkan tautan
+    kebijakan privasi untuk seluruh aplikasi.
+
+--------------------------------------------------------------------------------
+BAGIAN 2 — DESKRIPSI TOKO
+--------------------------------------------------------------------------------
+
+2.1 Deskripsi Singkat (maks. 80 karakter)
+
+    Toko herbal diet dengan sistem member, poin, dan saldo rupiah.
+
+2.2 Deskripsi Panjang (maks. 4000 karakter)
+
+Salin teks berikut:
+
+--- MULAI SALINAN ---
+
+HERBALINDO adalah aplikasi toko produk herbal diet alami yang dirancang ringan
+dan santai, sehingga Anda tidak perlu terus-menerus berada di dalam aplikasi.
+
+Aplikasi ini menggabungkan pengalaman berbelanja produk herbal dengan sistem
+keanggotaan yang sederhana: kumpulkan poin dari aktivitas harian, ubah poin
+menjadi saldo rupiah, lalu ajukan pencairan ketika syaratnya terpenuhi.
+
+MENGAPA HERBALINDO
+
+Sederhana dan tidak mengikat. Aktivitas harian dirancang singkat sehingga dapat
+dilakukan pada waktu senggang.
+
+Harga dalam Rupiah. Seluruh harga dan saldo ditampilkan dalam Rupiah Indonesia
+sesuai kebutuhan pengguna di Indonesia.
+
+Kontrol data ada di tangan Anda. Data operasional aplikasi disimpan pada
+perangkat Anda sendiri, sehingga riwayat pesanan, poin, dan saldo tetap dapat
+Anda lihat tanpa bergantung pada koneksi internet.
+
+FITUR UTAMA
+
+1. Toko Produk Herbal
+Telusuri katalog produk herbal diet alami beserta komposisi, aturan pakai, dan
+peringatan pemakaian pada setiap halaman produk.
+
+2. Keranjang dan Pembayaran QRIS
+Masukkan produk ke keranjang, isi data pengiriman, lalu selesaikan pembayaran
+melalui kode QRIS yang nominalnya sudah otomatis menyesuaikan total pesanan.
+
+3. Sistem Member
+Satu halaman masuk untuk seluruh pengguna. Setelah masuk, aplikasi menampilkan
+halaman yang sesuai dengan peran akun Anda.
+
+4. Poin dan Saldo Rupiah
+Kumpulkan poin dari aktivitas harian dan pembelian produk, kemudian ubah poin
+menjadi saldo rupiah dengan perhitungan yang transparan dan dapat Anda periksa
+kapan saja.
+
+5. Tugas Harian
+Selesaikan check-in harian dan aktivitas harian lain untuk memperoleh tambahan
+poin. Reward diberikan sesuai ketentuan yang berlaku pada saat tugas
+diselesaikan.
+
+6. Iklan Berhadiah
+Tonton iklan berhadiah untuk menambah poin. Jumlah iklan yang dapat ditonton
+setiap hari dibatasi agar tetap wajar dan adil bagi seluruh pengguna.
+
+7. Referral Satu Tingkat
+Bagikan Referral ID Anda berupa enam digit angka kepada teman. Aplikasi ini
+tidak menggunakan sistem berjenjang bertingkat maupun struktur berlapis;
+hubungan referral hanya berlaku antara Anda dan pengguna yang Anda undang
+secara langsung.
+
+8. Withdrawal atau Pencairan Saldo
+Ajukan pencairan saldo rupiah ke rekening bank atau dompet digital pilihan Anda.
+Aplikasi menampilkan seluruh syarat kelayakan beserta status terpenuhinya,
+sehingga Anda dapat mengetahui bagian mana yang perlu dilengkapi.
+
+9. Riwayat Transaksi
+Pantau riwayat pesanan, riwayat mutasi poin, dan riwayat pengajuan pencairan
+saldo pada halaman Profil dan Saldo.
+
+CATATAN PENTING TENTANG PRODUK
+
+Produk yang dijual merupakan ramuan herbal alami. Produk tersebut bukan obat dan
+tidak dimaksudkan untuk mendiagnosis, menyembuhkan, meringankan, atau mencegah
+penyakit apa pun. Apabila Anda sedang hamil, menyusui, memiliki kondisi
+kesehatan tertentu, atau sedang mengonsumsi obat dari dokter, konsultasikan
+terlebih dahulu dengan tenaga kesehatan profesional sebelum mengonsumsi produk.
+
+Produk tidak diperuntukkan bagi anak di bawah usia 12 tahun.
+
+KETENTUAN POIN DAN SALDO
+
+Poin bukan alat pembayaran yang sah, tidak dapat dipindahtangankan kepada
+pengguna lain, dan tidak dapat diperjualbelikan. Poin hanya dapat dimanfaatkan
+sesuai mekanisme yang tersedia di dalam aplikasi. Saldo rupiah bukan simpanan
+dan tidak memberikan bunga. Pencairan saldo dilakukan setelah pengajuan Anda
+ditinjau dan disetujui.
+
+Unduh HERBALINDO sekarang dan mulai kumpulkan poin dari aktivitas harian Anda.
+Punya pertanyaan atau membutuhkan bantuan? Hubungi kami di
+altomediaindonesia@gmail.com.
+
+--- SELESAI SALINAN ---
+
+--------------------------------------------------------------------------------
+BAGIAN 3 — ASET GRAFIS
+--------------------------------------------------------------------------------
+
+Seluruh berkas berikut telah tersedia pada folder store-assets.
+
+3.1 Ikon Aplikasi (wajib)
+
+    Berkas  : store-assets/play_icon_512.png
+    Ukuran  : 512 x 512 piksel
+    Format  : PNG 32-bit dengan saluran alfa
+    Catatan : Tidak boleh memiliki sudut membulat sendiri; Play Console akan
+              menerapkan bentuk ikon secara otomatis.
+
+3.2 Feature Graphic (wajib)
+
+    Berkas  : store-assets/feature_graphic_1024x500.png
+    Ukuran  : 1024 x 500 piksel
+    Format  : PNG atau JPEG
+
+3.3 Tangkapan Layar Ponsel (wajib, minimal 2, maksimal 8)
+
+    Folder  : store-assets/screenshots/phone/
+    Ukuran  : 1080 x 1920 piksel
+    Berkas  : 01_splash.png, 02_login.png, 03_home.png, 04_products.png,
+              05_product_detail.png, 06_checkout.png, 07_payment.png,
+              08_tasks.png, 09_balance.png, 10_admin.png
+
+    Disarankan mengunggah 8 tangkapan layar pertama dengan urutan berikut:
+    Beranda, Produk, Detail Produk, Keranjang/Checkout, Pembayaran, Tugas,
+    Saldo, Profil.
+
+3.4 Tangkapan Layar Tablet 7 Inci (opsional)
+
+    Folder  : store-assets/screenshots/tablet7/
+    Ukuran  : 1200 x 1920 piksel
+    Berkas  : 01_home.png, 02_tasks.png, 03_admin.png
+
+3.5 Tangkapan Layar Tablet 10 Inci (opsional)
+
+    Folder  : store-assets/screenshots/tablet10/
+    Ukuran  : 1600 x 2560 piksel
+    Berkas  : 01_home.png, 02_balance.png
+
+--------------------------------------------------------------------------------
+BAGIAN 4 — KEBERLANGSUNGAN APLIKASI DAN PERSYARATAN TEKNIS
+--------------------------------------------------------------------------------
+
+4.1 Konfigurasi Build
+
+    Nama paket          : com.altomedia.herbalindo
+    Version code        : 1
+    Version name        : 1.0.0
+    Minimum SDK         : 21 (Android 5.0 Lollipop)
+    Target SDK          : 36
+    Format unggahan     : Android App Bundle (.aab)
+    Ukuran APK universal: sekitar 3,4 MB
+    Ukuran AAB          : sekitar 6,2 MB
+
+Target SDK 36 telah memenuhi persyaratan target API yang diberlakukan Google
+Play untuk unggahan baru.
+
+4.2 Penandatanganan Aplikasi
+
+    Berkas keystore     : ALTOMEDIA.jks
+    Alias               : kdsmedia
+    Keamanan            : Berkas keystore dan kata sandinya tidak boleh
+                          disertakan ke dalam repositori publik.
+
+SIMPAN berkas keystore dan kata sandinya di tempat yang aman. Apabila keystore
+hilang, Anda tidak akan dapat menerbitkan pembaruan untuk aplikasi yang sudah
+terbit.
+
+4.3 Ukuran Unduhan
+
+Aplikasi dibangun ringan, tanpa penyimpanan gambar sisi server dan tanpa
+pustaka yang tidak diperlukan, sehingga ukuran berkas tetap kecil. Perhatikan
+batas ukuran unduhan dasar AAB yang diberlakukan Google Play (200 MB) — aplikasi
+ini jauh di bawah batas tersebut.
+
+4.4 Izin yang Digunakan
+
+    INTERNET               : Memuat iklan dan konten daring.
+    ACCESS_NETWORK_STATE   : Memeriksa status koneksi jaringan.
+    AD_ID dan izin terkait : Diperlukan oleh layanan iklan Google AdMob.
+
+Aplikasi tidak meminta akses ke kamera, kontak, mikrofon, lokasi, maupun
+penyimpanan berkas pengguna.
+
+4.5 Kesesuaian Kebijakan Google Play
+
+    a. Kebijakan Privasi tersedia dan dapat diakses publik;
+    b. Data yang dikumpulkan sesuai dengan yang dijelaskan pada bagian Data
+       Safety (lihat Bagian 5);
+    c. Tidak ada konten yang menyesatkan mengenai klaim khasiat produk;
+    d. Keterangan produk herbal disajikan apa adanya tanpa klaim medis.
+
+--------------------------------------------------------------------------------
+BAGIAN 5 — KEAMANAN DATA (DATA SAFETY)
+--------------------------------------------------------------------------------
+
+Formulir Data Safety wajib diisi pada Play Console. Nilai yang sesuai dengan
+Aplikasi ini adalah sebagai berikut.
+
+5.1 Pengumpulan dan Pembagian Data
+
+    Apakah aplikasi mengumpulkan atau membagikan data pengguna yang wajib
+    diungkapkan?  → YA
+
+    Rincian:
+
+    Nama
+        Dikumpulkan : Ya
+        Dibagikan   : Tidak
+        Tujuan      : Pengelolaan akun, pengiriman pesanan
+        Opsional    : Ya
+
+    Alamat Surel dan Nomor Telepon
+        Dikumpulkan : Ya
+        Dibagikan   : Tidak
+        Tujuan      : Pengelolaan akun, komunikasi terkait pesanan
+        Opsional    : Ya
+
+    Alamat Pengiriman
+        Dikumpulkan : Ya
+        Dibagikan   : Ya — kepada jasa pengiriman, semata-mata untuk
+                      mengantarkan paket
+        Tujuan      : Pemenuhan pesanan
+        Opsional    : Ya
+
+    Informasi Pembayaran
+        Dikumpulkan : Tidak — pembayaran dilakukan melalui aplikasi bank atau
+                      dompet digital pengguna sendiri
+        Rincian     : Aplikasi hanya menampilkan kode QRIS. Tidak ada data
+                      rekening atau kartu yang dikumpulkan.
+
+    Aktivitas di Aplikasi
+        Dikumpulkan : Ya
+        Dibagikan   : Tidak
+        Tujuan      : Perhitungan poin, saldo, referral, dan pencegahan
+                      penyalahgunaan
+        Opsional    : Ya
+
+    Pengenal Perangkat atau Pengenal Periklanan
+        Dikumpulkan : Ya
+        Dibagikan   : Ya — kepada penyedia layanan iklan (Google AdMob)
+        Tujuan      : Periklanan
+        Opsional    : Ya
+
+5.2 Keamanan Data
+
+    Apakah data ditransmisikan dalam bentuk terenkripsi?  → YA
+    Data periklanan dikirim melalui koneksi HTTPS.
+
+    Apakah pengguna dapat meminta penghapusan data?  → YA
+    Pengguna dapat menghapus data dengan menghapus data aplikasi melalui
+    pengaturan perangkat, atau menghapus pemasangan aplikasi.
+
+5.3 Catatan Penting
+
+    Data operasional seperti poin, saldo, pesanan, dan referral disimpan pada
+    perangkat pengguna. Pengguna memiliki kendali penuh atas data tersebut.
+
+--------------------------------------------------------------------------------
+BAGIAN 6 — KLASIFIKASI KONTEN (CONTENT RATING)
+--------------------------------------------------------------------------------
+
+Jawab kuesioner klasifikasi konten sesuai keadaan sebenarnya:
+
+    Kekerasan                : Tidak ada
+    Konten seksual           : Tidak ada
+    Bahasa kasar             : Tidak ada
+    Narkoba dan alkohol      : Tidak ada
+    Perjudian                : Tidak ada
+    Konten menakutkan        : Tidak ada
+    Pembelian dalam aplikasi : Tidak ada pembelian digital. Transaksi yang ada
+                               adalah pembelian barang fisik berupa produk
+                               herbal.
+    Berbagi lokasi           : Tidak
+    Interaksi antar pengguna : Tidak ada fitur obrolan atau pesan antar
+                               pengguna.
+
+Perkiraan hasil klasifikasi: untuk usia 12 tahun ke atas atau setara.
+
+--------------------------------------------------------------------------------
+BAGIAN 7 — LANGKAH UNGGAH KE PLAY CONSOLE
+--------------------------------------------------------------------------------
+
+7.1 Persiapan
+
+    1. Buat akun Google Play Developer dan bayar biaya pendaftaran satu kali.
+    2. Lengkapi verifikasi identitas dan rekening pembayaran.
+    3. Siapkan tautan kebijakan privasi yang dapat diakses publik.
+
+7.2 Membuat Aplikasi Baru
+
+    1. Masuk ke Play Console, pilih "Create app".
+    2. Isi nama aplikasi HERBALINDO.
+    3. Pilih bahasa utama: Bahasa Indonesia (in).
+    4. Pilih jenis: App, kemudian Free.
+    5. Setujui pernyataan kepatuhan kebijakan.
+
+7.3 Mengisi Bagian "App content"
+
+    Lengkapi seluruh bagian berikut:
+    a. Privacy policy
+    b. App access
+    c. Ads (pilih: aplikasi ini mengandung iklan)
+    d. Content rating (kuesioner)
+    e. Target audience and content
+    f. News app (tidak)
+    g. COVID-19 contact tracing (tidak)
+    h. Data safety
+    i. Government app (tidak)
+    j. Financial features (tidak ada fitur keuangan yang diatur)
+
+7.4 Mengisi Store Listing
+
+    a. App name, short description, full description (lihat Bagian 2)
+    b. App icon (lihat Bagian 3.1)
+    c. Feature graphic (lihat Bagian 3.2)
+    d. Phone screenshots (lihat Bagian 3.3)
+    e. Tablet screenshots (opsional, lihat Bagian 3.4 dan 3.5)
+
+7.5 Mengunggah Rilis
+
+    1. Buka menu "Testing" → "Internal testing" untuk uji coba terbatas, atau
+       langsung ke "Production" apabila aplikasi siap.
+    2. Buat rilis baru.
+    3. Unggah berkas app-release.aab.
+    4. Isi catatan rilis (salin dari RELEASE_NOTES.txt).
+    5. Tinjau ringkasan rilis, kemudian simpan.
+    6. Pilih "Review release", lalu "Start rollout".
+
+7.6 Peninjauan oleh Google
+
+    Proses peninjauan umumnya memerlukan waktu beberapa hari. Apabila terdapat
+    catatan dari tim peninjau, perbaiki sesuai catatan tersebut lalu ajukan
+    rilis ulang. Untuk aplikasi baru, peninjauan dapat memerlukan waktu lebih
+    lama pada rilis pertama.
+
+7.7 Setelah Terbit
+
+    a. Pantau ulasan dan penilaian pengguna melalui Play Console;
+    b. Perbarui catatan rilis setiap kali menerbitkan versi baru;
+    c. Naikkan versionCode dan versionName pada app/build.gradle sebelum
+       mengunggah rilis berikutnya.
+
+--------------------------------------------------------------------------------
+BAGIAN 8 — DAFTAR PERIKSA SEBELUM MENGUNGGAH
+--------------------------------------------------------------------------------
+
+Pastikan seluruh butir berikut telah terpenuhi:
+
+    [ ] Berkas AAB terbentuk dan ditandatangani dengan keystore rilis
+    [ ] versionCode dan versionName sudah benar
+    [ ] minSdk 21 dan targetSdk 36
+    [ ] Ikon 512x512 tersedia
+    [ ] Feature graphic 1024x500 tersedia
+    [ ] Minimal 2 tangkapan layar ponsel tersedia
+    [ ] Deskripsi singkat tidak melebihi 80 karakter
+    [ ] Deskripsi panjang tidak melebihi 4000 karakter
+    [ ] Deskripsi panjang tidak memuat klaim medis atas produk herbal
+    [ ] Kebijakan Privasi dapat diakses publik
+    [ ] Dokumen Syarat dan Ketentuan tersedia
+    [ ] Formulir Data Safety telah diisi sesuai Bagian 5
+    [ ] Kuesioner klasifikasi konten telah diisi
+    [ ] Alamat surel dukungan aktif dan dapat menerima pesan
+
+--------------------------------------------------------------------------------
+BAGIAN 9 — PENYELESAIAN MASALAH UMUM
+--------------------------------------------------------------------------------
+
+9.1 Unggahan AAB ditolak karena versionCode sudah digunakan
+    Naikkan versionCode pada app/build.gradle, lalu bangun ulang AAB.
+
+9.2 Peringatan target API
+    Aplikasi ini sudah memakai targetSdk 36, sehingga tidak terkena peringatan
+    target API yang lama.
+
+9.3 Peninjauan ditolak dengan alasan klaim medis
+    Pastikan tidak ada kalimat pada deskripsi toko maupun keterangan produk yang
+    menyatakan bahwa produk dapat menyembuhkan atau mengobati penyakit. Produk
+    herbal harus dinyatakan sebagai bukan obat.
+
+9.4 Kebijakan privasi dinyatakan tidak valid
+    Pastikan tautan dapat dibuka tanpa memerlukan login, dan isi kebijakan
+    menjelaskan data yang benar-benar dikumpulkan aplikasi sesuai Bagian 5.
+
+9.5 Penolakan karena izin tidak perlu
+    Aplikasi hanya meminta izin jaringan dan izin yang diperlukan layanan iklan.
+    Apabila terdapat pertanyaan dari peninjau terkait izin iklan, jelaskan bahwa
+    aplikasi menampilkan iklan melalui Google AdMob.
+
+================================================================================
+AKHIR DOKUMEN
+================================================================================
