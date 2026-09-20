@@ -27,7 +27,9 @@ ALTOMEDIA/
     ui/         SplashActivity, AuthActivity, BaseActivity
       member/   MemberActivity + tab + Cart/Checkout/Payment/OrderDetail
       admin/    AdminActivity + 7 Section
-  app/src/test/java/.../RepositoryTest.java   ← 48 unit test
+  app/src/test/java/.../RepositoryTest.java   ← aturan bisnis (MemoryStore)
+  app/src/test/java/.../StartupLifecycleTest.java ← daur hidup layar (Robolectric)
+  app/src/test/java/.../DbStoreTest.java      ← penyimpanan SQLite sungguhan
   tools/        verify_project.py, assetkit.py, gen_assets.py
   store-assets/ ikon 512, feature graphic, screenshots
   release/      APK, AAB, SHA256SUMS.txt, RELEASE_NOTES.md
@@ -87,6 +89,42 @@ konsistensi statis, dan pemeriksaan isi APK.
    memang ada rujukan seperti `android.R.layout.simple_spinner_dropdown_item`
    dan `android.R.id.content`. Ini sah; jangan diubah menjadi `R.*`.
 
+6. **`Activity.getColor(int)` baru ada sejak API 23, sedangkan minSdk 21.**
+   Pemakaiannya membuat aplikasi menutup dengan `NoSuchMethodError` di Android
+   5.x. Selalu pakai `ContextCompat.getColor(...)`. Android Lint tidak
+   melaporkan ini karena `lint.abortOnError` bernilai false — jalankan
+   `$GRADLE :app:lintDebug` lalu periksa bagian `NewApi` secara manual.
+
+7. **Layar tidak boleh menyentuh `user` pada `onCreate` sebelum sesi dibaca.**
+   `BaseActivity.onResume` mengisi `user` dan memanggil `onSessionReady`.
+   `MemberActivity.onCreate` karena itu membaca `Session.current(this)` lebih
+   dulu; tab pertama (`show("home")`) langsung memakai data pengguna. Mengandalkan
+   `onResume` saja akan melempar `NullPointerException` sebelum layar tampil.
+
+8. **Layar yang tidak memerlukan sesi wajib menimpa `requiresSession()`.**
+   `BaseActivity.onResume` mengalihkan layar ke `AuthActivity` ketika sesi tidak
+   ada. Layar seperti `AuthActivity` harus mengembalikan `false`, jika tidak
+   layar akan menutup diri sendiri dan aplikasi tampak langsung keluar.
+
+9. **Metode `protected` di `BaseActivity` jangan diduplikasi di turunan.**
+   Menulis ulang `toAuth()` dengan akses `private` menyebabkan kegagalan
+   kompilasi "attempting to assign weaker access privileges".
+
+## Pengujian
+
+Alur bisnis diuji dengan `MemoryStore`; itu tidak mewakili perangkat. Untuk
+perubahan yang menyentuh layar, jalur pembukaan, atau penyimpanan, andalkan
+`StartupLifecycleTest` dan `DbStoreTest`.
+
+- Robolectric 4.13 hanya mendukung sampai SDK 34, sedangkan `targetSdk` 36.
+  Uji yang memakainya **wajib** memakai `@org.robolectric.annotation.Config(sdk = 34)`
+  (tulis lengkap; `Config` bentrok dengan `com.altomedia.herbalindo.core.Config`).
+- `StartupLifecycleTest` menjalankan Activity sungguhan, sehingga
+  `HerbalindoApp.onCreate` ikut berjalan dan banner AdMob benar-benar dimuat.
+- Saat menguji layar, ingat `Repository.createOrder` mengosongkan keranjang.
+  Layar checkout yang dibuka setelahnya akan selesai sendiri karena keranjang
+  kosong — bukan tanda adanya cacat.
+
 ## Aturan bisnis inti
 
 - Konversi poin: 10.000 poin = Rp1.000 (`Config.POINTS_PER_UNIT` /
@@ -114,7 +152,9 @@ Tiga format dipakai: banner, rewarded, interstitial.
 
 Build **debug** otomatis memakai unit uji resmi Google; build **release** memakai unit
 produksi. Pemilihan ada di `Config.adUnit(...)` dan diterapkan lewat
-`AdsManager.loadBanner(...)` yang memanggil `setAdUnitId` dari kode.
+`AdsManager.loadBanner(...)`. Baik `setAdUnitId` maupun `setAdSize` diatur dari
+kode: `AdView.loadAd` melempar `IllegalStateException` bila salah satunya belum
+terisi, dan kegagalan itu ditangkap agar banner tidak menjatuhkan layar.
 
 Karena itu, `ads:adUnitId` pada layout **diabaikan** untuk banner. Jangan
 mengandalkan nilai di XML dan jangan menyalin unit uji ke berkas layout.
@@ -162,7 +202,7 @@ masih berisi nilai contoh (`REPLACE_WITH_YOUR_FIREBASE_PROJECT_ID` dan
 
 Merge telah diselesaikan dengan mempertahankan implementasi **Java** sebagai
 kode utama, karena implementasi inilah yang benar-benar dapat dijalankan,
-memiliki 48 unit test, dan telah menghasilkan APK serta AAB rilis.
+memiliki 70 unit test, dan telah menghasilkan APK serta AAB rilis.
 
 Spesifikasi pada Bab 12 memang menyebut Firebase. Apabila di kemudian hari
 aplikasi akan dihubungkan ke Firebase, diperlukan proyek Firebase yang nyata

@@ -39,6 +39,15 @@ public class DbStoreTest {
         ctx.deleteDatabase(Config.DB_NAME);
     }
 
+    /** Aplikasi menyiapkan aturan bisnis dan data awal sebelum layar pertama tampil. */
+    @Test public void kelasApplicationMenyiapkanDataSaatAplikasiDibuat() {
+        assertTrue("Application yang berjalan bukan HerbalindoApp",
+                ctx instanceof HerbalindoApp);
+        assertNotNull(HerbalindoApp.get());
+        assertNotNull("Repository belum siap saat Application dibuat",
+                Repository.get(ctx).user("USR-ADMIN"));
+    }
+
     /** Tabel dibuat dan data awal tersedia pada basis data yang benar-benar baru. */
     @Test public void dataAwalTersediaPadaBasisDataBaru() throws Exception {
         Repository repo = Repository.get(ctx);
