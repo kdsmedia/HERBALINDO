@@ -41,7 +41,7 @@ SHA-256: bab18b5ef926b5b7ae04ae1192ae282c72f1db4ca4437d74f296550e93e801d5
 
 ## Mutu
 
-- 70 pengujian lulus, tanpa kegagalan
+- 76 pengujian lulus, tanpa kegagalan
 - Pengujian tahap pembukaan menjalankan daur hidup layar yang sesungguhnya pada
   API 21 dan API 33, mencakup layar masuk, delapan layar member, dan panel admin
 - Pengujian penyimpanan memakai basis data SQLite yang sama seperti aplikasi

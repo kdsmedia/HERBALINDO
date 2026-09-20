@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 
 import androidx.test.core.app.ApplicationProvider;
@@ -99,6 +100,36 @@ public class StartupLifecycleTest {
         ShadowActivity shadow = Shadows.shadowOf(a);
         assertEquals(AuthActivity.class.getName(),
                 shadow.getNextStartedActivity().getComponent().getClassName());
+        c.destroy();
+    }
+
+    /** Tautan referral yang dibuka dari luar aplikasi disimpan untuk pendaftaran. */
+    @Test public void tautanReferralMenyimpanKodeUntukPendaftaran() {
+        Intent i = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse("herbalindo://ref/482731"));
+        ActivityController<SplashActivity> c =
+                Robolectric.buildActivity(SplashActivity.class, i).setup();
+        assertEquals("482731", Session.pendingReferral(c.get()));
+        c.destroy();
+    }
+
+    /** Kode referral yang tidak sah tidak disimpan. */
+    @Test public void tautanReferralTanpaKodeSahTidakDisimpan() {
+        Intent i = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse("herbalindo://ref/abc"));
+        ActivityController<SplashActivity> c =
+                Robolectric.buildActivity(SplashActivity.class, i).setup();
+        assertNull(Session.pendingReferral(c.get()));
+        c.destroy();
+    }
+
+    /** Layar pembuka menyalurkan admin ke panel admin, bukan ke layar member. */
+    @Test public void layarPembukaMengarahkanAdminKePanelAdmin() {
+        Session.set(ctx, Repository.get(ctx).user("USR-ADMIN"));
+        ActivityController<SplashActivity> c = Robolectric.buildActivity(SplashActivity.class).setup();
+        SplashActivity a = c.get();
+
+        org.robolectric.shadows.ShadowLooper.idleMainLooper(1000, java.util.concurrent.TimeUnit.MILLISECONDS);
+        assertEquals(AdminActivity.class.getName(),
+                Shadows.shadowOf(a).getNextStartedActivity().getComponent().getClassName());
         c.destroy();
     }
 
