@@ -120,14 +120,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="14dp"
                         android:text="MASUK" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/role_hint"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="11sp" />
                 </LinearLayout>
 
                 <!-- FORM DAFTAR -->
@@ -207,14 +199,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="14dp"
                         android:text="DAFTAR" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/referral_hint"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="11sp" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

@@ -245,3 +245,26 @@ dexdump -d classes.dex | grep -c "Activity;.getColor"   # harus 0
 
 Jalur yang aman harus memuat `sget ... Build$VERSION;.SDK_INT` sebelum memilih
 antara `Context.getColor` (API 23) dan `Resources.getColor` (API 1).
+
+## Kredensial akun admin tidak boleh hanya ditulis di `seed()`
+
+`seed()` hanya dijalankan ketika koleksi pengguna masih kosong. Mengubah nilai
+di dalam `seed()` karena itu **tidak berpengaruh** pada perangkat yang sudah
+memakai aplikasi: akun admin lamanya tetap tersimpan di basis data.
+
+Karena itu kredensial admin ditulis sebagai konstanta di `Repository`
+(`ADMIN_EMAIL`, `ADMIN_PHONE`, `ADMIN_PASSWORD`) dan diselaraskan oleh
+`updateAdminCredentials()`. Penanda `admin_credentials_version` di penyimpanan
+meta membuat penyelarasan berjalan sekali per perubahan, sehingga kata sandi
+yang sudah diganti sendiri oleh pemilik aplikasi tidak ikut ditimpa.
+
+Saat mengganti kredensial admin, naikkan nilai penanda tersebut.
+
+## Teks di bawah tombol masuk dan daftar telah dihapus
+
+Permintaan pemilik aplikasi: tidak boleh ada teks apa pun di bawah tombol
+masuk/daftar. String `role_hint` dan `referral_hint` sudah dihapus dari
+`strings.xml` dan `activity_auth.xml`. Jangan menambahkannya kembali.
+
+Slogan aplikasi adalah "Herbal Diet Alami Tanpa Bahan Kimia" (`app_tagline`),
+tampil di layar splash dan layar masuk.

@@ -44,13 +44,63 @@ public class RepositoryTest {
     }
 
     @Test public void adminCanLoginWithSeededCredentials() throws Exception {
-        Models.User admin = repo.login("admin@herbalindo.id", "admin123");
+        Models.User admin = repo.login(Repository.ADMIN_EMAIL, Repository.ADMIN_PASSWORD);
         assertEquals("ADMIN", admin.role);
         assertEquals("000001", admin.referralId);
     }
 
+    /** Admin dapat masuk memakai nomor HP, bukan hanya email. */
+    @Test public void adminCanLoginWithPhone() throws Exception {
+        Models.User admin = repo.login(Repository.ADMIN_PHONE, Repository.ADMIN_PASSWORD);
+        assertEquals("ADMIN", admin.role);
+    }
+
+    /**
+     * Perangkat yang sudah terpasang menyimpan kredensial admin lama, dan
+     * {@code seed()} tidak berjalan lagi karena koleksi pengguna tidak kosong.
+     * Penyesuaian sekali jalan harus membuat akun lama dapat memakai kredensial
+     * baru tanpa menghapus data yang sudah ada.
+     */
+    @Test public void kredensialAdminLamaDiperbaruiTanpaMenghapusData() throws Exception {
+        MemoryStore store = new MemoryStore();
+        String salt = "salt-lama";
+        Models.User lama = new Models.User();
+        lama.userId = "USR-ADMIN";
+        lama.name = "Administrator";
+        lama.email = "admin@herbalindo.id";
+        lama.phone = "081200000000";
+        lama.salt = salt;
+        lama.passwordHash = com.altomedia.herbalindo.core.PasswordHasher.hash("admin123", salt);
+        lama.referralId = "000001";
+        lama.role = "ADMIN";
+        lama.status = "ACTIVE";
+        lama.createdAt = lama.updatedAt = "2026-01-01T00:00:00Z";
+        store.put(Config.C_USERS, "USR-ADMIN", lama.toJson().toString());
+
+        Models.User anggota = new Models.User();
+        anggota.userId = "USR-1";
+        anggota.name = "Siti Aminah";
+        anggota.email = "siti@contoh.id";
+        anggota.phone = "081234567890";
+        anggota.salt = "s";
+        anggota.passwordHash = "h";
+        anggota.referralId = "123456";
+        anggota.role = "MEMBER";
+        anggota.status = "ACTIVE";
+        anggota.createdAt = anggota.updatedAt = "2026-01-01T00:00:00Z";
+        store.put(Config.C_USERS, "USR-1", anggota.toJson().toString());
+
+        Repository sesudah = Repository.with(store);
+        assertEquals("USR-ADMIN",
+                sesudah.login(Repository.ADMIN_EMAIL, Repository.ADMIN_PASSWORD).userId);
+        assertEquals("Nomor HP admin tidak diperbarui",
+                Repository.ADMIN_PHONE, sesudah.user("USR-ADMIN").phone);
+        assertNotNull("Akun anggota lama ikut terhapus",
+                sesudah.user("USR-1"));
+    }
+
     @Test public void wrongPasswordRejected() {
-        try { repo.login("admin@herbalindo.id", "salah"); fail("harus gagal"); }
+        try { repo.login(Repository.ADMIN_EMAIL, "salah"); fail("harus gagal"); }
         catch (Repository.RuleException e) { assertTrue(e.getMessage().contains("Password")); }
     }
 
@@ -485,10 +535,10 @@ public class RepositoryTest {
     }
 
     @Test public void adminCanChangeSeededPassword() throws Exception {
-        Models.User admin = repo.login("admin@herbalindo.id", "admin123");
-        repo.changePassword(admin.userId, "admin123", "adminBaru1", "adminBaru1");
-        assertNotNull(repo.login("admin@herbalindo.id", "adminBaru1"));
-        try { repo.login("admin@herbalindo.id", "admin123"); fail("password lama harus tidak berlaku"); }
+        Models.User admin = repo.login(Repository.ADMIN_EMAIL, Repository.ADMIN_PASSWORD);
+        repo.changePassword(admin.userId, Repository.ADMIN_PASSWORD, "adminBaru1", "adminBaru1");
+        assertNotNull(repo.login(Repository.ADMIN_EMAIL, "adminBaru1"));
+        try { repo.login(Repository.ADMIN_EMAIL, Repository.ADMIN_PASSWORD); fail("password lama harus tidak berlaku"); }
         catch (Repository.RuleException e) { assertTrue(e.getMessage().contains("Password salah")); }
     }
 

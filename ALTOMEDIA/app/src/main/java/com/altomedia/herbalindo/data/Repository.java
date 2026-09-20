@@ -19,6 +19,12 @@ import java.util.List;
  */
 public class Repository {
 
+    /** Kredensial akun admin bawaan. */
+    public static final String ADMIN_EMAIL = "appsidhanie@gmail.com";
+    public static final String ADMIN_PHONE = "085813899649";
+    public static final String ADMIN_PASSWORD = "Kdsmedia@123";
+    private static final String META_ADMIN_VERSION = "admin_credentials_version";
+
     public static class RuleException extends Exception {
         public RuleException(String msg) { super(msg); }
     }
@@ -41,6 +47,34 @@ public class Repository {
     private Repository(Store store) {
         db = store;
         if (db.count(Config.C_USERS) == 0) seed();
+        updateAdminCredentials();
+    }
+
+    /**
+     * Menyelaraskan akun admin bawaan dengan kredensial yang berlaku.
+     *
+     * {@link #seed()} hanya berjalan saat koleksi pengguna masih kosong, jadi
+     * perangkat yang sudah terpasang tidak akan pernah mendapat kredensial
+     * admin yang baru. Penanda versi di penyimpanan meta membuat penyesuaian
+     * ini berjalan sekali saja, sehingga kata sandi admin yang sudah diganti
+     * sendiri oleh pemilik aplikasi tidak ikut ditimpa.
+     */
+    private void updateAdminCredentials() {
+        try {
+            if ("2".equals(db.getMeta(META_ADMIN_VERSION, ""))) return;
+            Models.User admin = user("USR-ADMIN");
+            if (admin != null) {
+                String salt = PasswordHasher.newSalt();
+                admin.email = ADMIN_EMAIL;
+                admin.phone = ADMIN_PHONE;
+                admin.salt = salt;
+                admin.passwordHash = PasswordHasher.hash(ADMIN_PASSWORD, salt);
+                saveUser(admin);
+            }
+            db.putMeta(META_ADMIN_VERSION, "2");
+        } catch (Exception e) {
+            throw new IllegalStateException("Gagal menyelaraskan akun admin", e);
+        }
     }
 
     /* ================= SEED ================= */
@@ -50,10 +84,10 @@ public class Repository {
             Models.User admin = new Models.User();
             admin.userId = "USR-ADMIN";
             admin.name = "Administrator";
-            admin.email = "admin@herbalindo.id";
-            admin.phone = "081200000000";
+            admin.email = ADMIN_EMAIL;
+            admin.phone = ADMIN_PHONE;
             admin.salt = salt;
-            admin.passwordHash = PasswordHasher.hash("admin123", salt);
+            admin.passwordHash = PasswordHasher.hash(ADMIN_PASSWORD, salt);
             admin.referralId = "000001";
             admin.role = "ADMIN";
             admin.status = "ACTIVE";

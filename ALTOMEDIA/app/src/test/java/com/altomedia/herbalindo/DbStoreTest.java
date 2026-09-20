@@ -58,6 +58,15 @@ public class DbStoreTest {
         assertNotNull("Pengaturan toko tidak dimuat", repo.settings());
     }
 
+    /** Akun admin dapat masuk memakai email maupun nomor HP yang ditetapkan. */
+    @Test public void akunAdminDapatMasukDenganEmailDanNomor() throws Exception {
+        Repository repo = Repository.get(ctx);
+        assertEquals("USR-ADMIN",
+                repo.login(Repository.ADMIN_EMAIL, Repository.ADMIN_PASSWORD).userId);
+        assertEquals("USR-ADMIN",
+                repo.login(Repository.ADMIN_PHONE, Repository.ADMIN_PASSWORD).userId);
+    }
+
     /** Data yang ditulis tetap ada saat dibaca kembali oleh basis data lain pada berkas yang sama. */
     @Test public void dataTersimpanTetapAdaSetelahDibukaUlang() throws Exception {
         Repository repo = Repository.get(ctx);
