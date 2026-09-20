@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#1F7A4D">
+<meta name="description" content="HERBALINDO — Belanja herbal diet alami, kumpulkan poin, referral & saldo.">
+<title>HERBALINDO</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ================= PULL TO REFRESH ================= -->
+<div id="ptr"><span class="spin"></span><span id="ptr-text">Tarik untuk memperbarui</span></div>
+
+<!-- ================= AUTH ================= -->
+<div id="auth-screen">
+  <div class="brand">
+    <div class="leaf">🌿</div>
+    <h1>HERBALINDO</h1>
+    <p>Herbal diet alami · Poin · Referral · Saldo</p>
+  </div>
+
+  <div class="card">
+    <div class="tabs-auth">
+      <button id="tab-login" class="on" type="button">Masuk</button>
+      <button id="tab-register" type="button">Daftar</button>
+    </div>
+
+    <form id="form-login" autocomplete="on">
+      <div class="form-row">
+        <label class="lbl" for="login-id">Email / Nomor HP</label>
+        <input class="input" id="login-id" type="text" inputmode="email" placeholder="0812xxxxxxx atau nama@email.com" required>
+      </div>
+      <div class="form-row">
+        <label class="lbl" for="login-pass">Password</label>
+        <input class="input" id="login-pass" type="password" placeholder="••••••" required>
+      </div>
+      <button class="btn" type="submit">MASUK</button>
+      <p class="small muted center" style="margin:10px 0 0">Satu form untuk Member &amp; Admin. Role ditentukan server.</p>
+    </form>
+
+    <form id="form-register" class="hidden" autocomplete="on">
+      <div class="form-row">
+        <label class="lbl" for="reg-name">Nama</label>
+        <input class="input" id="reg-name" type="text" placeholder="Nama lengkap" required>
+      </div>
+      <div class="form-row">
+        <label class="lbl" for="reg-contact">Nomor HP / Email</label>
+        <input class="input" id="reg-contact" type="text" inputmode="email" placeholder="08xxxxxxxxxx" required>
+      </div>
+      <div class="form-row">
+        <label class="lbl" for="reg-pass">Password</label>
+        <input class="input" id="reg-pass" type="password" placeholder="Minimal 6 karakter" required>
+      </div>
+      <div class="form-row">
+        <label class="lbl" for="reg-ref">Referral ID (opsional)</label>
+        <input class="input" id="reg-ref" type="text" inputmode="numeric" maxlength="6" placeholder="6 digit angka">
+      </div>
+      <button class="btn" type="submit">DAFTAR</button>
+      <div class="hint-box" style="margin-top:12px">
+        Referral ID dibuat <b>otomatis 6 digit</b> oleh server dan tidak dapat diubah.
+        Referral hanya <b>1 tingkat</b> (tanpa upline/downline berantai).
+      </div>
+    </form>
+  </div>
+
+  <p class="small center" style="color:rgba(255,255,255,.75);margin:6px 0 0">
+    Demo admin: admin@herbalindo.id / admin123
+  </p>
+</div>
+
+<!-- ================= MEMBER APP ================= -->
+<div id="app" class="hidden">
+  <header class="topbar">
+    <h2 id="page-title">Home</h2>
+    <span class="badge" id="top-ref">REF —</span>
+  </header>
+  <main id="view" class="page"></main>
+
+  <div id="cartbar" class="cartbar hidden">
+    <span class="t" id="cartbar-t">0 item</span>
+    <button class="btn sm gold" id="cartbar-btn" type="button">Keranjang</button>
+  </div>
+
+  <div id="admob" class="hidden">
+    <span class="ad-ic">Ad</span>
+    <div class="ad-main">
+      <div class="ad-t" id="admob-t">Iklan Banner</div>
+      <div class="ad-s" id="admob-s">Muat iklan…</div>
+    </div>
+    <span class="ad-tag" id="admob-tag">AD</span>
+    <button class="x hidden" id="admob-x" type="button" aria-label="Tutup">✕</button>
+  </div>
+
+  <nav id="tabbar">
+    <button data-tab="home" class="on" type="button"><span class="i">🏠</span>Home</button>
+    <button data-tab="produk" type="button"><span class="i">🛍️</span>Produk</button>
+    <button data-tab="tugas" type="button"><span class="i">🎯</span>Tugas</button>
+    <button data-tab="saldo" type="button"><span class="i">💰</span>Saldo</button>
+    <button data-tab="profil" type="button"><span class="i">👤</span>Profil</button>
+  </nav>
+</div>
+
+<!-- ================= ADMIN ================= -->
+<div id="admin-screen" class="hidden">
+  <div class="admin-wrap">
+    <aside class="a-side">
+      <div class="logo">🌿 HERBALINDO<br><span style="font-weight:500;font-size:11px;color:#9FB6A8">Panel Admin</span></div>
+      <button data-av="dash" class="on" type="button">📊 Dashboard</button>
+      <button data-av="member" type="button">👥 Member</button>
+      <button data-av="produk" type="button">📦 Produk</button>
+      <button data-av="stok" type="button">🏷️ Stok</button>
+      <button data-av="order" type="button">🧾 Pesanan</button>
+      <button data-av="referral" type="button">👥 Referral</button>
+      <button data-av="poin" type="button">⭐ Poin</button>
+      <button data-av="wd" type="button">💸 Withdrawal</button>
+      <button data-av="setting" type="button">⚙️ Pengaturan</button>
+      <button data-av="log" type="button">🗒️ Audit Log</button>
+      <button data-av="keluar" type="button">🚪 Keluar</button>
+    </aside>
+    <div class="a-body">
+      <header class="a-top">
+        <h2 id="a-title">Dashboard</h2>
+        <button class="btn sm ghost" id="a-logout" type="button">Keluar</button>
+      </header>
+      <main class="a-main" id="a-view"></main>
+    </div>
+  </div>
+</div>
+
+<div id="modal-root"></div>
+
+<script src="js/vendor/qrcode.min.js" defer></script>
+<script src="js/store.js" defer></script>
+<script src="js/app.js" defer></script>
+<script src="js/admin.js" defer></script>
+</body>
+</html>
