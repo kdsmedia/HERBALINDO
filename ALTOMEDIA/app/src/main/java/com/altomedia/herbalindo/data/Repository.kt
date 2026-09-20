@@ -80,7 +80,9 @@ object Repository {
     fun userFlow(uid: String): Flow<User?> = callbackFlow {
         val reg = db.collection(Col.USERS).document(uid)
             .addSnapshotListener { snap, _ ->
-                trySend(snap?.toObject(User::class.java))
+                val user = snap?.toObject(User::class.java)
+                cacheUser(user)
+                trySend(user)
             }
         awaitClose { reg.remove() }
     }
@@ -97,6 +99,26 @@ object Repository {
     suspend fun listUsers(limit: Long = 200): List<User> =
         db.collection(Col.USERS).orderBy("createdAt", Query.Direction.DESCENDING)
             .limit(limit).get().await().documents.mapNotNull { it.toObject(User::class.java) }
+
+    /** Admin roster; sorted newest first because createdAt ordering needs an index. */
+    fun usersFlow(): Flow<List<User>> = callbackFlow {
+        val reg = db.collection(Col.USERS)
+            .addSnapshotListener { snap, err ->
+                if (err != null) {
+                    trySend(emptyList())
+                    return@addSnapshotListener
+                }
+                trySend(
+                    snap?.documents?.mapNotNull { it.toObject(User::class.java) }
+                        ?.sortedByDescending { it.createdAt ?: java.util.Date(0) }
+                        ?: emptyList()
+                )
+            }
+        awaitClose { reg.remove() }
+    }
+
+    /** A single member document for the admin detail screen. */
+    suspend fun getUserOnce(uid: String): User? = getUser(uid)
 
     suspend fun searchUsers(query: String): List<User> {
         val q = query.trim()
@@ -208,6 +230,14 @@ object Repository {
     suspend fun getOrder(orderId: String): com.altomedia.herbalindo.data.model.Order? =
         db.collection(Col.ORDERS).document(orderId).get().await()
             .toObject(com.altomedia.herbalindo.data.model.Order::class.java)
+
+    fun orderFlow(orderId: String): Flow<com.altomedia.herbalindo.data.model.Order?> = callbackFlow {
+        val reg = db.collection(Col.ORDERS).document(orderId)
+            .addSnapshotListener { snap, _ ->
+                trySend(snap?.toObject(com.altomedia.herbalindo.data.model.Order::class.java))
+            }
+        awaitClose { reg.remove() }
+    }
 
     // -------------------------------------------------------------- withdrawals
 
@@ -346,4 +376,66 @@ object Repository {
     } catch (t: Throwable) {
         OpResult.Failure(t)
     }
+
+    // ------------------------------------------------------- cached profile
+
+    @Volatile
+    private var cachedUser: User? = null
+
+    /** Last successfully loaded profile, used to prefill forms without a network wait. */
+    fun userCache(uid: String): User? = cachedUser?.takeIf { it.uid == uid }
+
+    // ------------------------------------------------------- callable bridge
+
+    /**
+     * Creates an order through the backend, which re-reads prices and stock.
+     * Returns the new order id and number for the payment screen.
+     */
+    suspend fun createOrder(
+        items: List<Map<String, Any?>>,
+        recipientName: String,
+        phone: String,
+        address: String,
+        city: String,
+        postalCode: String,
+        note: String,
+    ): OpResult<CreateOrderResult> = try {
+        val response = Api.createOrder(
+            items = items,
+            recipientName = recipientName,
+            phone = phone,
+            address = address,
+            city = city,
+            postalCode = postalCode,
+            note = note,
+        )
+        when (response) {
+            is OpResult.Success -> OpResult.Success(
+                CreateOrderResult(
+                    orderId = response.data["orderId"]?.toString().orEmpty(),
+                    orderNumber = response.data["orderNumber"]?.toString().orEmpty(),
+                    total = (response.data["grandTotal"] as? Number)?.toLong() ?: 0L,
+                    pointsEarned = (response.data["pointsEarned"] as? Number)?.toLong() ?: 0L,
+                )
+            )
+            is OpResult.Failure -> OpResult.Failure(response.error)
+        }
+    } catch (t: Throwable) {
+        OpResult.Failure(t)
+    }
+
+    /** User-facing message for any callable or network failure. */
+    fun friendlyMessage(error: Throwable): String = Api.message(error)
+
+    /** Refreshes the in-memory profile cache; called by the flows that already observe it. */
+    internal fun cacheUser(user: User?) {
+        cachedUser = user
+    }
+
+    data class CreateOrderResult(
+        val orderId: String,
+        val orderNumber: String,
+        val total: Long,
+        val pointsEarned: Long,
+    )
 }

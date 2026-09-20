@@ -14,6 +14,9 @@
     <string name="phone">Nomor HP</string>
     <string name="referral_id_optional">Referral ID (opsional)</string>
     <string name="referral_id_hint">6 digit angka</string>
+    <string name="poin_didapat">Poin diperoleh</string>
+    <string name="menunggu_konfirmasi_admin">Menunggu konfirmasi admin</string>
+    <string name="pembayaran_diterima">Pembayaran diterima</string>
     <string name="forgot_password">Lupa password?</string>
     <string name="reset_password">Reset Password</string>
     <string name="already_have_account">Sudah punya akun? Masuk</string>
@@ -118,6 +121,9 @@
     <string name="riwayat_transaksi">Riwayat Transaksi</string>
     <string name="kebijakan_privasi">Kebijakan Privasi</string>
     <string name="syarat_ketentuan">Syarat &amp; Ketentuan</string>
+    <string name="refund">Refund</string>
+    <string name="approve">Setujui</string>
+    <string name="reject">Tolak</string>
     <string name="tentang_aplikasi">Tentang Aplikasi</string>
     <string name="versi">Versi</string>
 

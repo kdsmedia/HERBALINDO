@@ -103,12 +103,14 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0")
 
-    implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-firestore")
+    // Firebase modules are pinned individually rather than via the BOM: the spec requires
+    // minSdk 21, and firebase-auth 23.x (the BOM default) raised its floor to 23.
+    // auth 22.3.1 is the newest release that still supports API 21.
+    implementation("com.google.firebase:firebase-auth:22.3.1")
+    implementation("com.google.firebase:firebase-firestore:25.1.4")
     // Points, balance, referral and order mutations run as callable Cloud Functions so
     // the client can never mint value directly (see BAB 13.1 / 13.2).
-    implementation("com.google.firebase:firebase-functions")
+    implementation("com.google.firebase:firebase-functions:21.2.0")
 
     // 23.6.0 is the last AdMob SDK line that still supports minSdk 21.
     implementation("com.google.android.gms:play-services-ads:23.6.0")

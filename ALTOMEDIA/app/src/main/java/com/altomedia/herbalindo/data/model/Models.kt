@@ -188,6 +188,7 @@ data class Withdrawal(
     @DocumentId val withdrawalId: String = "",
     val userId: String = "",
     val amount: Long = 0L,
+    val dayKey: String = "",
     val method: String = "",
     val destination: String = "",
     val holderName: String = "",
