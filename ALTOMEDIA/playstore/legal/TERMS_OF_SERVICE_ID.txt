@@ -1,0 +1,697 @@
+================================================================================
+                              SYARAT DAN KETENTUAN                              
+                       HERBALINDO — SYARAT DAN KETENTUAN                        
+                             Pengembang: ALTOMEDIA                              
+                      Kontak: altomediaindonesia@gmail.com                      
+                        Paket: com.altomedia.herbalindo                         
+                     Terakhir diperbarui: 20 September 2026                     
+================================================================================
+
+Berkas ini dihasilkan dari terms-of-service.html oleh tools/gen_legal_txt.py.
+Versi resmi yang berlaku adalah halaman HTML pada GitHub Pages.
+Jangan sunting berkas ini secara langsung; sunting berkas HTML-nya.
+
+🌿
+
+
+HERBALINDO
+
+
+
+
+Syarat dan Ketentuan
+ Terakhir diperbarui: 20 September 2026
+
+
+
+
+Daftar Isi
+
+
+ 1. Penerimaan Syarat
+
+ 2. Definisi
+
+ 3. Kelayakan Pengguna
+
+ 4. Akun dan Keamanan
+
+ 5. Program Poin
+
+ 6. Program Referral (Satu Tingkat)
+
+ 7. Saldo dan Penarikan
+
+ 8. Perilaku yang Dilarang
+
+ 9. Pemesanan dan Pembayaran
+
+ 10. Pengiriman dan Ongkos Kirim
+
+ 11. Pengembalian Dana, Refund, dan Pembatalan
+
+ 12. Kekayaan Intelektual
+
+ 13. Penafian dan Batasan Tanggung Jawab
+
+ 14. Keadaan Memaksa
+
+ 15. Penangguhan dan Penghentian Akun
+
+ 16. Penyelesaian Sengketa dan Hukum yang Berlaku
+
+ 17. Perubahan Syarat
+
+ 18. Kontak
+
+1. Penerimaan Syarat
+
+Syarat dan Ketentuan ini ("Syarat") merupakan perjanjian yang mengikat secara
+hukum
+antara Anda ("Pengguna", "Member", atau "Anda") dan ALTOMEDIA
+("kami", "milik kami", atau "Pengembang") selaku penyelenggara aplikasi
+HERBALINDO dengan nama paket com.altomedia.herbalindo
+("Aplikasi").
+
+Dengan mengunduh, memasang, mendaftar, atau menggunakan Aplikasi dalam bentuk
+apa pun,
+Anda menyatakan bahwa Anda telah membaca, memahami, dan menyetujui seluruh isi
+Syarat
+ini beserta Kebijakan Privasi kami. Apabila Anda
+tidak menyetujui sebagian atau seluruh Syarat ini, Anda tidak berhak menggunakan
+Aplikasi dan diminta untuk berhenti menggunakan serta menghapus Aplikasi dari
+perangkat Anda.
+
+Syarat ini berlaku sejak tanggal Anda pertama kali menggunakan Aplikasi dan akan
+terus
+berlaku selama Akun Anda aktif, serta sepanjang diperlukan untuk menyelesaikan
+kewajiban yang belum selesai setelah Akun ditutup.
+
+2. Definisi
+
+
+ - Aplikasi — aplikasi seluler HERBALINDO untuk sistem operasi Android, termasuk
+ seluruh fitur dan layanannya.
+
+ - Member — pengguna terdaftar yang dapat berbelanja, mengumpulkan Poin, dan
+ mengajukan penarikan Saldo.
+
+ - Administrator (Admin) — pihak yang ditunjuk ALTOMEDIA untuk mengelola katalog
+ produk, memverifikasi pesanan dan pembayaran, memproses penarikan Saldo, serta
+ mengatur parameter operasional toko.
+
+ - Poin — satuan loyalitas non-tunai yang diperoleh dari check-in harian,
+ menonton iklan berhadiah, dan pembelian. Poin bukan alat pembayaran yang sah
+ dan tidak dapat dipindahtangankan.
+
+ - Saldo — nilai Rupiah hasil konversi Poin yang dapat diajukan untuk penarikan
+ sesuai ketentuan Bagian 7.
+
+ - Rewarded Ad (iklan berhadiah) — iklan video yang ditonton secara sukarela
+ untuk memperoleh Poin.
+
+ - QRIS — Quick Response Code Indonesian Standard, standar kode QR pembayaran
+ nasional yang diterbitkan oleh penyedia pembayaran.
+
+ - Order (Pesanan) — pesanan produk yang Anda buat melalui Aplikasi.
+
+ - Konten Pengguna — data atau materi yang Anda kirimkan melalui Aplikasi,
+ misalnya bukti pembayaran atau alamat pengiriman.
+
+3. Kelayakan Pengguna
+
+
+ - Anda harus berusia minimal 18 (delapan belas) tahun dan cakap hukum untuk
+ membuat Akun dan melakukan transaksi.
+
+ - Apabila Anda berusia di bawah 18 tahun, Anda hanya boleh menggunakan Aplikasi
+ dengan persetujuan dan pendampingan orang tua atau wali yang sah.
+
+ - Anda hanya diperbolehkan memiliki satu Akun untuk satu orang. Kepemilikan
+ beberapa Akun oleh satu orang dianggap pelanggaran terhadap Syarat ini.
+
+ - Anda wajib memberikan data yang benar, akurat, terkini, dan lengkap pada saat
+ mendaftar dan pada saat mengajukan penarikan Saldo.
+
+ - Anda tidak boleh menggunakan Aplikasi apabila Anda berada di wilayah
+ yurisdiksi yang melarang layanan serupa, atau apabila kami sebelumnya telah
+ menangguhkan atau menghentikan Akun Anda.
+
+4. Akun dan Keamanan
+
+4.1 Tanggung Jawab atas Akun
+
+Anda bertanggung jawab penuh atas kerahasiaan kredensial Akun Anda, termasuk
+alamat
+email dan kata sandi. Seluruh aktivitas yang terjadi melalui Akun Anda dianggap
+sebagai
+aktivitas Anda, kecuali Anda dapat membuktikan bahwa Akun Anda diakses tanpa
+kewenangan meskipun Anda telah berupaya menjaga keamanannya.
+
+4.2 Kewajiban Pengguna
+
+
+ - Menggunakan kata sandi yang kuat dan tidak membagikannya kepada siapa pun.
+
+ - Segera menghubungi kami apabila mengetahui atau menduga adanya akses tanpa
+ kewenangan terhadap Akun Anda.
+
+ - Tidak menjual, menyewakan, atau mengalihkan Akun Anda kepada pihak lain.
+
+ - Tidak menggunakan identitas palsu atau identitas orang lain tanpa izin.
+
+4.3 Hak Kami atas Akun
+
+Kami berhak menolak pembuatan Akun, menangguhkan Akun, atau menghentikan Akun
+apabila
+kami menemukan indikasi pelanggaran Syarat, kecurangan, atau aktivitas yang
+merugikan
+Pengguna lain maupun kami.
+
+5. Program Poin
+
+HERBALINDO menyelenggarakan program loyalitas berbasis Poin. Poin bukan
+merupakan alat
+pembayaran yang sah, tidak berbunga, dan tidak dapat dipindahtangankan kepada
+Akun lain.
+
+5.1 Cara Memperoleh Poin
+
+
+
+Sumber Poin | Ketentuan
+
+
+
+
+ Check-in harian | Satu kali per hari per Akun, dengan jumlah Poin yang
+ ditetapkan pada pengaturan sistem.
+
+
+
+ Menonton iklan berhadiah | Sukarela. Poin diberikan hanya bila iklan ditonton
+ sampai selesai dan server mencatat penyelesaiannya. Maksimum 20 (dua puluh)
+ iklan berhadiah per hari per Akun.
+
+
+
+ Pembelian produk | Poin diberikan setelah pembayaran pesanan berhasil
+ diverifikasi oleh Admin. Jumlah Poin mengikuti ketentuan Poin pada
+ masing-masing produk.
+
+
+
+ Bonus referral | Mengikuti ketentuan pada Bagian 6.
+
+
+
+5.2 Nilai Konversi Poin
+
+Nilai konversi Poin ke Rupiah adalah sebagai berikut:
+
+
+
+Poin | Nilai Rupiah
+
+
+
+1 Poin | Rp0,10 (sepuluh sen)
+
+10.000 Poin | Rp1.000 (seribu Rupiah)
+
+100.000 Poin | Rp10.000 (sepuluh ribu Rupiah)
+
+500.000 Poin | Rp50.000 (lima puluh ribu Rupiah)
+
+1.000.000 Poin | Rp100.000 (seratus ribu Rupiah)
+
+
+Nilai konversi di atas ditetapkan untuk periode berjalan. Kami dapat
+menyesuaikan
+parameter program Poin (termasuk besaran Poin per aktivitas) untuk periode
+berikutnya,
+dan perubahan tersebut akan kami informasikan melalui Aplikasi.
+
+5.3 Batasan Poin
+
+
+ - Poin tidak dapat dipindahtangankan, tidak dapat dijual, dan tidak dapat
+ diwariskan.
+
+ - Poin tidak dapat ditukar langsung dengan uang tunai, kecuali melalui
+ mekanisme penarikan Saldo sesuai Bagian 7.
+
+ - Poin yang diperoleh dari tindakan yang melanggar Syarat ini dapat dibatalkan,
+ ditarik kembali, atau hangus.
+
+ - Saldo Poin dan seluruh mutasinya dicatat oleh sistem kami dan merupakan
+ catatan yang berlaku sebagai acuan.
+
+6. Program Referral (Satu Tingkat)
+
+HERBALINDO menyelenggarakan program referral yang hanya satu tingkat.
+Kami tidak menyelenggarakan program berjenjang (multi-level marketing),
+tidak menerapkan sistem piramida, dan tidak memberikan komisi atas downline di
+bawah
+tingkat pertama.
+
+6.1 Cara Kerja
+
+ 1. Setiap Member memperoleh Kode Referral 6 (enam) digit yang dibuat oleh
+ sistem dan bersifat unik.
+
+ 2. Calon pengguna dapat memasukkan Kode Referral Anda pada saat mendaftar, atau
+ memindai/menggunakan tautan pendaftaran yang memuat kode tersebut.
+
+ 3. Hubungan referral tercatat secara permanen pada saat pendaftaran berhasil
+ dan tidak dapat diubah setelahnya.
+
+6.2 Syarat Bonus Referral
+
+Bonus referral baru dibayarkan kepada Anda apabila SELURUH syarat berikut
+terpenuhi:
+
+ 1. Anggota yang Anda referensikan mendaftar secara sah menggunakan Kode
+ Referral Anda;
+
+ 2. Anggota tersebut melakukan pembelian yang memenuhi syarat minimum sesuai
+ pengaturan sistem;
+
+ 3. Pembayaran atas pembelian tersebut berhasil diverifikasi oleh Admin;
+
+ 4. Tidak terdapat refund maupun pembatalan atas pesanan yang memenuhi syarat
+ tersebut.
+
+6.3 Larangan dalam Program Referral
+
+
+ - Self-referral — menggunakan Kode Referral milik diri sendiri atau membuat
+ Akun tambahan untuk memperoleh bonus dari diri sendiri.
+
+ - Membuat Akun palsu, Akun fiktif, atau Akun massal untuk tujuan memperoleh
+ bonus.
+
+ - Menawarkan imbalan uang atau bentuk lain kepada calon anggota yang tidak
+ sesuai dengan ketentuan program.
+
+ - Menggunakan bot, skrip, atau cara otomatis untuk mendaftarkan anggota.
+
+ - Melakukan manipulasi data, termasuk memalsukan bukti pembayaran.
+
+Konsekuensi. Pelanggaran atas ketentuan ini mengakibatkan pembatalan
+seluruh bonus referral yang belum dibayarkan, penarikan kembali (clawback) bonus
+yang
+telah dibayarkan, serta penangguhan atau penghentian Akun yang bersangkutan.
+
+7. Saldo dan Penarikan
+
+Poin yang Anda kumpulkan dapat dikonversi menjadi Saldo Rupiah dan diajukan
+untuk
+penarikan. Penarikan diproses secara manual oleh Admin melalui transfer bank
+atau
+dompet digital.
+
+7.1 Syarat Pengajuan Penarikan
+
+
+
+Ketentuan | Nilai
+
+
+
+Minimum penarikan | Rp50.000 (setara 500.000 Poin)
+
+Iklan berhadiah wajib ditonton pada hari yang sama | 20 (dua puluh) iklan
+
+Maksimum penarikan per hari | 1 (satu) kali per Akun
+
+Status Akun | Harus aktif dan tidak dalam keadaan ditangguhkan
+
+Nama pemilik rekening tujuan | Harus sama dengan nama pada Akun Anda
+
+
+7.2 Proses Penarikan
+
+ 1. Anda mengajukan permintaan penarikan melalui layar Saldo dan melengkapi data
+ metode, nomor rekening, serta nama pemilik rekening.
+
+ 2. Poin yang setara dengan nilai penarikan langsung didebit dari Saldo Poin
+ Anda pada saat pengajuan, agar saldo yang sama tidak dapat diajukan dua kali.
+
+ 3. Admin memverifikasi permintaan tersebut.
+
+ 4. Apabila disetujui, Admin melakukan transfer dana dan menandai permintaan
+ sebagai sudah dibayar.
+
+ 5. Apabila ditolak, Poin yang telah didebit akan dikembalikan ke Saldo Anda
+ beserta alasan penolakan.
+
+Waktu pemrosesan bergantung pada antrean verifikasi dan jam operasional Admin
+serta
+jam layanan bank atau penyedia dompet digital tujuan. Kami tidak menjamin
+penyelesaian
+dalam jangka waktu tertentu, namun kami berupaya memproses setiap permintaan
+yang sah
+sesegera mungkin.
+
+7.3 Biaya dan Tanggung Jawab
+
+
+ - Biaya transfer atau biaya layanan bank/dompet digital yang timbul dari
+ pengiriman Saldo menjadi tanggungan Anda dan dapat diperhitungkan dari nilai
+ penarikan.
+
+ - Kesalahan penulisan nomor rekening, nama pemilik, atau data tujuan penarikan
+ yang berada di luar kendali kami menjadi tanggung jawab Anda.
+
+ - Kami tidak bertanggung jawab atas keterlambatan atau kegagalan transfer yang
+ disebabkan oleh gangguan pada sistem bank, penyedia dompet digital, atau
+ jaringan pembayaran.
+
+ - Permintaan penarikan yang terbukti didasarkan pada Poin hasil kecurangan akan
+ dibatalkan dan Poin terkait dihapus.
+
+8. Perilaku yang Dilarang
+
+Anda dilarang, baik secara langsung maupun tidak langsung, melakukan hal-hal
+berikut:
+
+
+ - Memanipulasi Poin, Saldo, bonus referral, stok produk, status pesanan, atau
+ status penarikan dengan cara apa pun, termasuk menyalahgunakan kesalahan (bug)
+ sistem.
+
+ - Menggunakan otomatisasi, bot, skrip, emulator otomatis, atau cara tidak wajar
+ untuk menonton iklan berhadiah atau melakukan check-in.
+
+ - Menyalahgunakan mekanisme verifikasi pembayaran, termasuk mengunggah bukti
+ pembayaran palsu atau melakukan konfirmasi atas pembayaran yang tidak pernah
+ terjadi.
+
+ - Membuat beberapa Akun, atau menggunakan identitas orang lain tanpa izin.
+
+ - Merekayasa balik (reverse engineering), mendekompilasi, memodifikasi, atau
+ membuat versi turunan dari Aplikasi.
+
+ - Mengakses sistem kami dengan cara yang tidak sah, menguji kerentanan tanpa
+ izin tertulis, atau mengganggu ketersediaan layanan.
+
+ - Mengumpulkan data pengguna lain melalui Aplikasi dengan cara yang melanggar
+ hukum.
+
+ - Menggunakan Aplikasi untuk kegiatan yang melanggar hukum, termasuk pencucian
+ uang atau penipuan.
+
+Konsekuensi pelanggaran. Kami berhak menghapus Poin dan Saldo yang
+diperoleh secara tidak sah, membatalkan bonus referral, menolak pesanan,
+menangguhkan
+atau menghentikan Akun Anda, serta menempuh upaya hukum yang tersedia apabila
+diperlukan. Tindakan tersebut dapat kami lakukan tanpa pemberitahuan terlebih
+dahulu.
+
+9. Pemesanan dan Pembayaran
+
+9.1 Pemesanan
+
+
+ - Pesanan dibuat melalui fitur keranjang dan checkout pada Aplikasi.
+
+ - Pesanan dianggap sebagai permintaan pembelian dan baru mengikat setelah
+ pembayaran berhasil diverifikasi oleh Admin.
+
+ - Kami dapat menolak atau membatalkan pesanan apabila stok tidak tersedia,
+ harga keliru karena kesalahan sistem, atau terdapat indikasi kecurangan.
+
+9.2 Pembayaran melalui QRIS
+
+
+ - Pembayaran dilakukan dengan memindai kode QR QRIS yang ditampilkan Aplikasi
+ menggunakan aplikasi bank atau dompet digital Anda.
+
+ - Nominal yang harus dibayar ditampilkan secara tepat pada layar pembayaran.
+ Mohon pastikan nominal transfer sama persis dengan total pesanan agar
+ verifikasi dapat dilakukan.
+
+ - Layar pembayaran memiliki batas waktu. Apabila batas waktu terlewati, pesanan
+ dapat dibatalkan secara otomatis dan Anda perlu membuat pesanan baru.
+
+ - Setelah melakukan pembayaran, Anda melakukan konfirmasi pada Aplikasi agar
+ Admin dapat memverifikasi.
+
+ - Kami tidak menerima, tidak memproses, dan tidak menyimpan nomor kartu, PIN,
+ atau kata sandi perbankan Anda. Transaksi terjadi sepenuhnya di dalam aplikasi
+ bank atau dompet digital Anda.
+
+Verifikasi pembayaran dilakukan secara manual oleh Admin. Karena itu, status
+pesanan
+mungkin tidak langsung berubah setelah Anda melakukan pembayaran. Mohon bersabar
+dan
+simpan bukti pembayaran Anda sampai pesanan diproses.
+
+10. Pengiriman dan Ongkos Kirim
+
+
+ - Pengiriman dilakukan ke alamat yang Anda isikan pada saat pemesanan. Pastikan
+ alamat dan nomor telepon penerima sudah benar sebelum menyelesaikan pesanan.
+
+ - Ongkos kirim dihitung sesuai ketentuan yang berlaku pada saat pemesanan.
+ Apabila tersedia ketentuan gratis ongkos kirim untuk nilai belanja tertentu,
+ ketentuan tersebut akan ditampilkan pada Aplikasi.
+
+ - Pesanan diproses setelah pembayaran diverifikasi. Waktu pengiriman bergantung
+ pada jasa logistik dan lokasi tujuan.
+
+ - Risiko keterlambatan yang disebabkan oleh jasa logistik, cuaca, bencana, atau
+ keadaan di luar kendali kami berada di luar tanggung jawab kami.
+
+ - Apabila paket tidak dapat dikirim karena alamat yang tidak valid atau
+ penerima tidak dapat dihubungi, pesanan dapat dikembalikan dan biaya pengiriman
+ ulang menjadi tanggungan Anda.
+
+11. Pengembalian Dana, Refund, dan Pembatalan
+
+11.1 Pengajuan
+
+Permintaan pembatalan atau pengembalian dana dapat diajukan melalui kontak resmi
+kami
+dengan menyertakan nomor pesanan dan alasan yang jelas. Permintaan akan ditinjau
+oleh
+Admin secara individual.
+
+11.2 Akibat terhadap Poin dan Bonus Referral
+
+Apabila sebuah pesanan yang memenuhi syarat dibatalkan atau dikembalikan
+dananya, maka:
+
+
+ - Poin yang diperoleh dari pesanan tersebut ditarik kembali dari Saldo Anda.
+
+ - Apabila Poin tersebut telah dikonversi atau ditarik, kami berhak menyesuaikan
+ Saldo Anda pada mutasi berikutnya.
+
+ - Bonus referral yang telah dibayarkan atas dasar pesanan tersebut dibatalkan
+ (clawback), termasuk apabila bonus telah diterima oleh pemberi referral.
+
+11.3 Batasan
+
+
+ - Pengembalian dana tidak dapat dilakukan untuk produk yang telah dibuka,
+ digunakan, atau rusak akibat kelalaian Anda, kecuali produk tersebut diterima
+ dalam keadaan rusak atau tidak sesuai.
+
+ - Kami tidak bertanggung jawab atas kerugian tidak langsung, termasuk
+ kehilangan keuntungan, yang timbul dari pembatalan pesanan.
+
+ - Pembatalan tidak dapat dilakukan untuk pesanan yang sudah dalam proses
+ pengiriman, kecuali disetujui oleh Admin.
+
+12. Kekayaan Intelektual
+
+Seluruh hak kekayaan intelektual atas Aplikasi — termasuk namun tidak terbatas
+pada
+nama HERBALINDO, logo, ikon, desain antarmuka, tata letak, kode program, teks,
+gambar,
+grafik, dan basis data — dimiliki oleh ALTOMEDIA atau pemberi lisensinya dan
+dilindungi
+oleh hukum yang berlaku.
+
+Anda diberikan lisensi terbatas, tidak eksklusif, tidak dapat dialihkan, dan
+dapat
+dicabut untuk menggunakan Aplikasi semata-mata untuk keperluan pribadi dan bukan
+komersial, sesuai dengan Syarat ini. Anda tidak diperkenankan menyalin,
+memodifikasi,
+mendistribusikan, menjual, menyewakan, atau membuat karya turunan dari bagian
+mana pun
+dari Aplikasi tanpa izin tertulis dari kami.
+
+Dengan mengirimkan Konten Pengguna melalui Aplikasi, Anda memberikan kepada kami
+lisensi non-eksklusif untuk menggunakan, menyimpan, dan memproses konten
+tersebut
+sejauh diperlukan untuk menjalankan layanan, misalnya untuk memverifikasi
+pembayaran
+atau memproses pengiriman.
+
+13. Penafian dan Batasan Tanggung Jawab
+
+13.1 Penafian Medis
+
+Produk herbal yang dijual di HERBALINDO bukan obat. Produk tersebut
+merupakan suplemen atau bahan alami yang tidak dimaksudkan untuk mendiagnosis,
+mengobati, menyembuhkan, atau mencegah penyakit apa pun. Informasi produk yang
+ditampilkan pada Aplikasi bersifat informatif dan bukan nasihat medis. Selalu
+konsultasikan kondisi kesehatan Anda dengan dokter atau tenaga kesehatan
+profesional
+sebelum mengonsumsi produk herbal, khususnya apabila Anda sedang hamil,
+menyusui,
+sedang menjalani pengobatan, atau memiliki kondisi medis tertentu. Hasil yang
+diperoleh
+setiap orang dapat berbeda dan tidak dijamin.
+
+13.2 Penafian Umum
+
+Aplikasi dan seluruh layanannya disediakan "sebagaimana adanya" (as is) dan
+"sebagaimana tersedia" (as available). Kami tidak menjamin bahwa Aplikasi akan
+selalu tersedia tanpa gangguan, bebas dari kesalahan, atau bebas dari komponen
+berbahaya.
+
+13.3 Batasan Tanggung Jawab
+
+Sejauh diizinkan oleh hukum yang berlaku, kami tidak bertanggung jawab atas
+kerugian
+tidak langsung, insidental, khusus, konsekuensial, atau hukuman, termasuk
+kehilangan
+keuntungan, kehilangan data, atau kehilangan kesempatan, yang timbul dari atau
+berkaitan dengan penggunaan Aplikasi.
+
+Tanggung jawab kami secara keseluruhan atas klaim apa pun yang berkaitan dengan
+Aplikasi dibatasi pada jumlah yang telah Anda bayarkan kepada kami dalam
+3 (tiga) bulan terakhir sebelum timbulnya klaim, atau Rp250.000
+(dua ratus lima puluh ribu Rupiah), mana yang lebih rendah.
+
+Pembatasan ini tidak berlaku untuk hal-hal yang secara tegas tidak dapat
+dikecualikan
+menurut hukum yang berlaku.
+
+14. Keadaan Memaksa
+
+Kami tidak dianggap lalai atau melanggar Syarat ini apabila kegagalan atau
+keterlambatan
+pelaksanaan kewajiban kami disebabkan oleh keadaan di luar kendali kami yang
+wajar,
+termasuk namun tidak terbatas pada bencana alam, wabah penyakit, perang,
+kerusuhan,
+kebijakan pemerintah, pemadaman listrik, gangguan jaringan telekomunikasi,
+kegagalan
+layanan pihak ketiga (termasuk penyedia backend, penyedia iklan, sistem
+perbankan, dan
+jasa logistik), serta tindakan peretasan atau serangan siber.
+
+Dalam hal terjadi keadaan memaksa, kami akan berupaya memberitahukan situasi
+tersebut
+melalui Aplikasi dan melanjutkan pelaksanaan kewajiban kami sesegera mungkin
+setelah
+keadaan tersebut berakhir.
+
+15. Penangguhan dan Penghentian Akun
+
+15.1 Hak Anda untuk Berhenti
+
+Anda dapat berhenti menggunakan Aplikasi kapan saja. Anda juga dapat mengajukan
+penghapusan Akun melalui kontak resmi kami. Ketentuan mengenai akibat
+penghapusan Akun
+diuraikan pada Kebijakan Privasi Bagian 11.
+
+15.2 Hak Kami untuk Menangguhkan atau Menghentikan
+
+Kami dapat menangguhkan atau menghentikan Akun Anda, dengan atau tanpa
+pemberitahuan
+terlebih dahulu, apabila:
+
+
+ - Anda melanggar Syarat ini, termasuk ketentuan Bagian 8 tentang perilaku yang
+ dilarang;
+
+ - Terdapat indikasi kecurangan atau penyalahgunaan sistem Poin, Saldo, atau
+ referral;
+
+ - Data yang Anda berikan terbukti tidak benar, tidak valid, atau milik orang
+ lain;
+
+ - Kami diwajibkan melakukannya oleh hukum atau perintah pihak berwenang;
+
+ - Akun Anda tidak aktif dalam jangka waktu yang lama dan diperlukan penataan
+ data.
+
+15.3 Akibat Penghentian
+
+Pada saat Akun dihentikan, hak Anda untuk mengakses Aplikasi berakhir. Poin,
+Saldo yang
+belum ditarik, dan hak atas bonus referral yang terkait dengan pelanggaran dapat
+hangus.
+Kami tetap berhak menuntut penyelesaian kewajiban yang timbul sebelum
+penghentian.
+
+16. Penyelesaian Sengketa dan Hukum yang Berlaku
+
+Syarat ini diatur dan ditafsirkan berdasarkan hukum Republik Indonesia. Apabila
+timbul
+perselisihan sehubungan dengan Syarat ini atau penggunaan Aplikasi, para pihak
+sepakat
+untuk terlebih dahulu menyelesaikannya secara musyawarah dalam semangat itikad
+baik
+dalam jangka waktu 30 (tiga puluh) hari sejak perselisihan diberitahukan
+secara tertulis.
+
+Apabila penyelesaian secara musyawarah tidak tercapai, para pihak sepakat untuk
+menyelesaikan perselisihan melalui pengadilan yang berwenang di Indonesia, tanpa
+mengurangi hak Anda untuk menyampaikan pengaduan kepada lembaga perlindungan
+konsumen
+yang berwenang.
+
+16.1 Keluhan Konsumen
+
+Keluhan terkait produk, pesanan, pembayaran, atau penarikan Saldo dapat
+disampaikan
+melalui kontak resmi kami. Kami berupaya menanggapi setiap keluhan dalam waktu
+paling
+lambat 7 (tujuh) hari kerja.
+
+17. Perubahan Syarat
+
+Kami dapat mengubah Syarat ini dari waktu ke waktu untuk menyesuaikan dengan
+perubahan
+fitur Aplikasi, kebijakan internal, atau ketentuan hukum. Setiap perubahan akan
+kami
+tandai dengan tanggal "Terakhir diperbarui" pada bagian atas halaman ini.
+
+Apabila terjadi perubahan yang bersifat material, kami akan memberitahukannya
+melalui
+Aplikasi atau email yang terdaftar pada Akun Anda. Dengan terus menggunakan
+Aplikasi
+setelah tanggal berlaku perubahan, Anda dianggap menyetujui Syarat yang telah
+diperbarui. Apabila Anda tidak menyetujui perubahan tersebut, Anda berhak
+berhenti
+menggunakan Aplikasi dan menghapus Akun Anda.
+
+18. Kontak
+
+Untuk pertanyaan, keluhan, atau permintaan terkait Syarat ini, silakan
+menghubungi:
+
+
+ - Pengembang: ALTOMEDIA
+
+ - Aplikasi: HERBALINDO (com.altomedia.herbalindo)
+
+ - Email: altomediaindonesia@gmail.com
+
+
+
+
+© 2026 ALTOMEDIA. HERBALINDO adalah aplikasi produk herbal diet dengan program
+poin dan referral satu tingkat. Produk yang dijual bukan obat dan tidak
+dimaksudkan untuk mengobati penyakit.
+
+
+Dokumen terkait: Kebijakan Privasi · Syarat dan Ketentuan
+ ↑ Kembali ke atas

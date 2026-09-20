@@ -1,0 +1,302 @@
+================================================================================
+                    HERBALINDO — CATATAN RILIS (RELEASE NOTES)
+================================================================================
+Paket Aplikasi : com.altomedia.herbalindo
+Pengembang     : ALTOMEDIA
+Kontak         : altomediaindonesia@gmail.com
+Berkas ini     : ALTOMEDIA/playstore/RELEASE_NOTES.txt
+
+--------------------------------------------------------------------------------
+CARA BERKAS INI DIKELOLA (WAJIB DIBACA SEBELUM MENAMBAH CATATAN)
+--------------------------------------------------------------------------------
+1. Berkas ini adalah changelog berjalan (running changelog). Setiap kali ada
+   build baru yang dirilis, blok catatan baru ditambahkan DI BAGIAN PALING ATAS,
+   tepat di bawah blok header ini. Build terbaru selalu berada paling atas,
+   sehingga pembaca langsung melihat versi terkini tanpa menggulir.
+2. Satu versi = satu blok. Jangan menggabungkan dua versi ke dalam satu blok,
+   dan jangan menyunting blok versi lama yang sudah dirilis (kecuali untuk
+   memperbaiki salah ketik yang jelas; perubahan isi wajib dicatat sebagai
+   revisi pada versi baru).
+3. Setiap blok wajib memakai urutan subbagian yang sama seperti contoh v1.0.0 di
+   bawah: Rilis Perdana/Pembaruan, Fitur Utama, Perbaikan & Kualitas, Keamanan,
+   Kompatibilitas, Catatan Teknis, dan Artefak Rilis.
+4. Nilai versionCode WAJIB naik satu angka pada setiap build yang diunggah ke
+   Google Play. versionName boleh tetap bila hanya memperbaiki bug kecil, tetapi
+   versionCode tidak boleh diulang.
+5. Nama berkas artefak mengikuti pola yang dipakai di repo ini (lihat bagian
+   Artefak Rilis). Tulis nama berkas persis seperti yang dihasilkan Gradle.
+6. Setelah blok baru ditambahkan, perbarui pula isi "Catatan Rilis" pada halaman
+   listing Google Play Console agar isinya konsisten dengan berkas ini.
+7. Format template terbaru selalu tersedia di bagian PALING BAWAH berkas ini
+   pada judul "TEMPLATE CATATAN RILIS BERIKUTNYA". Salin template tersebut,
+   jangan mengarang struktur baru.
+8. Gunakan Bahasa Indonesia yang jelas. Tulis hanya hal yang benar-benar ada di
+   build tersebut. Dilarang menulis fitur yang belum dirilis atau menyalin
+   catatan versi lama tanpa penyesuaian.
+
+================================================================================
+VERSI 1.0.0 — 20 SEPTEMBER 2026
+================================================================================
+versionName    : 1.0.0
+versionCode    : 1
+Tanggal rilis   : 20 September 2026
+Saluran         : Rilis produksi (Google Play + APK distribusi langsung)
+Status          : Rilis perdana (initial public release)
+
+--------------------------------------------------------------------------------
+RILIS PERDANA
+--------------------------------------------------------------------------------
+HERBALINDO versi 1.0.0 adalah rilis publik pertama. Ini adalah aplikasi Android
+yang menggabungkan toko produk herbal diet alami, program member dengan sistem
+poin, referral satu tingkat, saldo Rupiah, penarikan saldo (withdrawal), iklan
+rewarded, dan panel admin — semuanya berada dalam SATU aplikasi yang sama.
+Rilis ini sudah lolos audit internal untuk kebersihan manifes, keamanan aturan
+basis data, dan kesiapan persyaratan Google Play.
+
+--------------------------------------------------------------------------------
+FITUR UTAMA
+--------------------------------------------------------------------------------
+A. Toko & Belanja
+   - Katalog produk herbal diet alami dengan foto, deskripsi, komposisi, cara
+     pemakaian, peringatan, harga normal, harga promo, berat, dan SKU.
+   - Halaman detail produk lengkap dengan informasi komposisi dan peringatan
+     penggunaan agar pembeli tahu persis apa yang dibelinya.
+   - Keranjang belanja (cart) yang dapat diubah jumlahnya sebelum checkout.
+   - Alur checkout dengan perhitungan ongkos kirim dan total pesanan.
+   - Status pesanan yang dikelola oleh server, bukan oleh aplikasi.
+
+B. Pembayaran QRIS
+   - Pembayaran memakai QRIS dinamis yang di-render langsung di perangkat
+     menggunakan pustaka ZXing (Google ZXing core 3.5.3).
+   - Kode QR memuat nominal TEPAT sesuai total pesanan, sehingga pembeli tidak
+     perlu mengetik jumlah manual dan tidak ada risiko salah nominal.
+   - Kode QR berlaku 15 menit. Setelah kedaluwarsa, pembeli membuat ulang kode.
+   - Alur verifikasi berlapis: member menekan konfirmasi setelah membayar,
+     kemudian admin memverifikasi bukti pembayaran sebelum pesanan diproses.
+     Verifikasi manual ini melindungi member dari pesanan yang tidak sah dan
+     melindungi penjual dari klaim pembayaran palsu.
+
+C. Program Member & Poin
+   - Poin harian dari check-in harian.
+   - Poin dari iklan rewarded (maksimal 20 iklan per hari per member).
+   - Poin dari pembelian produk.
+   - Konversi poin ke Rupiah: 10.000 poin = Rp1.000.
+     Setara dengan: 1 poin = Rp0,10; 100.000 poin = Rp10.000;
+     500.000 poin = Rp50.000; 1.000.000 poin = Rp100.000.
+   - Buku besar poin (points ledger) yang mencatat setiap penambahan dan
+     pengurangan poin beserta keterangannya, sehingga saldo selalu dapat
+     ditelusuri.
+
+D. Saldo & Withdrawal
+   - Saldo Rupiah yang berasal dari poin yang dikonversi.
+   - Minimum penarikan Rp50.000.
+   - Syarat penarikan: menyelesaikan 20 iklan rewarded pada hari yang sama.
+   - Maksimal 1 pengajuan penarikan per hari.
+   - Admin memverifikasi dan mentransfer dana secara manual.
+
+E. Referral Satu Tingkat (Bukan MLM)
+   - Undangan hanya satu tingkat: pengundang langsung → member yang diundang.
+   - Tidak ada upline/downline berantai dan tidak ada bonus berjenjang.
+   - Bonus referral hanya dikreditkan setelah seluruh syarat terpenuhi:
+     pendaftaran valid, pembelian yang memenuhi syarat, pembayaran berhasil,
+     dan tidak ada pembatalan/refund yang menggugurkan bonus.
+
+F. Panel Admin (di dalam aplikasi yang sama)
+   - Dashboard ringkasan.
+   - Manajemen member.
+   - Manajemen produk (tambah, ubah, aktif/nonaktifkan).
+   - Manajemen pesanan.
+   - Manajemen penarikan (setujui / tolak / bayar).
+   - Pengaturan aplikasi (poin check-in, poin per iklan, bonus referral,
+     minimum penarikan, biaya kirim, dan lain-lain).
+   - Audit log: setiap tindakan admin tercatat (misalnya PROCESS_WITHDRAWAL dan
+     ADJUST_POINTS) beserta nilai, alasan, dan identitas admin.
+
+G. Iklan
+   - Banner AdMob pada layar yang sesuai.
+   - Rewarded video AdMob yang memberi poin hanya setelah SDK iklan
+     mengonfirmasi bahwa iklan benar-benar selesai ditonton.
+
+--------------------------------------------------------------------------------
+PERBAIKAN & KUALITAS
+--------------------------------------------------------------------------------
+1. Perbaikan bug manifes yang bersifat fatal (build blocker). Sebelum perbaikan,
+   AndroidManifest.xml mendeklarasikan 7 activity "hantu" yang tidak pernah
+   diimplementasikan (OrderHistory, OrderDetail, Withdrawal, PointsLedger,
+   Referral, Legal, dan QrisPayment), sementara PaymentActivity — layar yang
+   benar-benar dibuka oleh CheckoutActivity — justru TIDAK terdaftar. Pada build
+   lama, menyelesaikan pembelian akan melempar ActivityNotFoundException dan
+   transaksi gagal di ujung alur. Pada v1.0.0 manifes sudah disamakan dengan
+   activity yang benar-benar ada, dan PaymentActivity kini terdaftar resmi.
+2. Manifest dibersihkan dari deklarasi mati sehingga ukuran aplikasi lebih ramping
+   dan permukaan serangan menyusut (tidak ada komponen yang bisa dipanggil tanpa
+   implementasi).
+3. Rilis production memakai R8 (isMinifyEnabled = true) dan resource shrinking
+   (isShrinkResources = true) dengan proguard-rules.pro yang telah disesuaikan.
+4. Lint dijalankan pada setiap build. Peringatan yang tidak relevan dengan
+   fungsional tidak dijadikan penghalang rilis di rilis perdana ini.
+5. Pemuatan gambar produk memakai Glide dengan cache disk agar daftar produk
+   tetap lancar saat digulir, termasuk pada koneksi yang lambat.
+6. Pengambilan ulang iklan memakai jeda backoff singkat (5 detik) agar koneksi
+   lemah tidak membuat antarmuka macet.
+
+--------------------------------------------------------------------------------
+KEAMANAN
+--------------------------------------------------------------------------------
+1. SEMUA field bernilai (value field) — poin, saldo, status pesanan, stok, status
+   penarikan, bonus referral, dan role — HANYA ditulis oleh Cloud Functions yang
+   berjalan memakai Admin SDK. Aplikasi klien tidak pernah menulis field tersebut.
+2. Firestore Security Rules menolak penulisan dari klien:
+   - /users/{userId} → klien hanya boleh membaca miliknya sendiri; pembuatan
+     dokumen ditolak (dibuat oleh fungsi registerProfile); perubahan dibatasi
+     pada field kontak dan wajib mempertahankan nilai points, balance, role,
+     referralId, status, dan verified (fungsi valueFieldsUnchanged()).
+   - /orders, /order_items, /payments, /points_ledger, /referrals, /ad_rewards,
+     /daily_tasks, /withdrawals → allow write: if false (hanya backend).
+   - /products → hanya baca; tulis hanya lewat Cloud Functions.
+   - /admin_logs dan /stock_movements → hanya admin yang boleh membaca; tulis
+     hanya backend.
+   - Aturan default menolak (default deny) untuk seluruh path yang tidak cocok.
+3. Konsekuensinya, APK yang dimodifikasi tetap tidak dapat "mencetak" poin,
+   mengubah saldo, atau menyetujui penarikan sendiri, karena server akan menolak.
+4. Referral ID dibangkitkan server sebagai tepat 6 digit angka, unik, dan tidak
+   dapat diubah oleh member.
+5. Validasi sisi server: seluruh aturan penarikan (minimum saldo, 20 iklan
+   rewarded hari itu, akun aktif, satu pengajuan per hari) diperiksa ulang di
+   Cloud Function, bukan hanya di aplikasi.
+6. Poin dipotong segera saat pengajuan penarikan dibuat, sehingga saldo yang sama
+   tidak dapat ditarik dua kali. Bila penarikan ditolak, poin dikembalikan dan
+   dicatat di buku besar.
+7. Tidak ada cleartext traffic (android:usesCleartextTraffic="false") dan
+   aplikasi memakai network_security_config.
+8. android:allowBackup="false" dan fullBackupContent dinonaktifkan agar data
+   autentikasi tidak ikut tercadang di luar perangkat.
+9. Kunci rilis ALTOMEDIA.jks tidak disertakan ke dalam repositori (diabaikan oleh
+   .gitignore).
+
+--------------------------------------------------------------------------------
+KOMPATIBILITAS
+--------------------------------------------------------------------------------
+- minSdk 21 (Android 5.0 Lollipop) — aplikasi dapat dipasang pada perangkat lama
+  yang masih banyak dipakai di Indonesia.
+- targetSdk 36 (Android 16) — memenuhi persyaratan target API Google Play saat
+  rilis ini dibuat.
+- compileSdk 36, Java/JVM target 17 dengan core library desugaring aktif.
+- Orientasi layar portrait dan dukungan RTL dinonaktifkan sesuai desain.
+- Konfigurasi sumber daya dibatasi untuk bahasa "in" (Indonesia) dan "en".
+- Firebase Auth versi 22.3.1 dan AdMob play-services-ads 23.6.0 dipilih karena
+  masih mendukung minSdk 21 (versi yang lebih baru menaikkan batas minimum API).
+
+--------------------------------------------------------------------------------
+CATATAN TEKNIS
+--------------------------------------------------------------------------------
+- Bahasa & kerangka: Kotlin.
+- Build: Android Gradle Plugin 8.11.1, Kotlin 2.1.21, Google Services 4.4.2.
+- UI: Material 3 (com.google.android.material 1.12.0), ViewBinding aktif.
+- Pustaka Jetpack: core-ktx, appcompat, constraintlayout, recyclerview,
+  swiperefreshlayout, fragment-ktx, lifecycle (viewmodel, livedata, runtime).
+- Asinkron: Kotlin Coroutines 1.9.0 (+ coroutines-play-services).
+- Backend: Google Firebase.
+  * Authentication: email/password.
+  * Cloud Firestore: basis data utama.
+  * Cloud Functions: region asia-southeast2 (Jakarta).
+  * Cloud Storage: penyimpanan berkas.
+- Iklan: Google AdMob — banner dan rewarded video.
+- Pembayaran: QRIS dinamis via ZXing (kode QR memuat total pesanan, berlaku
+  15 menit).
+- Tanda tangan rilis: keystore ALTOMEDIA.jks, alias "kdsmedia", masa berlaku
+  10000 hari.
+- Konfigurasi Play Store:
+  * minSdk 21 / targetSdk 36.
+  * AAB untuk unggahan Google Play.
+  * APK untuk distribusi/pemasangan langsung.
+  * R8 minify + resource shrinking aktif.
+  * Tanpa cleartext traffic.
+  * Izin AD_ID (com.google.android.gms.permission.AD_ID) dideklarasikan.
+  * Formulir Keamanan Data (Data Safety) wajib diisi di Play Console.
+- Izin yang diminta: INTERNET, ACCESS_NETWORK_STATE, VIBRATE, AD_ID.
+
+--------------------------------------------------------------------------------
+ARTEFAK RILIS
+--------------------------------------------------------------------------------
+APK (distribusi langsung) : app-release.apk
+AAB (Google Play)         : app-release.aab
+Lokasi hasil build (Gradle):
+  app/build/outputs/apk/release/app-release.apk
+  app/build/outputs/bundle/release/app-release.aab
+Catatan: kedua artefak di atas ditandatangani dengan kunci rilis ALTOMEDIA
+(alias kdsmedia). Simpan dan cadangkan ALTOMEDIA.jks beserta kata sandinya di
+tempat aman — kehilangan kunci ini membuat aplikasi tidak dapat diperbarui lagi
+di Google Play.
+
+================================================================================
+                           AKHIR CATATAN VERSI 1.0.0
+================================================================================
+
+
+================================================================================
+TEMPLATE CATATAN RILIS BERIKUTNYA (SALIN FORMAT INI UNTUK v1.0.1 DAN SETERUSNYA)
+================================================================================
+Tambahkan blok baru DI ATAS blok v1.0.0 (tepat di bawah blok header "CARA BERKAS
+INI DIKELOLA"), lalu isi setiap subbagian. Hapus subbagian yang benar-benar tidak
+ada perubahannya dengan menulis "Tidak ada perubahan pada versi ini." — jangan
+mengosongkan subbagian tanpa keterangan.
+
+================================================================================
+VERSI 1.0.1 — <TANGGAL RILIS, contoh: 5 Oktober 2026>
+================================================================================
+versionName    : 1.0.1
+versionCode    : 2
+Tanggal rilis   : <tanggal>
+Saluran         : <Rilis produksi / Rilis beta / Uji internal>
+Status          : <Pembaruan pemeliharaan / Pembaruan fitur / Perbaikan bug>
+
+--------------------------------------------------------------------------------
+RINGKASAN PEMBARUAN
+--------------------------------------------------------------------------------
+<Tulis 2-4 kalimat: apa yang berubah pada versi ini dan mengapa perubahan itu
+dilakukan. Contoh: "Versi ini memperbaiki kegagalan memuat produk saat koneksi
+terputus dan menambahkan konfirmasi ganda sebelum pengajuan penarikan.">
+
+--------------------------------------------------------------------------------
+FITUR BARU / PERUBAHAN
+--------------------------------------------------------------------------------
+1. <Fitur atau perubahan pertama. Sebutkan layar/fungsi yang terdampak.>
+2. <Fitur atau perubahan kedua.>
+3. <Tambahkan atau kurangi nomor sesuai kebutuhan.>
+
+--------------------------------------------------------------------------------
+PERBAIKAN & KUALITAS
+--------------------------------------------------------------------------------
+1. <Bug yang diperbaiki. Jelaskan gejala sebelum perbaikan dan hasil sesudahnya.>
+2. <Perbaikan stabilitas, kinerja, atau tampilan lainnya.>
+
+--------------------------------------------------------------------------------
+KEAMANAN
+--------------------------------------------------------------------------------
+1. <Perubahan aturan Firestore, validasi Cloud Functions, atau penanganan sesi.>
+2. <Bila tidak ada perubahan: "Tidak ada perubahan pada versi ini.">
+
+--------------------------------------------------------------------------------
+KOMPATIBILITAS
+--------------------------------------------------------------------------------
+- minSdk : 21 (Android 5.0 Lollipop)
+- targetSdk : 36 (Android 16)
+- <Catatan tambahan bila ada perubahan kompatibilitas perangkat atau pustaka.>
+
+--------------------------------------------------------------------------------
+CATATAN TEKNIS
+--------------------------------------------------------------------------------
+- <Perubahan versi pustaka, konfigurasi Gradle, R8/ProGuard, atau konfigurasi
+  Firebase yang relevan.>
+- <Catatan proses build atau deployment Cloud Functions.>
+
+--------------------------------------------------------------------------------
+ARTEFAK RILIS
+--------------------------------------------------------------------------------
+APK (distribusi langsung) : app-release.apk
+AAB (Google Play)         : app-release.aab
+versionCode artefak        : <angka versionCode pada build ini>
+================================================================================
+                           AKHIR CATATAN VERSI 1.0.1
+================================================================================

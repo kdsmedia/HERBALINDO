@@ -1,0 +1,694 @@
+================================================================================
+                               KEBIJAKAN PRIVASI                                
+                         HERBALINDO — KEBIJAKAN PRIVASI                         
+                             Pengembang: ALTOMEDIA                              
+                      Kontak: altomediaindonesia@gmail.com                      
+                        Paket: com.altomedia.herbalindo                         
+                     Terakhir diperbarui: 20 September 2026                     
+================================================================================
+
+Berkas ini dihasilkan dari privacy-policy.html oleh tools/gen_legal_txt.py.
+Versi resmi yang berlaku adalah halaman HTML pada GitHub Pages.
+Jangan sunting berkas ini secara langsung; sunting berkas HTML-nya.
+
+🌿
+
+
+HERBALINDO
+
+
+
+
+Kebijakan Privasi
+ Terakhir diperbarui: 20 September 2026
+
+
+
+
+Daftar Isi
+
+
+ 1. Pendahuluan dan Ruang Lingkup
+
+ 2. Definisi
+
+ 3. Informasi yang Kami Kumpulkan
+
+ 4. Dasar Hukum dan Tujuan Pemrosesan
+
+ 5. Cara Kami Mengumpulkan Data
+
+ 6. Berbagi Data dengan Pihak Ketiga
+
+ 7. Iklan dan Identitas Periklanan
+
+ 8. Cookie dan Teknologi Serupa
+
+ 9. Penyimpanan dan Retensi Data
+
+ 10. Keamanan Data
+
+ 11. Hak Anda sebagai Pengguna
+
+ 12. Data Anak-anak dan Batas Usia
+
+ 13. Transfer Data Internasional
+
+ 14. Perubahan Kebijakan Ini
+
+ 15. Hubungi Kami
+
+ 16. Ringkasan Bahasa Sederhana
+
+1. Pendahuluan dan Ruang Lingkup
+
+Selamat datang di HERBALINDO. Kebijakan Privasi ini ("Kebijakan") menjelaskan
+bagaimana ALTOMEDIA ("kami", "milik kami", atau "Pengembang") mengumpulkan,
+menggunakan, menyimpan, membagikan, dan melindungi informasi pribadi Anda ketika
+Anda
+menggunakan aplikasi seluler HERBALINDO dengan nama paket
+com.altomedia.herbalindo ("Aplikasi"), termasuk seluruh fitur di dalamnya
+seperti katalog produk herbal, keranjang belanja, pembayaran QRIS, program poin,
+program
+referral, saldo Rupiah, penarikan saldo, tugas harian, serta iklan berhadiah.
+
+Kebijakan ini berlaku untuk semua orang yang mengunduh, memasang, mengakses,
+atau
+menggunakan Aplikasi, baik sebagai Member biasa maupun sebagai Administrator.
+Dengan
+membuat akun atau menggunakan Aplikasi, Anda menyatakan bahwa Anda telah
+membaca,
+memahami, dan menyetujui praktik yang dijelaskan dalam Kebijakan ini.
+
+Aplikasi HERBALINDO adalah aplikasi e-commerce produk herbal diet yang
+menyelenggarakan
+program loyalitas berbasis poin dan saldo. Karena Aplikasi memproses data
+transaksi
+keuangan, identitas pengiriman, dan data rekening penarikan, kami berkomitmen
+untuk
+mengelola data tersebut secara transparan dan sesuai dengan peraturan
+perundang-undangan
+yang berlaku di Republik Indonesia, termasuk Undang-Undang Nomor 27 Tahun 2022
+tentang
+Pelindungan Data Pribadi (UU PDP), serta ketentuan Google Play terkait Data
+Safety.
+
+Catatan penting: Kebijakan ini hanya mengatur data yang kami proses sebagai
+pengendali data. Layanan pihak ketiga yang Anda akses dari Aplikasi (misalnya
+aplikasi
+bank atau dompet digital Anda saat memindai kode QRIS) memiliki kebijakan
+privasi
+tersendiri yang berada di luar kendali kami.
+
+2. Definisi
+
+
+ - Aplikasi — aplikasi seluler HERBALINDO untuk sistem operasi Android.
+
+ - Akun — kumpulan data identitas dan kredensial yang memungkinkan Anda masuk ke
+ Aplikasi.
+
+ - Data Pribadi — data tentang orang perseorangan yang teridentifikasi atau
+ dapat diidentifikasi.
+
+ - Member — pengguna terdaftar yang berbelanja dan/atau mengikuti program poin
+ dan referral.
+
+ - Administrator (Admin) — pengguna dengan peran khusus yang mengelola produk,
+ pesanan, penarikan saldo, dan pengaturan toko.
+
+ - Poin — satuan loyalitas non-tunai yang diperoleh dari check-in harian,
+ menonton iklan berhadiah, dan pembelian. Poin tidak dapat dipindahtangankan.
+
+ - Saldo — nilai Rupiah hasil konversi poin yang dapat ditarik melalui
+ permintaan penarikan.
+
+ - Rewarded Ad (iklan berhadiah) — iklan video berdurasi tertentu yang, setelah
+ ditonton sampai selesai, memberi Poin kepada Member.
+
+ - QRIS — Quick Response Code Indonesian Standard, standar kode QR pembayaran
+ nasional yang diterbitkan oleh penyedia pembayaran.
+
+ - Pengendali Data — pihak yang menentukan tujuan dan cara pemrosesan Data
+ Pribadi, dalam hal ini ALTOMEDIA.
+
+ - Layanan Backend — layanan Google Firebase (Authentication, Cloud Firestore,
+ Cloud Functions, Cloud Storage) yang kami gunakan sebagai infrastruktur teknis.
+
+3. Informasi yang Kami Kumpulkan
+
+Kami hanya mengumpulkan data yang benar-benar diperlukan untuk menjalankan
+Aplikasi.
+Kami tidak mengumpulkan data biometrik, tidak mengakses kontak Anda, tidak
+merekam
+suara, dan tidak membaca pesan singkat Anda.
+
+3.1 Data Identitas dan Kontak
+
+
+ - Nama lengkap atau nama tampilan yang Anda daftarkan.
+
+ - Alamat email yang Anda gunakan untuk masuk.
+
+ - Nomor telepon seluler Anda.
+
+ - Kata sandi — kami tidak pernah melihat atau menyimpan kata sandi dalam bentuk
+ teks biasa. Kata sandi dikelola dan disimpan dalam bentuk hash oleh Firebase
+ Authentication.
+
+ - Alamat pengiriman barang, termasuk nama penerima, nomor telepon penerima, dan
+ alamat lengkap.
+
+3.2 Data Transaksi dan Pesanan
+
+
+ - Riwayat pesanan: produk yang dibeli, jumlah, harga satuan, total belanja,
+ ongkos kirim, dan status pesanan.
+
+ - Riwayat konfirmasi pembayaran, termasuk waktu konfirmasi dan bukti pembayaran
+ yang Anda unggah (jika ada).
+
+ - Riwayat pengembalian dana (refund) dan pembatalan pesanan.
+
+3.3 Data Program Loyalitas
+
+
+ - Saldo Poin dan seluruh mutasi poin (ledger), termasuk alasan setiap mutasi
+ seperti check-in, menonton iklan, pembelian, referral, penarikan, atau
+ penyesuaian manual oleh Admin.
+
+ - Kode referral 6 (enam) digit milik Anda, serta identitas Member yang
+ mendaftar menggunakan kode referral Anda (khusus untuk perhitungan bonus
+ referral satu tingkat).
+
+ - Riwayat tugas harian, termasuk jumlah iklan berhadiah yang telah Anda tonton
+ pada hari tertentu.
+
+3.4 Data Penarikan Saldo
+
+
+ - Jumlah Rupiah yang diminta untuk ditarik.
+
+ - Metode penarikan (misalnya bank atau dompet digital), nama bank atau penyedia
+ dompet digital.
+
+ - Nomor rekening atau nomor dompet digital tujuan penarikan.
+
+ - Nama pemilik rekening sebagaimana tercatat pada rekening tersebut.
+
+ - Status permintaan penarikan (menunggu, disetujui, ditolak, atau sudah
+ dibayar) beserta catatan Admin.
+
+Nomor rekening yang Anda simpan hanya digunakan untuk keperluan transfer saldo
+penarikan
+dan tidak pernah kami tampilkan secara utuh pada antarmuka umum. Pada layar
+tertentu,
+nomor rekening ditampilkan dalam bentuk tersamarkan.
+
+3.5 Data Teknis dan Perangkat
+
+
+ - Model perangkat, versi sistem operasi Android, dan versi Aplikasi.
+
+ - Pengenal instalasi aplikasi dan token perangkat untuk keperluan notifikasi
+ (jika diaktifkan).
+
+ - Alamat Protokol Internet (IP) yang digunakan saat Aplikasi berkomunikasi
+ dengan server.
+
+ - Catatan kesalahan (crash log) dan diagnostik teknis, apabila Anda atau sistem
+ kami mengaktifkannya.
+
+3.6 Data Periklanan
+
+
+ - Advertising ID (AD_ID) perangkat Android, yaitu pengenal yang dapat diatur
+ ulang (reset) oleh Anda, yang digunakan oleh Google AdMob untuk menayangkan dan
+ mengukur iklan.
+
+ - Data interaksi iklan agregat, seperti jumlah penayangan dan penyelesaian
+ iklan berhadiah.
+
+Kami tidak meminta izin ACCESS_FINE_LOCATION, CAMERA,
+READ_CONTACTS, READ_SMS, maupun READ_PHONE_STATE.
+Aplikasi hanya meminta izin INTERNET, ACCESS_NETWORK_STATE,
+VIBRATE, dan AD_ID.
+
+4. Dasar Hukum dan Tujuan Pemrosesan
+
+Setiap pemrosesan Data Pribadi memiliki tujuan yang jelas dan dasar hukum yang
+sah.
+Tabel berikut memetakan data, tujuan, dan dasar hukumnya.
+
+
+
+Jenis Data | Tujuan Pemrosesan | Dasar Hukum
+
+
+
+
+ Nama, email, nomor telepon | Membuat dan mengelola Akun, memverifikasi
+ identitas, menghubungi Anda terkait pesanan atau saldo | Pelaksanaan
+ perjanjian; persetujuan
+
+
+
+ Kata sandi (hash) | Autentikasi dan menjaga keamanan Akun | Pelaksanaan
+ perjanjian; kepentingan sah
+
+
+
+ Alamat pengiriman | Mengirimkan produk yang Anda pesan | Pelaksanaan perjanjian
+
+
+
+ Riwayat pesanan dan pembayaran | Memproses pesanan, verifikasi pembayaran QRIS,
+ menangani refund dan sengketa, serta memenuhi kewajiban akuntansi | Pelaksanaan
+ perjanjian; kewajiban hukum
+
+
+
+ Saldo Poin dan mutasi poin | Menjalankan program loyalitas, menghitung bonus
+ referral, mendeteksi penyalahgunaan | Pelaksanaan perjanjian; kepentingan sah
+
+
+
+ Nomor rekening dan nama pemilik | Menyalurkan dana penarikan saldo kepada
+ pemilik Akun yang sah dan mencegah pencucian uang | Pelaksanaan perjanjian;
+ kewajiban hukum; kepentingan sah
+
+
+
+ Kode referral dan relasi referral | Menghitung bonus referral satu tingkat dan
+ mencegah self-referral maupun akun palsu | Kepentingan sah; persetujuan
+
+
+
+ Advertising ID dan data interaksi iklan | Menayangkan iklan, mengukur kinerja
+ iklan, dan memberi hadiah poin atas iklan yang ditonton | Persetujuan
+
+
+
+ Data teknis, IP, dan crash log | Menjaga keandalan, keamanan, dan kinerja
+ Aplikasi serta mendiagnosis gangguan | Kepentingan sah
+
+
+
+Kami tidak memproses Data Pribadi untuk keperluan pengambilan keputusan otomatis
+yang
+memberi dampak hukum signifikan kepada Anda, dan kami tidak menjual Data Pribadi
+Anda
+kepada pihak mana pun.
+
+5. Cara Kami Mengumpulkan Data
+
+
+ - Langsung dari Anda. Saat Anda mendaftar, masuk, melengkapi profil,
+ menambahkan alamat pengiriman, memesan produk, mengonfirmasi pembayaran, atau
+ mengajukan penarikan saldo.
+
+ - Secara otomatis. Saat Aplikasi berkomunikasi dengan server, sistem mencatat
+ data teknis seperti versi Aplikasi, waktu akses, dan log kesalahan.
+
+ - Dari layanan pihak ketiga. Firebase Authentication memverifikasi kredensial
+ Anda; Google AdMob menyediakan data penayangan iklan; penyedia pembayaran
+ menyampaikan status transaksi.
+
+ - Dari Administrator. Admin dapat memperbarui status pesanan, mencatat
+ penyesuaian poin, serta mencatat hasil verifikasi penarikan saldo.
+
+Seluruh perubahan pada nilai yang dapat ditukar menjadi uang — Poin, Saldo,
+bonus
+referral, status pesanan, stok produk, dan status penarikan — dilakukan secara
+terpusat di server kami, bukan dari perangkat Anda. Hal ini kami lakukan untuk
+melindungi Anda dari manipulasi nilai saldo.
+
+6. Berbagi Data dengan Pihak Ketiga
+
+Kami tidak menjual, menyewakan, atau memperdagangkan Data Pribadi Anda. Kami
+hanya
+membagikan data kepada pihak ketiga yang diperlukan untuk mengoperasikan
+Aplikasi,
+dengan cakupan sesempit mungkin.
+
+
+
+Pihak Ketiga | Peran | Data yang Diterima
+
+
+
+
+ Google Firebase (Firebase Authentication, Cloud Firestore, Cloud Functions,
+ Cloud Storage) | Infrastruktur autentikasi, basis data, dan pemrosesan logika
+ bisnis | Seluruh data Akun, pesanan, poin, dan penarikan yang dijelaskan pada
+ Bagian 3, disimpan dan diproses pada infrastruktur Google
+
+
+
+ Google AdMob | Penayangan iklan banner dan iklan berhadiah | Advertising ID,
+ alamat IP, informasi perangkat, serta data interaksi iklan
+
+
+
+ Penyedia pembayaran QRIS dan bank/dompet digital | Pemrosesan pembayaran dan
+ pemindahan dana penarikan saldo | Nomor rekening atau dompet digital, nama
+ pemilik rekening, dan nominal transaksi
+
+
+
+ Jasa pengiriman atau logistik | Pengantaran produk yang Anda pesan | Nama
+ penerima, nomor telepon penerima, dan alamat pengiriman
+
+
+
+ Penyedia layanan analitik dan diagnostik | Mendeteksi kerusakan Aplikasi dan
+ meningkatkan kinerja | Data teknis perangkat, catatan kesalahan, dan versi
+ Aplikasi
+
+
+
+Selain itu, kami dapat mengungkapkan data apabila diwajibkan oleh hukum,
+dipanggil
+oleh aparat penegak hukum yang berwenang, atau diperlukan untuk menegakkan
+Syarat dan
+Ketentuan kami, termasuk dalam rangka penyelidikan dugaan kecurangan terhadap
+sistem
+poin dan saldo.
+
+Penting untuk Anda ketahui: saat Anda memindai kode QRIS, transaksi
+tersebut terjadi di dalam aplikasi bank atau dompet digital Anda sendiri. Kami
+tidak
+menerima dan tidak menyimpan nomor kartu, PIN, atau kredensial perbankan Anda.
+Kami
+hanya menerima konfirmasi bahwa pembayaran telah dilakukan, yang kemudian
+diverifikasi
+oleh Admin secara manual berdasarkan bukti pembayaran.
+
+7. Iklan dan Identitas Periklanan
+
+Aplikasi menampilkan dua jenis iklan melalui Google AdMob:
+
+
+ - Iklan banner yang tampil pada bagian bawah layar utama.
+
+ - Iklan berhadiah (rewarded video) yang Anda tonton secara sukarela pada layar
+ Tugas Harian untuk memperoleh Poin.
+
+Untuk menayangkan iklan, Google AdMob dan mitranya dapat menggunakan
+Advertising ID perangkat Anda. Advertising ID adalah pengenal yang
+dapat diatur ulang dan dapat Anda hapus melalui pengaturan perangkat Android
+pada menu
+Privasi → Iklan. Anda juga dapat menonaktifkan personalisasi iklan pada menu
+yang sama tanpa kehilangan akses ke fitur inti Aplikasi.
+
+7.1 Iklan Berhadiah dan Batas Harian
+
+Menonton iklan berhadiah bersifat sepenuhnya sukarela. Poin diberikan hanya
+apabila
+iklan ditonton sampai selesai dan server kami mencatat penyelesaian tersebut.
+Untuk
+mencegah penyalahgunaan, Aplikasi menetapkan batas maksimum 20 iklan berhadiah
+per
+hari per Akun. Batas ini dihitung berdasarkan tanggal lokal Jakarta (WIB), dan
+pencatatan dilakukan di server sehingga tidak dapat diubah dari perangkat.
+
+7.2 Kontrol Orang Tua dan Pengguna Anak
+
+Aplikasi ini ditujukan untuk pengguna berusia 18 tahun ke atas. Kami tidak
+secara
+sengaja menayangkan iklan yang dipersonalisasi kepada anak-anak.
+
+8. Cookie dan Teknologi Serupa
+
+Aplikasi Android tidak menggunakan cookie peramban untuk melacak Anda. Namun,
+kami
+menggunakan teknologi penyimpanan lokal dan pengenal teknis yang serupa
+fungsinya,
+yaitu:
+
+
+ - Penyimpanan lokal sesi (SharedPreferences) — menyimpan cache ringan seperti
+ identitas dasar dan peran Akun Anda, agar Aplikasi dapat menampilkan antarmuka
+ lebih cepat saat dibuka kembali.
+
+ - Cache lokal basis data — menyimpan sementara salinan data katalog dan data
+ Akun Anda di perangkat, sehingga Aplikasi tetap dapat menampilkan informasi
+ terakhir saat koneksi internet lemah.
+
+ - Pengenal SDK pihak ketiga — digunakan oleh Firebase dan AdMob untuk fungsi
+ autentikasi, keamanan, dan periklanan.
+
+Menghapus data Aplikasi melalui pengaturan Android akan menghapus penyimpanan
+lokal
+tersebut. Akun Anda di server tetap ada sampai Anda meminta penghapusan Akun.
+
+9. Penyimpanan dan Retensi Data
+
+Kami menyimpan Data Pribadi hanya selama diperlukan untuk tujuan pengumpulannya,
+untuk
+memenuhi kewajiban hukum, dan untuk menyelesaikan sengketa. Setelah masa retensi
+berakhir, data dihapus atau dianonimkan secara aman.
+
+
+
+Jenis Data | Masa Retensi | Alasan
+
+
+
+
+ Data Akun (nama, email, telepon) | Selama Akun aktif; dihapus dalam 30 hari
+ setelah permintaan penghapusan Akun | Operasional Akun dan hak pengguna atas
+ penghapusan
+
+
+
+ Riwayat pesanan dan pembayaran | 5 tahun sejak transaksi terakhir | Kewajiban
+ pembukuan, perpajakan, dan penanganan sengketa
+
+
+
+ Mutasi Poin dan saldo | 5 tahun sejak mutasi terakhir | Audit program loyalitas
+ dan pencegahan kecurangan
+
+
+
+ Data penarikan saldo dan rekening tujuan | 5 tahun sejak penarikan terakhir |
+ Kewajiban hukum keuangan dan pencegahan penyalahgunaan
+
+
+
+ Catatan audit Administrator | 5 tahun | Akuntabilitas internal dan investigasi
+ penyalahgunaan wewenang
+
+
+
+ Data teknis, log akses, dan crash log | Maksimum 12 bulan | Keamanan dan
+ diagnostik
+
+
+
+ Advertising ID dan interaksi iklan | Dikelola oleh Google sesuai kebijakan
+ AdMob | Penayangan dan pengukuran iklan
+
+
+
+10. Keamanan Data
+
+Kami menerapkan langkah teknis dan organisasi yang wajar untuk melindungi Data
+Pribadi
+Anda, antara lain:
+
+
+ - Enkripsi saat transit. Seluruh komunikasi antara Aplikasi dan server
+ menggunakan HTTPS/TLS. Aplikasi dikonfigurasi menolak lalu lintas teks biasa
+ (usesCleartextTraffic="false").
+
+ - Aturan keamanan basis data. Basis data Firestore dilindungi aturan keamanan
+ yang menolak seluruh penulisan dari sisi klien terhadap data bernilai ekonomi
+ seperti Poin, Saldo, peran (role), kode referral, status Akun, dan status
+ verifikasi.
+
+ - Penulisan nilai secara terpusat. Setiap perubahan Poin, Saldo, bonus
+ referral, status pesanan, stok produk, dan penarikan saldo hanya dapat
+ dilakukan oleh fungsi server kami. Aplikasi yang dimodifikasi (tampered) tidak
+ dapat menambah poin atau menyetujui penarikan saldo.
+
+ - Pembatasan akses. Data pribadi hanya dapat dibaca oleh pemilik Akun yang
+ bersangkutan atau oleh Administrator yang berwenang. Setiap tindakan
+ Administrator dicatat dalam catatan audit yang tidak dapat diubah dari sisi
+ klien.
+
+ - Pemisahan peran. Akun Administrator memiliki peran tersendiri dan tidak akan
+ pernah diberikan secara otomatis kepada pengguna biasa.
+
+ - Kata sandi ter-hash. Kata sandi dikelola oleh Firebase Authentication dan
+ tidak pernah kami simpan dalam bentuk teks biasa.
+
+ - Minimalisasi data. Kami tidak meminta izin perangkat yang tidak diperlukan
+ untuk fungsi Aplikasi.
+
+Meskipun kami berupaya maksimal, tidak ada metode transmisi atau penyimpanan
+data di
+internet yang sepenuhnya bebas risiko. Karena itu, penting bagi Anda untuk
+menjaga
+kerahasiaan kata sandi dan tidak membagikan Akun Anda kepada siapa pun.
+
+11. Hak Anda sebagai Pengguna
+
+Sesuai UU PDP dan praktik terbaik Google Play, Anda memiliki hak-hak berikut:
+
+
+ - Hak akses. Memperoleh informasi mengenai Data Pribadi Anda yang kami proses.
+
+ - Hak koreksi. Memperbaiki data yang tidak akurat. Sebagian data dapat Anda
+ ubah langsung melalui layar Profil pada Aplikasi.
+
+ - Hak penghapusan. Meminta penghapusan Akun beserta Data Pribadi Anda, dengan
+ tetap memperhatikan data yang wajib kami simpan menurut hukum.
+
+ - Hak portabilitas. Meminta salinan data Anda dalam format yang umum digunakan.
+
+ - Hak penarikan persetujuan. Menarik persetujuan atas pemrosesan yang berbasis
+ persetujuan, termasuk personalisasi iklan melalui pengaturan perangkat.
+
+ - Hak keberatan dan pembatasan. Mengajukan keberatan atas pemrosesan tertentu,
+ dengan tetap memperhatikan dasar hukum yang kami miliki.
+
+11.1 Cara Menggunakan Hak Anda
+
+Kirimkan permintaan Anda ke altomediaindonesia@gmail.com
+dengan subjek "Permintaan Hak Data Pribadi", dan sertakan:
+
+ 1. Nama lengkap dan alamat email yang terdaftar pada Akun HERBALINDO Anda;
+
+ 2. Jenis hak yang ingin Anda gunakan (akses, koreksi, penghapusan,
+ portabilitas, atau lainnya);
+
+ 3. Rincian data yang dimaksud, bila memungkinkan.
+
+Kami akan memverifikasi permintaan Anda untuk mencegah penyalahgunaan, dan akan
+menanggapi dalam waktu paling lambat 14 (empat belas) hari kerja. Untuk
+permintaan penghapusan Akun, kami akan memprosesnya dalam waktu paling lambat
+30 (tiga puluh) hari kalender, kecuali data tertentu wajib kami simpan
+untuk memenuhi kewajiban hukum.
+
+11.2 Akibat Penghapusan Akun
+
+
+ - Anda tidak lagi dapat masuk ke Aplikasi dengan Akun tersebut.
+
+ - Saldo Poin, sisa saldo Rupiah yang belum ditarik, riwayat tugas harian, dan
+ hak atas bonus referral akan hangus dan tidak dapat dikembalikan.
+
+ - Riwayat pesanan tetap kami simpan sesuai masa retensi yang dijelaskan pada
+ Bagian 9 untuk keperluan hukum.
+
+Kami menyarankan Anda menarik seluruh saldo yang memenuhi syarat sebelum
+mengajukan
+penghapusan Akun.
+
+12. Data Anak-anak dan Batas Usia
+
+Aplikasi HERBALINDO tidak ditujukan untuk anak-anak. Anda harus berusia minimal
+18 tahun untuk membuat Akun dan melakukan transaksi. Apabila Anda
+berusia 17 tahun ke bawah tetapi ingin menggunakan Aplikasi, Anda wajib
+memperoleh
+persetujuan dan pendampingan orang tua atau wali yang sah.
+
+Kami tidak dengan sengaja mengumpulkan Data Pribadi dari anak di bawah usia yang
+disyaratkan. Apabila kami mengetahui bahwa kami telah mengumpulkan data tersebut
+tanpa
+persetujuan yang sah, kami akan menghapusnya sesegera mungkin. Jika Anda
+mengetahui
+adanya Akun milik anak di bawah usia tersebut, silakan hubungi kami melalui
+altomediaindonesia@gmail.com.
+
+13. Transfer Data Internasional
+
+Layanan backend kami, Google Firebase, dan Google AdMob dapat menyimpan atau
+memproses
+data pada server yang berlokasi di luar Indonesia. Kami memilih wilayah operasi
+(region) server yang sedekat mungkin dengan Indonesia untuk menekan waktu akses
+dan
+risiko, namun sebagian data dapat diproses di luar wilayah tersebut oleh
+penyedia
+layanan global.
+
+Dalam hal terjadi transfer data ke luar wilayah Indonesia, kami memastikan bahwa
+penyedia layanan menerapkan tingkat perlindungan data yang setara dengan
+ketentuan
+yang berlaku di Indonesia, dan transfer dilakukan berdasarkan perjanjian
+pemrosesan
+data yang mengikat.
+
+14. Perubahan Kebijakan Ini
+
+Kami dapat memperbarui Kebijakan ini dari waktu ke waktu untuk mencerminkan
+perubahan
+pada fitur Aplikasi, praktik data kami, atau ketentuan hukum yang berlaku.
+Setiap
+perubahan akan kami tandai dengan tanggal "Terakhir diperbarui" pada bagian atas
+halaman ini.
+
+Apabila terjadi perubahan yang bersifat material — misalnya penambahan jenis
+data baru
+atau perubahan tujuan pemrosesan yang signifikan — kami akan memberitahukannya
+melalui
+Aplikasi atau melalui email yang terdaftar pada Akun Anda sebelum perubahan
+tersebut
+berlaku. Dengan terus menggunakan Aplikasi setelah tanggal berlaku, Anda
+dianggap
+menyetujui Kebijakan yang telah diperbarui.
+
+15. Hubungi Kami
+
+Untuk pertanyaan, keluhan, atau permintaan terkait pelindungan data pribadi,
+silakan
+menghubungi:
+
+
+ - Pengembang: ALTOMEDIA
+
+ - Aplikasi: HERBALINDO (com.altomedia.herbalindo)
+
+ - Email: altomediaindonesia@gmail.com
+
+Kami berkomitmen menanggapi setiap pertanyaan privasi secara terbuka dan cepat.
+Jika
+Anda tidak puas dengan tanggapan kami, Anda berhak menghubungi lembaga pengawas
+pelindungan data pribadi yang berwenang di Indonesia.
+
+16. Ringkasan Bahasa Sederhana
+
+Bagian ini adalah ringkasan agar mudah dipahami. Ringkasan ini bukan pengganti
+isi
+lengkap di atas.
+
+
+ - Kami mengumpulkan data yang diperlukan agar Anda dapat mendaftar, berbelanja,
+ mengumpulkan poin, dan menarik saldo.
+
+ - Kami tidak mengakses kontak, pesan, kamera, atau lokasi Anda.
+
+ - Kami tidak menyimpan nomor kartu, PIN, atau kredensial perbankan Anda.
+
+ - Kami tidak menjual data Anda kepada siapa pun.
+
+ - Iklan disediakan oleh Google AdMob, dan Anda dapat mengatur ulang Advertising
+ ID dari pengaturan Android.
+
+ - Nomor rekening tujuan penarikan hanya dipakai untuk mengirim saldo Anda dan
+ ditampilkan dalam bentuk tersamarkan.
+
+ - Anda dapat meminta akses, koreksi, atau penghapusan data dengan mengirim
+ email ke altomediaindonesia@gmail.com.
+
+
+
+
+© 2026 ALTOMEDIA. HERBALINDO adalah aplikasi produk herbal diet dengan program
+poin dan referral satu tingkat.
+
+
+Dokumen terkait: Syarat dan Ketentuan · Kebijakan Privasi
+ ↑ Kembali ke atas
