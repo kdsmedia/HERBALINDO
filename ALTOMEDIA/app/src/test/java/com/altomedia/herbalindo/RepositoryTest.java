@@ -700,6 +700,108 @@ public class RepositoryTest {
         assertEquals("PAID", repo.order(o.orderId).paymentStatus);
     }
 
+    @Test public void adminDapatMenambahProdukBaruDanStokAwalnyaTercatat() throws Exception {
+        Models.Product p = new Models.Product();
+        p.productId = "PRD-HBA-004";
+        p.sku = "HBA-004";
+        p.name = "Herbal Diet D";
+        p.category = "Herbal Diet";
+        p.description = "Produk baru untuk pengujian";
+        p.imageUrl = "https://contoh.id/hba-004.jpg";
+        p.price = 95000;
+        p.points = 600;
+        // Mengikuti alur form: produk disimpan dengan stok 0, lalu stok awal
+        // dimasukkan lewat adjustStock agar tercatat di riwayat.
+        p.stock = 0;
+        p.weight = 100;
+        p.status = "ACTIVE";
+        repo.saveProduct(p, "USR-ADMIN");
+        repo.adjustStock(p.productId, 25, "Stok awal produk baru", "USR-ADMIN");
+
+        Models.Product saved = repo.product("PRD-HBA-004");
+        assertNotNull(saved);
+        assertEquals("Herbal Diet D", saved.name);
+        assertEquals("https://contoh.id/hba-004.jpg", saved.imageUrl);
+        assertEquals(25, saved.stock);
+        assertEquals(600, saved.points);
+
+        boolean tercatat = false;
+        for (org.json.JSONObject m : repo.stockMovements()) {
+            if ("PRD-HBA-004".equals(m.optString("productId"))
+                    && "Stok awal produk baru".equals(m.optString("reason"))) tercatat = true;
+        }
+        assertTrue("stok awal produk baru harus tercatat di riwayat", tercatat);
+
+        boolean logAda = false;
+        for (org.json.JSONObject o : repo.adminLogs(0)) {
+            if ("PRODUCT_CREATE".equals(o.optString("action"))) logAda = true;
+        }
+        assertTrue("penambahan produk harus tercatat di audit log", logAda);
+    }
+
+    @Test public void produkBaruMunculDiKatalogYangDilihatMember() throws Exception {
+        int sebelum = repo.activeProducts().size();
+        Models.Product p = new Models.Product();
+        p.productId = "PRD-HBA-009";
+        p.sku = "HBA-009";
+        p.name = "Herbal Diet E";
+        p.category = "Herbal Diet";
+        p.description = "Produk uji katalog";
+        p.price = 88000;
+        p.points = 400;
+        p.stock = 10;
+        p.status = "ACTIVE";
+        repo.saveProduct(p, "USR-ADMIN");
+        assertEquals(sebelum + 1, repo.activeProducts().size());
+    }
+
+    @Test public void pembatalanBerulangTidakMengembalikanStokDuaKali() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        Models.Order o = buy(u, "PRD-HBA-001", 3);
+        assertEquals(47, repo.product("PRD-HBA-001").stock);
+
+        repo.markStatus(repo.order(o.orderId), "CANCELLED", "USR-ADMIN", "pembeli batal");
+        assertEquals(50, repo.product("PRD-HBA-001").stock);
+
+        // Mengulang aksi yang sama tidak boleh menambah stok lagi.
+        repo.markStatus(repo.order(o.orderId), "CANCELLED", "USR-ADMIN", "klik ulang");
+        assertEquals(50, repo.product("PRD-HBA-001").stock);
+
+        // Berpindah ke REFUNDED juga tidak memulihkan stok untuk kedua kalinya.
+        repo.markStatus(repo.order(o.orderId), "REFUNDED", "USR-ADMIN", "refund");
+        assertEquals(50, repo.product("PRD-HBA-001").stock);
+        assertEquals("REFUNDED", repo.order(o.orderId).paymentStatus);
+    }
+
+    @Test public void pembatalanBerulangTidakMemotongPoinDuaKali() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        Models.Order o = buy(u, "PRD-HBA-001", 2);
+        repo.submitPayment(o.orderId, "Budi Pengirim", o.total, "BCA", "");
+        repo.markStatus(repo.order(o.orderId), "PAID", "USR-ADMIN", "lunas");
+        assertEquals(1000, repo.user(u.userId).points);
+
+        repo.markStatus(repo.order(o.orderId), "REFUNDED", "USR-ADMIN", "refund");
+        assertEquals(0, repo.user(u.userId).points);
+
+        repo.markStatus(repo.order(o.orderId), "REFUNDED", "USR-ADMIN", "klik ulang");
+        assertEquals("poin tidak boleh menjadi negatif", 0, repo.user(u.userId).points);
+    }
+
+    @Test public void pembatalanTercatatSekaliPadaAuditLog() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        Models.Order o = buy(u, "PRD-HBA-001", 1);
+        repo.markStatus(repo.order(o.orderId), "CANCELLED", "USR-ADMIN", "batal");
+        repo.markStatus(repo.order(o.orderId), "CANCELLED", "USR-ADMIN", "batal lagi");
+
+        int catatan = 0;
+        for (org.json.JSONObject log : repo.adminLogs(0)) {
+            if ("ORDER_STATUS".equals(log.optString("action"))
+                    && log.optString("target").contains(o.orderNumber)
+                    && log.optString("data").contains("CANCELLED")) catatan++;
+        }
+        assertEquals("status akhir hanya dicatat sekali", 1, catatan);
+    }
+
     /** Menyiapkan member yang seluruh syarat penarikannya sudah terpenuhi. */
     private Models.User siapTarik() throws Exception {
         Models.User u = member("Siti Aminah", "081234567890", null);

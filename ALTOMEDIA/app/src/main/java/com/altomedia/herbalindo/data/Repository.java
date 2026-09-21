@@ -602,11 +602,26 @@ public class Repository {
 
     public void markStatus(Models.Order o, String status, String actorId, String note) {
         String prev = o.orderStatus;
+
+        // Pembatalan/pengembalian hanya boleh diproses sekali. Bila status
+        // akhir sudah sama dan pembatalan sudah pernah dijalankan, permintaan
+        // ulang cukup diabaikan agar stok dan poin tidak digandakan.
+        if (prev.equals(status) && ("REFUNDED".equals(status) || "CANCELLED".equals(status))
+                && o.revocationDone) return;
+
         o.orderStatus = status;
         if ("PAID".equals(status) || "PROCESSING".equals(status) || "SHIPPED".equals(status)
                 || "DELIVERED".equals(status) || "COMPLETED".equals(status)) o.paymentStatus = "PAID";
         if ("REFUNDED".equals(status)) o.paymentStatus = "REFUNDED";
         if ("CANCELLED".equals(status)) o.paymentStatus = "CANCELLED";
+
+        boolean needsRevoke = ("REFUNDED".equals(status) || "CANCELLED".equals(status))
+                && !o.revocationDone;
+        if (needsRevoke) {
+            o.revocationDone = true;
+            o.revokedAt = Util.nowIso();
+        }
+
         o.updatedAt = Util.nowIso();
         try {
             db.put(Config.C_ORDERS, o.orderId, o.toJson().toString());
@@ -620,7 +635,7 @@ public class Repository {
             grantPurchasePoints(o);
             qualifyReferral(o);
         }
-        if ("REFUNDED".equals(status) || "CANCELLED".equals(status)) revokeForOrder(o, actorId);
+        if (needsRevoke) revokeForOrder(o, actorId);
     }
 
     /** Menyelaraskan dokumen pembayaran dengan status pembayaran pada order. */

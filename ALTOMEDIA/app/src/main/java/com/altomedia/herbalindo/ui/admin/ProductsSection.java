@@ -3,6 +3,7 @@ package com.altomedia.herbalindo.ui.admin;
 import android.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,7 +26,10 @@ class ProductsSection {
         if (root == null) {
             root = LayoutInflater.from(a).inflate(R.layout.section_list, null, false);
             ((TextView) root.findViewById(R.id.sec_title)).setText("Katalog Produk & Stok");
-            root.findViewById(R.id.sec_add).setVisibility(View.GONE);
+            Button add = root.findViewById(R.id.sec_add);
+            add.setVisibility(View.VISIBLE);
+            add.setText("Tambah Produk");
+            add.setOnClickListener(v -> productForm(null));
         }
         return root;
     }
@@ -52,7 +56,7 @@ class ProductsSection {
             LinearLayout actions = card.findViewById(R.id.ac_actions);
             actions.removeAllViews();
 
-            actions.addView(action("Ubah Produk", R.color.info, v -> editProduct(p)));
+            actions.addView(action("Ubah Produk", R.color.info, v -> productForm(p)));
             actions.addView(action("Stok +", R.color.success, v -> adjust(p, 1)));
             actions.addView(action("Stok −", R.color.warning, v -> adjust(p, -1)));
             actions.addView(action(p.active() ? "Nonaktifkan" : "Aktifkan", R.color.text_secondary, v -> toggle(p)));
@@ -108,35 +112,45 @@ class ProductsSection {
         return et;
     }
 
-    private void editProduct(Models.Product p) {
+    /**
+     * Form tambah atau ubah produk.
+     *
+     * {@code null} berarti produk baru; selain itu form memuat nilai produk
+     * yang sedang diubah. Semua field yang diminta admin tersedia di sini:
+     * URL gambar, nama, harga, komisi poin, deskripsi, dan stok.
+     */
+    private void productForm(Models.Product existing) {
+        boolean isNew = existing == null;
         LinearLayout box = new LinearLayout(a);
         box.setOrientation(LinearLayout.VERTICAL);
         box.setPadding(28, 8, 28, 0);
-        EditText name = field(box, "Nama produk", p.name);
-        EditText imageUrl = field(box, "URL gambar produk", p.imageUrl);
-        EditText price = field(box, "Harga produk (Rp)", String.valueOf(p.price));
-        EditText points = field(box, "Komisi poin per unit", String.valueOf(p.points));
-        EditText desc = field(box, "Deskripsi produk", p.description);
-        EditText stockField = field(box, "Stok tersedia", String.valueOf(p.stock));
-        EditText category = field(box, "Kategori", p.category);
-        EditText promo = field(box, "Harga promo (0 = tanpa promo)", String.valueOf(p.promoPrice));
-        EditText minStock = field(box, "Minimum stok (peringatan)", String.valueOf(p.minStock));
-        EditText weight = field(box, "Berat (gram)", String.valueOf(p.weight));
-        EditText comp = field(box, "Komposisi", p.composition);
-        EditText usage = field(box, "Aturan pakai", p.usage);
-        EditText warn = field(box, "Peringatan", p.warning);
+        EditText name = field(box, "Nama produk", isNew ? "" : existing.name);
+        EditText imageUrl = field(box, "URL gambar produk", isNew ? "" : existing.imageUrl);
+        EditText price = field(box, "Harga produk (Rp)", isNew ? "" : String.valueOf(existing.price));
+        EditText points = field(box, "Komisi poin per unit", isNew ? "" : String.valueOf(existing.points));
+        EditText desc = field(box, "Deskripsi produk", isNew ? "" : existing.description);
+        EditText stockField = field(box, "Stok tersedia", isNew ? "" : String.valueOf(existing.stock));
+        EditText skuField = field(box, "Kode SKU (mis. HBA-004)", isNew ? "" : existing.sku);
+        skuField.setEnabled(isNew);
+        EditText category = field(box, "Kategori", isNew ? "Herbal Diet" : existing.category);
+        EditText promo = field(box, "Harga promo (0 = tanpa promo)", isNew ? "0" : String.valueOf(existing.promoPrice));
+        EditText minStock = field(box, "Minimum stok (peringatan)", isNew ? "5" : String.valueOf(existing.minStock));
+        EditText weight = field(box, "Berat (gram)", isNew ? "100" : String.valueOf(existing.weight));
+        EditText comp = field(box, "Komposisi", isNew ? "" : existing.composition);
+        EditText usage = field(box, "Aturan pakai", isNew ? "" : existing.usage);
+        EditText warn = field(box, "Peringatan", isNew ? "" : existing.warning);
 
         new AlertDialog.Builder(a)
-                .setTitle("Ubah " + p.sku)
+                .setTitle(isNew ? "Tambah produk" : "Ubah " + existing.sku)
                 .setView(new android.widget.ScrollView(a) {{ addView(box); }})
                 .setNegativeButton("Batal", null)
                 .setPositiveButton("Simpan", (d, w) -> {
                     try {
                         Models.Product edited = new Models.Product();
-                        edited.productId = p.productId;
-                        edited.sku = p.sku;
-                        edited.createdAt = p.createdAt;
-                        edited.status = p.status;
+                        edited.sku = skuField.getText().toString().trim().toUpperCase(java.util.Locale.US);
+                        edited.productId = isNew ? "PRD-" + edited.sku : existing.productId;
+                        edited.createdAt = isNew ? null : existing.createdAt;
+                        edited.status = isNew ? "ACTIVE" : existing.status;
                         edited.name = name.getText().toString().trim();
                         edited.imageUrl = imageUrl.getText().toString().trim();
                         edited.category = category.getText().toString().trim();
@@ -151,19 +165,30 @@ class ProductsSection {
                         edited.warning = warn.getText().toString().trim();
                         long newStock = parse(stockField.getText().toString());
 
-                        String problem = validate(edited, newStock);
+                        String problem = validate(edited, newStock, isNew);
                         if (problem != null) { Ui.error(a, problem); return; }
 
-                        edited.stock = p.stock;
-                        a.repo().saveProduct(edited, a.user.userId);
-                        // Stok awal disimpan lewat riwayat agar perubahannya
-                        // tercatat sama seperti penyesuaian stok lainnya.
-                        if (newStock != p.stock) {
-                            a.repo().adjustStock(p.productId, (int) (newStock - p.stock),
-                                    "Penyesuaian stok saat ubah produk", a.user.userId);
+                        if (isNew) {
+                            // Stok sengaja dimulai dari nol, lalu ditambah lewat
+                            // adjustStock agar jumlah awal ikut tercatat sebagai
+                            // pergerakan stok, bukan diam-diam terisi.
+                            edited.stock = 0;
+                            a.repo().saveProduct(edited, a.user.userId);
+                            if (newStock > 0) a.repo().adjustStock(edited.productId, (int) newStock,
+                                    "Stok awal produk baru", a.user.userId);
+                            Ui.ok(a, "Produk " + edited.sku + " ditambahkan");
+                        } else {
+                            // Stok lama dibiarkan, lalu selisihnya dicatat sebagai
+                            // pergerakan stok agar riwayatnya tetap utuh.
+                            edited.stock = existing.stock;
+                            a.repo().saveProduct(edited, a.user.userId);
+                            if (newStock != existing.stock) {
+                                a.repo().adjustStock(edited.productId, (int) (newStock - existing.stock),
+                                        "Penyesuaian stok saat ubah produk", a.user.userId);
+                            }
+                            Ui.ok(a, "Produk " + edited.sku + " diperbarui");
                         }
                         a.refreshActive();
-                        Ui.ok(a, "Produk " + edited.sku + " diperbarui");
                     } catch (Exception e) {
                         Ui.error(a, e.getMessage());
                     }
@@ -175,7 +200,11 @@ class ProductsSection {
      * Memeriksa isian form produk. Mengembalikan pesan masalah, atau
      * {@code null} bila seluruh isian sah.
      */
-    private String validate(Models.Product p, long stock) {
+    private String validate(Models.Product p, long stock, boolean isNew) {
+        if (isNew && !p.sku.matches("^[A-Z0-9-]{3,20}$"))
+            return "Kode SKU hanya huruf/angka/strip, 3-20 karakter";
+        if (isNew && a.repo().product(p.productId) != null)
+            return "SKU " + p.sku + " sudah dipakai produk lain";
         if (p.name.length() < 3) return "Nama produk minimal 3 karakter";
         if (p.price <= 0) return "Harga produk harus lebih dari 0";
         if (p.points < 0) return "Komisi poin tidak boleh negatif";

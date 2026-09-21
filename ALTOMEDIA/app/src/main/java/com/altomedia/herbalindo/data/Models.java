@@ -142,6 +142,14 @@ public final class Models {
          */
         public String buyerName = "", paidFrom = "", paidNote = "";
         public long paidAmount;
+        /**
+         * Menandai bahwa pembatalan pesanan ini sudah diproses.
+         *
+         * Tanpa penanda ini, memanggil {@code markStatus} dua kali akan
+         * mengembalikan stok dan memotong poin dua kali.
+         */
+        public boolean revocationDone;
+        public String revokedAt = "";
         public List<OrderItem> items = new ArrayList<>();
         public long subtotal, shippingCost, total;
         public String createdAt, updatedAt;
@@ -170,6 +178,7 @@ public final class Models {
             o.put("shippingName", shippingName); o.put("shippingPhone", shippingPhone);
             o.put("buyerName", buyerName); o.put("paidAmount", paidAmount);
             o.put("paidFrom", paidFrom); o.put("paidNote", paidNote);
+            o.put("revocationDone", revocationDone); o.put("revokedAt", revokedAt);
             o.put("note", note); o.put("createdAt", createdAt); o.put("updatedAt", updatedAt);
             return o;
         }
@@ -196,6 +205,8 @@ public final class Models {
                 ord.paidAmount = o.optLong("paidAmount");
                 ord.paidFrom = o.optString("paidFrom");
                 ord.paidNote = o.optString("paidNote");
+                ord.revocationDone = o.optBoolean("revocationDone");
+                ord.revokedAt = o.optString("revokedAt");
                 ord.note = o.optString("note");
                 ord.createdAt = o.optString("createdAt"); ord.updatedAt = o.optString("updatedAt");
             } catch (JSONException ignored) { }
