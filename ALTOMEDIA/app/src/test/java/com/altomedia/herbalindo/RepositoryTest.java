@@ -957,4 +957,42 @@ public class RepositoryTest {
         assertEquals("tidak boleh ada penandaan tanpa temuan memblokir",
                 0, repo.applyFraudFindings("USR-ADMIN"));
     }
+
+    /* ---------------- Bab 7.5: ringkasan tugas harian ---------------- */
+
+    @Test public void ringkasanTugasMenghitungReferralTerverifikasi() throws Exception {
+        Models.User inviter = member("Siti Aminah", "081234567890", null);
+        Models.User teman = member("Budi Santoso", "081234567891", inviter.referralId);
+        assertEquals("belum ada referral yang terverifikasi", 0, repo.verifiedReferralCount(inviter.userId));
+
+        Models.Order o = buy(teman, "PRD-HBA-001", 1);
+        repo.submitPayment(o.orderId, "Budi Santoso", o.total, "BCA", "");
+        repo.markStatus(repo.order(o.orderId), "PAID", "USR-ADMIN", "lunas");
+
+        assertEquals(1, repo.verifiedReferralCount(inviter.userId));
+    }
+
+    @Test public void ringkasanTugasMenghitungPoinPembelianHariIni() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        assertEquals(0, repo.purchasePointsOn(u.userId, com.altomedia.herbalindo.core.Util.todayKey()));
+
+        Models.Order o = buy(u, "PRD-HBA-001", 2);
+        repo.submitPayment(o.orderId, "Siti Aminah", o.total, "BCA", "");
+        repo.markStatus(repo.order(o.orderId), "PAID", "USR-ADMIN", "lunas");
+
+        assertEquals("poin pembelian hari ini harus ikut terhitung",
+                1000, repo.purchasePointsOn(u.userId, com.altomedia.herbalindo.core.Util.todayKey()));
+        assertEquals("hari lain tidak ikut terhitung",
+                0, repo.purchasePointsOn(u.userId, "2000-01-01"));
+    }
+
+    @Test public void totalPembelianMengabaikanPesananBatal() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        Models.Order o = buy(u, "PRD-HBA-001", 1);
+        long nilai = o.total;
+        assertEquals(nilai, repo.purchaseTotal(u.userId));
+
+        repo.markStatus(repo.order(o.orderId), "CANCELLED", "USR-ADMIN", "batal");
+        assertEquals("pesanan batal tidak dihitung belanja", 0, repo.purchaseTotal(u.userId));
+    }
 }

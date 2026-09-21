@@ -70,6 +70,16 @@ class TasksTab {
                 "Referral ID " + u.referralId + " · bonus " + Util.num(s.referralBonus)
                         + " poin untuk pesanan pertama teman (minimal " + Util.rupiah(s.referralMinOrder) + ")");
 
+        int terverifikasi = a.repo().verifiedReferralCount(u.userId);
+        ((TextView) root.findViewById(R.id.task_ref_status)).setText(
+                "Referral " + terverifikasi + " Verified");
+
+        ((TextView) root.findViewById(R.id.task_buy_sub)).setText(
+                "Poin dari pembelian hari ini · total belanja " + Util.rupiah(a.repo().purchaseTotal(u.userId)));
+        ((TextView) root.findViewById(R.id.task_buy_points)).setText(
+                (a.repo().purchasePointsOn(u.userId, t.date) > 0 ? "+" : "")
+                        + Util.num(a.repo().purchasePointsOn(u.userId, t.date)) + " Poin");
+
         ((TextView) root.findViewById(R.id.task_rules)).setText(
                 "1. Referral hanya 1 tingkat: bonus dibayarkan kepada pengundang langsung saat pesanan pertama "
                         + "teman terverifikasi. Tidak ada bonus berantai.\n"

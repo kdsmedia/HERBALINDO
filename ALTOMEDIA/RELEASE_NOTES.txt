@@ -65,6 +65,9 @@ Poin, Tugas, dan Iklan
     - Check-in harian yang hanya berlaku satu kali per hari.
     - Poin dari pembelian produk sesuai jumlah poin tiap produk.
     - Iklan berhadiah dengan batas harian yang dapat diatur.
+    - Halaman Tugas menampilkan ringkasan nyata: status check-in, kemajuan
+      iklan berhadiah hari ini, jumlah referral yang sudah terverifikasi, dan
+      poin pembelian hari ini beserta total belanjanya.
     - Riwayat mutasi poin yang mencatat setiap penambahan dan pengurangan.
 
 Referral Satu Tingkat

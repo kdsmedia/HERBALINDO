@@ -163,6 +163,49 @@ public class StartupLifecycleTest {
         buka(AdminActivity.class);
     }
 
+    /**
+     * Tab Tugas Harian harus menampilkan ringkasan yang benar-benar dihitung
+     * dari data (Bab 7.5), bukan angka tetap.
+     */
+    @Test public void tabTugasMenampilkanRingkasanNyata() throws Exception {
+        Models.User u = Repository.get(ctx).register("Siti Aminah", "081234567890", "rahasia1", null);
+        Models.User teman = Repository.get(ctx).register("Budi Santoso", "081234567891", "rahasia1", u.referralId);
+        Session.set(ctx, u);
+
+        Models.Order milikSaya = beliDanBayar(u, 2);
+        beliDanBayar(teman, 1);
+
+        ActivityController<MemberActivity> c = Robolectric.buildActivity(MemberActivity.class).setup();
+        MemberActivity a = c.get();
+        ((com.google.android.material.bottomnavigation.BottomNavigationView)
+                a.findViewById(R.id.bottom_nav)).setSelectedItemId(R.id.nav_tasks);
+
+        android.widget.TextView refStatus = a.findViewById(R.id.task_ref_status);
+        android.widget.TextView buyPoints = a.findViewById(R.id.task_buy_points);
+        android.widget.TextView buySub = a.findViewById(R.id.task_buy_sub);
+        assertNotNull("Kartu referral tidak tampil", refStatus);
+        assertEquals("Referral 1 Verified", refStatus.getText().toString());
+        assertEquals("+1.000 Poin", buyPoints.getText().toString());
+        assertTrue("Total belanja harus muncul pada ringkasan pembelian",
+                buySub.getText().toString().contains("total belanja"));
+        c.pause().stop().destroy();
+
+        assertNotNull("Data pesanan uji tidak boleh hilang", Repository.get(ctx).order(milikSaya.orderId));
+        assertEquals(1, Repository.get(ctx).verifiedReferralCount(u.userId));
+    }
+
+    /** Membuat pesanan satu produk lalu menandainya lunas. */
+    private Models.Order beliDanBayar(Models.User pembeli, int qty) throws Exception {
+        Repository repo = Repository.get(ctx);
+        repo.cartAdd("PRD-HBA-001", qty);
+        Models.User terbaru = repo.user(pembeli.userId);
+        Models.Order o = repo.createOrder(terbaru, terbaru.name, terbaru.contact(),
+                "Jl. Melati No. 12", "Karawang", "41361", "");
+        repo.submitPayment(o.orderId, terbaru.name, o.total, "BCA", "");
+        repo.markStatus(repo.order(o.orderId), "PAID", "USR-ADMIN", "lunas");
+        return o;
+    }
+
     /** Layar detail tanpa data yang sah harus menutup diri dengan rapi, bukan menjatuhkan aplikasi. */
     @Test public void layarDetailTanpaDataSahTidakMenjatuhkanAplikasi() throws Exception {
         Models.User u = Repository.get(ctx).register("Siti Aminah", "081234567891", "rahasia1", null);

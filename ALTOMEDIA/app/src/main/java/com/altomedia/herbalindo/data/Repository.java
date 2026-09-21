@@ -768,6 +768,36 @@ public class Repository {
         return out;
     }
 
+    /** Jumlah referral member ini yang sudah terverifikasi (Bab 7.5). */
+    public int verifiedReferralCount(String inviterId) {
+        int n = 0;
+        for (Models.Referral r : allReferrals()) {
+            if (inviterId.equals(r.inviterId) && "VERIFIED".equals(r.status)) n++;
+        }
+        return n;
+    }
+
+    /** Poin pembelian yang diperoleh member pada tanggal tertentu (Bab 7.5). */
+    public long purchasePointsOn(String userId, String date) {
+        long total = 0;
+        for (Models.Ledger l : ledger(userId, 0)) {
+            if (!"PURCHASE".equals(l.type)) continue;
+            if (l.createdAt != null && l.createdAt.startsWith(date)) total += l.amount;
+        }
+        return total;
+    }
+
+    /** Total nilai pesanan member yang tidak dibatalkan (Bab 7.5). */
+    public long purchaseTotal(String userId) {
+        long total = 0;
+        for (Models.Order o : allOrders()) {
+            if (!userId.equals(o.userId)) continue;
+            if ("CANCELLED".equals(o.orderStatus) || "REFUNDED".equals(o.orderStatus)) continue;
+            total += o.total;
+        }
+        return total;
+    }
+
     /* ================= WITHDRAWAL ================= */
     public static class Eligibility {
         public boolean ok;
