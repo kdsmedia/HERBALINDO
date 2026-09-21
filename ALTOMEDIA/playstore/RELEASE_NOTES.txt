@@ -50,8 +50,9 @@ HERBALINDO versi 1.0.0 adalah rilis publik pertama. Ini adalah aplikasi Android
 yang menggabungkan toko produk herbal diet alami, program member dengan sistem
 poin, referral satu tingkat, saldo Rupiah, penarikan saldo (withdrawal), iklan
 rewarded, dan panel admin — semuanya berada dalam SATU aplikasi yang sama.
-Rilis ini sudah lolos audit internal untuk kebersihan manifes, keamanan aturan
-basis data, dan kesiapan persyaratan Google Play.
+Rilis ini sudah lolos audit internal untuk kebersihan manifes, aturan bisnis
+pada Repository, dan kesiapan persyaratan Google Play, serta diverifikasi oleh
+107 unit test yang seluruhnya lulus.
 
 --------------------------------------------------------------------------------
 FITUR UTAMA
@@ -63,7 +64,8 @@ A. Toko & Belanja
      penggunaan agar pembeli tahu persis apa yang dibelinya.
    - Keranjang belanja (cart) yang dapat diubah jumlahnya sebelum checkout.
    - Alur checkout dengan perhitungan ongkos kirim dan total pesanan.
-   - Status pesanan yang dikelola oleh server, bukan oleh aplikasi.
+   - Status pesanan dikelola lewat Repository, sehingga setiap perubahan
+     status meninggalkan jejak pada audit log dan buku besar poin.
 
 B. Pembayaran QRIS
    - Pembayaran memakai QRIS dinamis yang di-render langsung di perangkat
@@ -103,19 +105,36 @@ E. Referral Satu Tingkat (Bukan MLM)
 
 F. Panel Admin (di dalam aplikasi yang sama)
    - Dashboard ringkasan.
-   - Manajemen member.
-   - Manajemen produk (tambah, ubah, aktif/nonaktifkan).
+   - Manajemen member, termasuk penandaan fraud manual.
+   - Manajemen produk (tambah, ubah, aktif/nonaktifkan), termasuk harga promo,
+     periode promo, dan tombol aktif/nonaktif promo.
+   - Manajemen kategori produk (tambah kategori baru tanpa membangun ulang).
+   - Riwayat pergerakan stok per produk, terbaru lebih dahulu, lengkap dengan
+     SKU, jumlah perubahan, stok akhir, alasan, dan pelakunya.
    - Manajemen pesanan.
    - Manajemen penarikan (setujui / tolak / bayar).
    - Pengaturan aplikasi (poin check-in, poin per iklan, bonus referral,
      minimum penarikan, biaya kirim, dan lain-lain).
    - Audit log: setiap tindakan admin tercatat (misalnya PROCESS_WITHDRAWAL dan
      ADJUST_POINTS) beserta nilai, alasan, dan identitas admin.
+   - Ekspor data (member, pesanan, penarikan, poin, stok) ke berkas CSV.
 
 G. Iklan
    - Banner AdMob pada layar yang sesuai.
    - Rewarded video AdMob yang memberi poin hanya setelah SDK iklan
      mengonfirmasi bahwa iklan benar-benar selesai ditonton.
+
+H. Promo, Kategori, dan Deteksi Fraud
+   - Harga promo hanya berlaku bila promonya dinyalakan DAN tanggal hari ini
+     berada di dalam periode promo. Di luar periode itu, harga normal yang
+     dipakai, sehingga harga produk tidak pernah salah.
+   - Kategori produk dikelola dari panel admin; nama duplikat atau terlalu
+     pendek ditolak dengan pesan yang jelas.
+   - Bab 13.4: deteksi fraud bawaan memeriksa akun duplikat (nomor kontak atau
+     nama yang sama), referral mencurigakan, transaksi berulang pada satu hari,
+     pembatalan setelah bonus referral cair, dan reward iklan melebihi batas.
+     Hasil pemeriksaan tampil di panel admin, dan temuan yang memblokir dapat
+     langsung ditandai sehingga pengajuan penarikan akun itu ditolak.
 
 --------------------------------------------------------------------------------
 PERBAIKAN & KUALITAS
@@ -143,36 +162,44 @@ PERBAIKAN & KUALITAS
 --------------------------------------------------------------------------------
 KEAMANAN
 --------------------------------------------------------------------------------
-1. SEMUA field bernilai (value field) — poin, saldo, status pesanan, stok, status
-   penarikan, bonus referral, dan role — HANYA ditulis oleh Cloud Functions yang
-   berjalan memakai Admin SDK. Aplikasi klien tidak pernah menulis field tersebut.
-2. Firestore Security Rules menolak penulisan dari klien:
-   - /users/{userId} → klien hanya boleh membaca miliknya sendiri; pembuatan
-     dokumen ditolak (dibuat oleh fungsi registerProfile); perubahan dibatasi
-     pada field kontak dan wajib mempertahankan nilai points, balance, role,
-     referralId, status, dan verified (fungsi valueFieldsUnchanged()).
-   - /orders, /order_items, /payments, /points_ledger, /referrals, /ad_rewards,
-     /daily_tasks, /withdrawals → allow write: if false (hanya backend).
-   - /products → hanya baca; tulis hanya lewat Cloud Functions.
-   - /admin_logs dan /stock_movements → hanya admin yang boleh membaca; tulis
-     hanya backend.
-   - Aturan default menolak (default deny) untuk seluruh path yang tidak cocok.
-3. Konsekuensinya, APK yang dimodifikasi tetap tidak dapat "mencetak" poin,
-   mengubah saldo, atau menyetujui penarikan sendiri, karena server akan menolak.
-4. Referral ID dibangkitkan server sebagai tepat 6 digit angka, unik, dan tidak
-   dapat diubah oleh member.
-5. Validasi sisi server: seluruh aturan penarikan (minimum saldo, 20 iklan
-   rewarded hari itu, akun aktif, satu pengajuan per hari) diperiksa ulang di
-   Cloud Function, bukan hanya di aplikasi.
+1. Seluruh nilai penting — poin, saldo, status pesanan, stok, status penarikan,
+   bonus referral, dan peran pengguna — hanya dapat diubah lewat `Repository`.
+   Layar tidak pernah menulis langsung ke penyimpanan.
+2. Setiap perubahan nilai tersebut meninggalkan jejak yang tidak dapat
+   dihilangkan dari tampilan:
+   - Buku besar poin (points_ledger) mencatat setiap penambahan dan pemotongan.
+   - Riwayat pergerakan stok (stock_movements) mencatat setiap perubahan stok.
+   - Audit log mencatat tindakan admin, termasuk penyesuaian saldo dan poin.
+3. Kata sandi disimpan sebagai hash dengan garam acak per akun (PasswordHasher),
+   bukan teks terbuka. Mengubah kata sandi mewajibkan verifikasi kata sandi lama.
+4. Referral ID dibangkitkan sebagai tepat 6 digit angka, unik, dan tidak dapat
+   diubah oleh member.
+5. Validasi aturan penarikan (minimum saldo, 20 iklan rewarded hari itu, akun
+   aktif, tidak terkena penandaan fraud, satu pengajuan per hari) diperiksa ulang
+   oleh `Repository.eligibility()` saat pengajuan dikirim, bukan hanya dengan
+   menyembunyikan tombol.
 6. Poin dipotong segera saat pengajuan penarikan dibuat, sehingga saldo yang sama
    tidak dapat ditarik dua kali. Bila penarikan ditolak, poin dikembalikan dan
    dicatat di buku besar.
-7. Tidak ada cleartext traffic (android:usesCleartextTraffic="false") dan
+7. Pembatalan dan pengembalian pesanan diproses tepat sekali. Penanda
+   `revocationDone` pada pesanan mencegah pengembalian stok dan pemotongan poin
+   terjadi berulang saat admin menekan tombol yang sama lebih dari sekali.
+8. Bab 13.4: deteksi fraud bawaan memeriksa akun duplikat, referral mencurigakan,
+   transaksi berulang pada satu hari, pembatalan setelah bonus referral, dan
+   reward iklan melebihi batas. Temuan yang bersifat memblokir dapat langsung
+   ditandai sehingga penarikan akun tersebut ditolak.
+9. Tidak ada cleartext traffic (android:usesCleartextTraffic="false") dan
    aplikasi memakai network_security_config.
-8. android:allowBackup="false" dan fullBackupContent dinonaktifkan agar data
-   autentikasi tidak ikut tercadang di luar perangkat.
-9. Kunci rilis ALTOMEDIA.jks tidak disertakan ke dalam repositori (diabaikan oleh
-   .gitignore).
+10. android:allowBackup="false" dan fullBackupContent dinonaktifkan agar data
+    autentikasi tidak ikut tercadang di luar perangkat.
+11. Kunci rilis ALTOMEDIA.jks dan kredensialnya tidak disertakan ke dalam
+    repositori (diabaikan oleh .gitignore).
+
+Catatan penting mengenai saldo dan poin: Bab 15 butir 15 menyebut saldo dan poin
+dikontrol oleh server/backend. Versi 1.0.0 belum memakai backend; seluruh aturan
+dijalankan di perangkat. Karena itu nilai saldo dan poin hanya dapat dipercaya
+selama perangkat tidak dimodifikasi. Sebelum aplikasi dipakai untuk transaksi
+nyata, perlu ditambahkan backend agar aturan ini ditegakkan di sisi server.
 
 --------------------------------------------------------------------------------
 KOMPATIBILITAS
@@ -184,28 +211,29 @@ KOMPATIBILITAS
 - compileSdk 36, Java/JVM target 17 dengan core library desugaring aktif.
 - Orientasi layar portrait dan dukungan RTL dinonaktifkan sesuai desain.
 - Konfigurasi sumber daya dibatasi untuk bahasa "in" (Indonesia) dan "en".
-- Firebase Auth versi 22.3.1 dan AdMob play-services-ads 23.6.0 dipilih karena
-  masih mendukung minSdk 21 (versi yang lebih baru menaikkan batas minimum API).
+- AdMob play-services-ads 23.6.0 dipilih karena masih mendukung minSdk 21
+  (versi yang lebih baru menaikkan batas minimum API).
 
 --------------------------------------------------------------------------------
 CATATAN TEKNIS
 --------------------------------------------------------------------------------
-- Bahasa & kerangka: Kotlin.
-- Build: Android Gradle Plugin 8.11.1, Kotlin 2.1.21, Google Services 4.4.2.
-- UI: Material 3 (com.google.android.material 1.12.0), ViewBinding aktif.
-- Pustaka Jetpack: core-ktx, appcompat, constraintlayout, recyclerview,
-  swiperefreshlayout, fragment-ktx, lifecycle (viewmodel, livedata, runtime).
-- Asinkron: Kotlin Coroutines 1.9.0 (+ coroutines-play-services).
-- Backend: Google Firebase.
-  * Authentication: email/password.
-  * Cloud Firestore: basis data utama.
-  * Cloud Functions: region asia-southeast2 (Jakarta).
-  * Cloud Storage: penyimpanan berkas.
-- Iklan: Google AdMob — banner dan rewarded video.
-- Pembayaran: QRIS dinamis via ZXing (kode QR memuat total pesanan, berlaku
-  15 menit).
+- Bahasa & kerangka: Java (tanpa Kotlin), Activity + Fragment + tampilan kustom.
+- Build: Android Gradle Plugin 8.11.1, Gradle 8.14.3, JDK 17.
+- UI: Material 3 (com.google.android.material 1.12.0), seluruh tata letak XML
+  ditulis langsung tanpa ViewBinding.
+- Pustaka Jetpack: appcompat 1.7.0, core 1.13.1, constraintlayout 2.1.4,
+  recyclerview 1.3.2, swiperefreshlayout 1.1.0.
+- Penyimpanan: SQLite lokal lewat helper `Db` dengan dokumen JSON per koleksi.
+  Tidak ada Firestore, Cloud Functions, maupun Firebase Storage.
+- Autentikasi: akun tersimpan di perangkat; kata sandi disimpan sebagai hash
+  dengan garam acak (PasswordHasher), bukan teks terbuka.
+- Iklan: Google AdMob play-services-ads 23.6.0 — banner dan rewarded video.
+  Build debug memakai unit uji resmi Google.
+- Pembayaran: QRIS dinamis via ZXing core 3.5.3 (kode QR memuat total pesanan
+  dan nomor pesanan sebagai referensi, dibuat sepenuhnya di perangkat).
 - Tanda tangan rilis: keystore ALTOMEDIA.jks, alias "kdsmedia", masa berlaku
-  10000 hari.
+  10000 hari. Kredensial dibaca dari `keystore/keystore.properties` yang tidak
+  ikut masuk repositori.
 - Konfigurasi Play Store:
   * minSdk 21 / targetSdk 36.
   * AAB untuk unggahan Google Play.
@@ -215,6 +243,8 @@ CATATAN TEKNIS
   * Izin AD_ID (com.google.android.gms.permission.AD_ID) dideklarasikan.
   * Formulir Keamanan Data (Data Safety) wajib diisi di Play Console.
 - Izin yang diminta: INTERNET, ACCESS_NETWORK_STATE, VIBRATE, AD_ID.
+- Pengujian: 107 unit test JVM (RepositoryTest, DbStoreTest,
+  StartupLifecycleTest) dengan Robolectric 4.13 pada SDK 34.
 
 --------------------------------------------------------------------------------
 ARTEFAK RILIS
@@ -274,7 +304,7 @@ PERBAIKAN & KUALITAS
 --------------------------------------------------------------------------------
 KEAMANAN
 --------------------------------------------------------------------------------
-1. <Perubahan aturan Firestore, validasi Cloud Functions, atau penanganan sesi.>
+1. <Perubahan aturan validasi di `Repository` atau penanganan sesi/masuk.>
 2. <Bila tidak ada perubahan: "Tidak ada perubahan pada versi ini.">
 
 --------------------------------------------------------------------------------
@@ -287,9 +317,9 @@ KOMPATIBILITAS
 --------------------------------------------------------------------------------
 CATATAN TEKNIS
 --------------------------------------------------------------------------------
-- <Perubahan versi pustaka, konfigurasi Gradle, R8/ProGuard, atau konfigurasi
-  Firebase yang relevan.>
-- <Catatan proses build atau deployment Cloud Functions.>
+- <Perubahan versi pustaka, konfigurasi Gradle, R8/ProGuard, atau skema
+  penyimpanan SQLite yang relevan.>
+- <Catatan proses build dan penandatanganan paket.>
 
 --------------------------------------------------------------------------------
 ARTEFAK RILIS

@@ -1132,8 +1132,4 @@ public class Repository {
     /** Akses penyimpanan (dipakai pengujian). */
     public Store store() { return db; }
 
-    public void resetDemo() {
-        db.wipeAll();
-        seed();
-    }
 }

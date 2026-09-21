@@ -38,6 +38,10 @@ android {
             storePassword storePass
             keyAlias alias
             keyPassword keyPass
+            // Sertakan skema tanda tangan v3 dan v4 agar paket tidak dapat
+            // diganti isinya tanpa kunci rilis.
+            enableV3Signing true
+            enableV4Signing true
         }
     }
 
@@ -59,14 +63,7 @@ android {
     }
 
     buildFeatures {
-        viewBinding true
         buildConfig true
-    }
-
-    packagingOptions {
-        resources {
-            excludes += ['META-INF/*.kotlin_module', 'DebugProbesKt.bin', 'kotlin/**']
-        }
     }
 
     bundle {
