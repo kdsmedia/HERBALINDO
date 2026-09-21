@@ -115,11 +115,19 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/pay_check"
+                android:id="@+id/pay_confirm"
                 style="@style/Widget.Herbalindo.Button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:text="Konfirmasi Transfer" />
+
+            <Button
+                android:id="@+id/pay_check"
+                style="@style/Widget.Herbalindo.Button.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="Periksa Status Pembayaran" />
 
             <com.google.android.material.card.MaterialCardView

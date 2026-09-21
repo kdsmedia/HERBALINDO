@@ -2,6 +2,7 @@ package com.altomedia.herbalindo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -242,7 +243,7 @@ public class RepositoryTest {
         assertEquals(110, u.points);
         assertFalse("saldo masih di bawah minimum", repo.eligibility(u).ok);
 
-        try { repo.requestWithdrawal(u, 110, "DANA", "081234567890"); fail("harus gagal"); }
+        try { repo.requestWithdrawal(u, 110, "DANA", "Siti Aminah", "081234567890"); fail("harus gagal"); }
         catch (Repository.RuleException e) { assertTrue(e.getMessage().contains("belum terpenuhi")); }
     }
 
@@ -254,7 +255,7 @@ public class RepositoryTest {
         Models.User fresh = repo.user(u.userId);
         assertTrue(repo.eligibility(fresh).ok);
 
-        Models.Withdrawal w = repo.requestWithdrawal(fresh, 500000, "DANA", "081234567890");
+        Models.Withdrawal w = repo.requestWithdrawal(fresh, 500000, "DANA", "Siti Aminah", "081234567890");
         assertEquals(50000, w.amountRupiah);
         assertEquals("PENDING", w.status);
         assertEquals(600100 - 500000, repo.user(u.userId).points);
@@ -268,7 +269,7 @@ public class RepositoryTest {
         Models.User u = member("Siti Aminah", "081234567890", null);
         repo.addPoints(u.userId, 600000, "ADMIN_CREDIT", "saldo uji", null);
         for (int i = 0; i < 20; i++) repo.watchAd(u.userId);
-        Models.Withdrawal w = repo.requestWithdrawal(repo.user(u.userId), 500000, "BCA", "1234567890");
+        Models.Withdrawal w = repo.requestWithdrawal(repo.user(u.userId), 500000, "BCA", "Siti Aminah", "1234567890");
         repo.processWithdrawal(w.withdrawalId, "PAID", "USR-ADMIN", "transfer");
 
         boolean paid = false;
@@ -281,9 +282,9 @@ public class RepositoryTest {
         repo.addPoints(u.userId, 2000000, "ADMIN_CREDIT", "saldo uji", null);
         for (int i = 0; i < 20; i++) repo.watchAd(u.userId);
 
-        repo.requestWithdrawal(repo.user(u.userId), 500000, "DANA", "081234567890");
+        repo.requestWithdrawal(repo.user(u.userId), 500000, "DANA", "Siti Aminah", "081234567890");
         try {
-            repo.requestWithdrawal(repo.user(u.userId), 500000, "DANA", "081234567890");
+            repo.requestWithdrawal(repo.user(u.userId), 500000, "DANA", "Siti Aminah", "081234567890");
             fail("harus gagal");
         } catch (Repository.RuleException e) { assertTrue(e.getMessage().contains("belum terpenuhi")); }
     }
@@ -293,9 +294,9 @@ public class RepositoryTest {
         repo.addPoints(u.userId, 2000000, "ADMIN_CREDIT", "saldo uji", null);
         for (int i = 0; i < 20; i++) repo.watchAd(u.userId);
 
-        Models.Withdrawal w = repo.requestWithdrawal(repo.user(u.userId), 500000, "DANA", "081234567890");
+        Models.Withdrawal w = repo.requestWithdrawal(repo.user(u.userId), 500000, "DANA", "Siti Aminah", "081234567890");
         repo.processWithdrawal(w.withdrawalId, "REJECTED", "USR-ADMIN", "gagal");
-        Models.Withdrawal again = repo.requestWithdrawal(repo.user(u.userId), 500000, "DANA", "081234567890");
+        Models.Withdrawal again = repo.requestWithdrawal(repo.user(u.userId), 500000, "DANA", "Siti Aminah", "081234567890");
         assertEquals("PENDING", again.status);
     }
 
@@ -550,5 +551,160 @@ public class RepositoryTest {
             if ("UBAH_PASSWORD".equals(o.optString("action"))) { found = true; break; }
         }
         assertTrue("perubahan password harus tercatat pada audit log", found);
+    }
+
+    /* ---------------- Kelola produk, penarikan, dan poin oleh admin ---------------- */
+
+    @Test public void produkMenyimpanGambarPoinDeskripsiDanStok() throws Exception {
+        Models.Product p = repo.product("PRD-HBA-001");
+        p.imageUrl = "https://contoh.id/gambar.jpg";
+        p.description = "Deskripsi baru untuk pengujian";
+        p.points = 750;
+        p.stock = 42;
+        repo.saveProduct(p, "USR-ADMIN");
+
+        Models.Product saved = Models.Product.from(repo.product("PRD-HBA-001").toJson().toString());
+        assertEquals("https://contoh.id/gambar.jpg", saved.imageUrl);
+        assertEquals("Deskripsi baru untuk pengujian", saved.description);
+        assertEquals(750, saved.points);
+        assertEquals(42, saved.stock);
+    }
+
+    @Test public void urlGambarHarusHttpAtauHttps() {
+        assertTrue(Util.isHttpUrl("https://contoh.id/a.jpg"));
+        assertTrue(Util.isHttpUrl("http://contoh.id/a.jpg"));
+        assertFalse(Util.isHttpUrl("ftp://contoh.id/a.jpg"));
+        assertFalse(Util.isHttpUrl("javascript:alert(1)"));
+        assertFalse(Util.isHttpUrl(""));
+        assertFalse(Util.isHttpUrl(null));
+    }
+
+    @Test public void penarikanHanyaMenerimaMetodeDropdown() throws Exception {
+        Models.User u = siapTarik();
+        for (String salah : new String[]{"", "  ", "BITCOIN", "bca", "OVO2", "DANA BANK"}) {
+            try {
+                repo.requestWithdrawal(u, 500000, salah, "Siti Aminah", "081234567890");
+                fail("metode di luar daftar harus gagal: [" + salah + "]");
+            } catch (Repository.RuleException e) {
+                assertTrue(e.getMessage().contains("Pilih metode"));
+            }
+        }
+        // Spasi di tepi dirapikan, bukan dianggap metode lain.
+        Models.Withdrawal spasi = repo.requestWithdrawal(u, 500000, "  DANA  ", "Siti Aminah", "081234567890");
+        assertEquals("DANA", spasi.method);
+        repo.processWithdrawal(spasi.withdrawalId, "REJECTED", "USR-ADMIN", "uji");
+
+        for (String benar : Config.WITHDRAW_METHODS) {
+            String tujuan = Config.isEwallet(benar) ? "081234567890" : "1234567890";
+            Models.Withdrawal w = repo.requestWithdrawal(u, 500000, benar, "Siti Aminah", tujuan);
+            assertEquals(benar, w.method);
+            assertEquals("Siti Aminah", w.accountName);
+            assertEquals("PENDING", w.status);
+            repo.processWithdrawal(w.withdrawalId, "REJECTED", "USR-ADMIN", "uji");
+        }
+    }
+
+    @Test public void penarikanMewajibkanNamaPemilikRekening() throws Exception {
+        Models.User u = siapTarik();
+        try { repo.requestWithdrawal(u, 500000, "DANA", "", "081234567890"); fail("harus gagal"); }
+        catch (Repository.RuleException e) { assertTrue(e.getMessage().contains("Nama pemilik")); }
+        try { repo.requestWithdrawal(u, 500000, "DANA", "Al", "081234567890"); fail("harus gagal"); }
+        catch (Repository.RuleException e) { assertTrue(e.getMessage().contains("Nama pemilik")); }
+    }
+
+    @Test public void penarikanMemvalidasiNomorSesuaiJenisMetode() throws Exception {
+        Models.User u = siapTarik();
+        try { repo.requestWithdrawal(u, 500000, "DANA", "Siti Aminah", "12345"); fail("harus gagal"); }
+        catch (Repository.RuleException e) { assertTrue(e.getMessage().contains("Nomor HP")); }
+        try { repo.requestWithdrawal(u, 500000, "BCA", "Siti Aminah", "0812"); fail("harus gagal"); }
+        catch (Repository.RuleException e) { assertTrue(e.getMessage().contains("rekening BCA")); }
+    }
+
+    @Test public void adminDapatMenetapkanPoinMemberKeNilaiTertentu() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        repo.adminSetPoints(u.userId, 12345, "koreksi saldo", "USR-ADMIN");
+        assertEquals(12345, repo.user(u.userId).points);
+
+        repo.adminSetPoints(u.userId, 100, "penyesuaian turun", "USR-ADMIN");
+        assertEquals(100, repo.user(u.userId).points);
+
+        assertNotEquals(0, repo.adminLogs(0).size());
+        boolean tercatat = false;
+        for (org.json.JSONObject o : repo.adminLogs(0)) {
+            if ("POIN_SET".equals(o.optString("action"))) tercatat = true;
+        }
+        assertTrue("penetapan poin harus tercatat di audit log", tercatat);
+    }
+
+    @Test public void penetapanPoinMenolakNilaiTidakSah() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        try { repo.adminSetPoints(u.userId, -1, "koreksi", "USR-ADMIN"); fail("harus gagal"); }
+        catch (Repository.RuleException e) { assertTrue(e.getMessage().contains("negatif")); }
+        try { repo.adminSetPoints(u.userId, 10, "ab", "USR-ADMIN"); fail("harus gagal"); }
+        catch (Repository.RuleException e) { assertTrue(e.getMessage().contains("Alasan")); }
+        try { repo.adminSetPoints(u.userId, 0, "koreksi", "USR-ADMIN"); fail("harus gagal"); }
+        catch (Repository.RuleException e) { assertTrue(e.getMessage().contains("sudah bernilai")); }
+    }
+
+    @Test public void pembeliDapatMengirimDataTransferUntukDiverifikasi() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        Models.Order o = buy(u, "PRD-HBA-001", 1);
+        assertEquals("UNPAID", o.paymentStatus);
+
+        Models.Order updated = repo.submitPayment(o.orderId, "Budi Pengirim", o.total, "BCA", "transfer 09:00");
+        assertEquals("VERIFYING", updated.paymentStatus);
+        assertEquals("WAITING_PAYMENT", updated.orderStatus);
+        assertEquals("Budi Pengirim", updated.buyerName);
+        assertEquals(o.total, updated.paidAmount);
+        assertEquals(Boolean.TRUE, updated.paidMatches());
+    }
+
+    @Test public void kesesuaianNominalTerdeteksiSaatTidakSamaDanSaatBelumDiisi() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        Models.Order o = buy(u, "PRD-HBA-001", 1);
+
+        assertNull("belum diisi harus null, bukan false", o.paidMatches());
+
+        repo.submitPayment(o.orderId, "Budi Pengirim", o.total - 5000, "BCA", "");
+        Models.Order kurang = repo.order(o.orderId);
+        assertEquals(Boolean.FALSE, kurang.paidMatches());
+
+        repo.submitPayment(o.orderId, "Budi Pengirim", o.total, "BCA", "");
+        assertEquals(Boolean.TRUE, repo.order(o.orderId).paidMatches());
+    }
+
+    @Test public void dataTransferTidakSahDitolak() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        Models.Order o = buy(u, "PRD-HBA-001", 1);
+        try { repo.submitPayment(o.orderId, "Ab", o.total, "", ""); fail("harus gagal"); }
+        catch (Repository.RuleException e) { assertTrue(e.getMessage().contains("Nama pengirim")); }
+        try { repo.submitPayment(o.orderId, "Budi Pengirim", 0, "", ""); fail("harus gagal"); }
+        catch (Repository.RuleException e) { assertTrue(e.getMessage().contains("Nominal")); }
+    }
+
+    @Test public void dataTransferTidakBolehDiubahSetelahLunas() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        Models.Order o = buy(u, "PRD-HBA-001", 1);
+        repo.submitPayment(o.orderId, "Budi Pengirim", o.total, "BCA", "");
+        repo.markStatus(repo.order(o.orderId), "PAID", "USR-ADMIN", "dana masuk");
+        try { repo.submitPayment(o.orderId, "Budi Pengirim", o.total, "BCA", ""); fail("harus gagal"); }
+        catch (Repository.RuleException e) { assertTrue(e.getMessage().contains("sudah terverifikasi")); }
+    }
+
+    @Test public void verifikasiMembuatPoinDanPesananLanjut() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        Models.Order o = buy(u, "PRD-HBA-001", 1);
+        repo.submitPayment(o.orderId, "Budi Pengirim", o.total, "BCA", "");
+        repo.markStatus(repo.order(o.orderId), "PAID", "USR-ADMIN", "sesuai mutasi");
+        assertEquals(500, repo.user(u.userId).points); // 1 x 500 poin produk
+        assertEquals("PAID", repo.order(o.orderId).paymentStatus);
+    }
+
+    /** Menyiapkan member yang seluruh syarat penarikannya sudah terpenuhi. */
+    private Models.User siapTarik() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        repo.addPoints(u.userId, 600000, "ADMIN_CREDIT", "saldo uji", null);
+        for (int i = 0; i < 20; i++) repo.watchAd(u.userId);
+        return repo.user(u.userId);
     }
 }

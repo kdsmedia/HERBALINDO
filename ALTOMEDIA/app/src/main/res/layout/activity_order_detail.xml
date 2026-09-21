@@ -99,6 +99,21 @@
                 android:layout_marginTop="6dp"
                 android:orientation="vertical" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="Pembayaran"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/od_payment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="vertical" />
+
             <Button
                 android:id="@+id/od_pay"
                 style="@style/Widget.Herbalindo.Button"

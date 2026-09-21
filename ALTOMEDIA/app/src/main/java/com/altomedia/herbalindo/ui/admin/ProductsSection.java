@@ -113,13 +113,15 @@ class ProductsSection {
         box.setOrientation(LinearLayout.VERTICAL);
         box.setPadding(28, 8, 28, 0);
         EditText name = field(box, "Nama produk", p.name);
+        EditText imageUrl = field(box, "URL gambar produk", p.imageUrl);
+        EditText price = field(box, "Harga produk (Rp)", String.valueOf(p.price));
+        EditText points = field(box, "Komisi poin per unit", String.valueOf(p.points));
+        EditText desc = field(box, "Deskripsi produk", p.description);
+        EditText stockField = field(box, "Stok tersedia", String.valueOf(p.stock));
         EditText category = field(box, "Kategori", p.category);
-        EditText price = field(box, "Harga (Rp)", String.valueOf(p.price));
         EditText promo = field(box, "Harga promo (0 = tanpa promo)", String.valueOf(p.promoPrice));
-        EditText points = field(box, "Poin per unit", String.valueOf(p.points));
         EditText minStock = field(box, "Minimum stok (peringatan)", String.valueOf(p.minStock));
         EditText weight = field(box, "Berat (gram)", String.valueOf(p.weight));
-        EditText desc = field(box, "Deskripsi", p.description);
         EditText comp = field(box, "Komposisi", p.composition);
         EditText usage = field(box, "Aturan pakai", p.usage);
         EditText warn = field(box, "Peringatan", p.warning);
@@ -135,8 +137,8 @@ class ProductsSection {
                         edited.sku = p.sku;
                         edited.createdAt = p.createdAt;
                         edited.status = p.status;
-                        edited.stock = p.stock;
                         edited.name = name.getText().toString().trim();
+                        edited.imageUrl = imageUrl.getText().toString().trim();
                         edited.category = category.getText().toString().trim();
                         edited.price = parse(price.getText().toString());
                         edited.promoPrice = parse(promo.getText().toString());
@@ -147,12 +149,19 @@ class ProductsSection {
                         edited.composition = comp.getText().toString().trim();
                         edited.usage = usage.getText().toString().trim();
                         edited.warning = warn.getText().toString().trim();
-                        if (edited.name.length() < 3) { Ui.error(a, "Nama minimal 3 karakter"); return; }
-                        if (edited.price <= 0) { Ui.error(a, "Harga harus lebih dari 0"); return; }
-                        if (edited.promoPrice > 0 && edited.promoPrice >= edited.price) {
-                            Ui.error(a, "Harga promo harus lebih kecil dari harga normal"); return;
-                        }
+                        long newStock = parse(stockField.getText().toString());
+
+                        String problem = validate(edited, newStock);
+                        if (problem != null) { Ui.error(a, problem); return; }
+
+                        edited.stock = p.stock;
                         a.repo().saveProduct(edited, a.user.userId);
+                        // Stok awal disimpan lewat riwayat agar perubahannya
+                        // tercatat sama seperti penyesuaian stok lainnya.
+                        if (newStock != p.stock) {
+                            a.repo().adjustStock(p.productId, (int) (newStock - p.stock),
+                                    "Penyesuaian stok saat ubah produk", a.user.userId);
+                        }
                         a.refreshActive();
                         Ui.ok(a, "Produk " + edited.sku + " diperbarui");
                     } catch (Exception e) {
@@ -160,6 +169,24 @@ class ProductsSection {
                     }
                 })
                 .show();
+    }
+
+    /**
+     * Memeriksa isian form produk. Mengembalikan pesan masalah, atau
+     * {@code null} bila seluruh isian sah.
+     */
+    private String validate(Models.Product p, long stock) {
+        if (p.name.length() < 3) return "Nama produk minimal 3 karakter";
+        if (p.price <= 0) return "Harga produk harus lebih dari 0";
+        if (p.points < 0) return "Komisi poin tidak boleh negatif";
+        if (p.description.length() < 5) return "Deskripsi produk minimal 5 karakter";
+        if (stock < 0) return "Stok tidak boleh negatif";
+        if (stock > 1000000) return "Stok terlalu besar (maksimum 1.000.000)";
+        if (!Util.isBlank(p.imageUrl) && !Util.isHttpUrl(p.imageUrl))
+            return "URL gambar harus diawali http:// atau https://";
+        if (p.promoPrice > 0 && p.promoPrice >= p.price)
+            return "Harga promo harus lebih kecil dari harga normal";
+        return null;
     }
 
     private long parse(String s) {

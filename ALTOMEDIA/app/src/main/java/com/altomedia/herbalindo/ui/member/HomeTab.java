@@ -66,6 +66,7 @@ class HomeTab {
             View row = Rows.card(a, p.name, p.category + " · " + p.sku, Util.rupiah(p.effectivePrice()));
             row.findViewById(R.id.item_action).setVisibility(View.VISIBLE);
             row.findViewById(R.id.item_action).setEnabled(true);
+            ImageLoader.load(row.findViewById(R.id.item_image), p.imageUrl, R.drawable.ic_product_placeholder);
             ((android.widget.Button) row.findViewById(R.id.item_action)).setText("Lihat");
             row.findViewById(R.id.item_action).setOnClickListener(v -> a.openProduct(p.productId));
             list.addView(row);

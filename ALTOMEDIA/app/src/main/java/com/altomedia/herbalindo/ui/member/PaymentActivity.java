@@ -1,5 +1,6 @@
 package com.altomedia.herbalindo.ui.member;
 
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -7,7 +8,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -19,6 +22,7 @@ import com.altomedia.herbalindo.core.QrisGenerator;
 import com.altomedia.herbalindo.core.Ui;
 import com.altomedia.herbalindo.core.Util;
 import com.altomedia.herbalindo.data.Models;
+import com.altomedia.herbalindo.data.Repository;
 import com.altomedia.herbalindo.ui.BaseActivity;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -77,11 +81,72 @@ public class PaymentActivity extends BaseActivity {
             if ("PAID".equals(order.paymentStatus)) {
                 Ui.info(this, "Pembayaran terverifikasi",
                         "Pesanan " + order.orderNumber + " sudah diverifikasi admin.\nPoin belanja telah ditambahkan.");
+            } else if ("VERIFYING".equals(order.paymentStatus)) {
+                Ui.info(this, "Menunggu verifikasi admin",
+                        "Data transfer Anda sudah dikirim. Admin akan mencocokkan dengan mutasi yang masuk.");
             } else {
                 Ui.ok(this, "Status saat ini: " + Config.orderLabel(order.orderStatus)
-                        + ". Pembayaran diverifikasi admin setelah dana masuk.");
+                        + ". Kirim data transfer lalu tunggu verifikasi admin.");
             }
         });
+        findViewById(R.id.pay_confirm).setOnClickListener(v -> askTransferData());
+    }
+
+    /**
+     * Meminta pembeli mengisi data transfer.
+     *
+     * Isian ini yang membuat admin dapat mencocokkan pesanan dengan mutasi yang
+     * masuk. Validasi dilakukan sebelum disimpan agar pesanan tidak menunggu
+     * verifikasi dengan keterangan yang tidak lengkap.
+     */
+    private void askTransferData() {
+        if (order == null) return;
+        if ("PAID".equals(order.paymentStatus)) {
+            Ui.ok(this, "Pembayaran sudah diverifikasi");
+            return;
+        }
+        LinearLayout box = new LinearLayout(this);
+        box.setOrientation(LinearLayout.VERTICAL);
+        box.setPadding(30, 10, 30, 0);
+        final EditText sender = new EditText(this);
+        sender.setHint("Nama pengirim sesuai rekening");
+        sender.setText(order.buyerName.isEmpty() ? (user == null ? "" : user.name) : order.buyerName);
+        final EditText amount = new EditText(this);
+        amount.setHint("Nominal yang ditransfer (angka)");
+        amount.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        if (order.paidAmount > 0) amount.setText(String.valueOf(order.paidAmount));
+        final EditText from = new EditText(this);
+        from.setHint("Bank / e-wallet pengirim (opsional)");
+        from.setText(order.paidFrom);
+        final EditText note = new EditText(this);
+        note.setHint("Catatan (opsional, mis. jam transfer)");
+        note.setText(order.paidNote);
+        box.addView(sender);
+        box.addView(amount);
+        box.addView(from);
+        box.addView(note);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Konfirmasi transfer")
+                .setMessage("Tagihan " + Util.rupiah(order.total)
+                        + "\nIsi nominal persis seperti yang Anda transfer agar admin mudah mencocokkan.")
+                .setView(new android.widget.ScrollView(this) {{ addView(box); }})
+                .setNegativeButton("Batal", null)
+                .setPositiveButton("Kirim", (d, w) -> {
+                    long amt;
+                    try { amt = Long.parseLong(amount.getText().toString().trim()); }
+                    catch (Exception e) { Ui.error(this, "Nominal harus berupa angka"); return; }
+                    try {
+                        order = repo.submitPayment(order.orderId, sender.getText().toString().trim(), amt,
+                                from.getText().toString(), note.getText().toString());
+                        renderStatus();
+                        Ui.info(this, "Data transfer terkirim",
+                                "Admin akan memverifikasi pembayaran Anda.\nStatus: MENUNGGU VERIFIKASI");
+                    } catch (Repository.RuleException e) {
+                        Ui.error(this, e.getMessage());
+                    }
+                })
+                .show();
     }
 
     @Override protected void onSessionReady(Models.User user) { /* order sudah dimuat */ }

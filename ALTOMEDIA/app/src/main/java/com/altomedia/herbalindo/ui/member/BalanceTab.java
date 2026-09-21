@@ -5,15 +5,20 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.altomedia.herbalindo.R;
+import com.altomedia.herbalindo.core.Config;
 import com.altomedia.herbalindo.core.Ui;
 import com.altomedia.herbalindo.core.Util;
 import com.altomedia.herbalindo.data.Models;
 import com.altomedia.herbalindo.data.Repository;
+import com.google.android.material.textfield.TextInputLayout;
 
 /** Tab Saldo: ringkasan, syarat withdrawal yang transparan, dan pengajuan. */
 class BalanceTab {
@@ -32,9 +37,33 @@ class BalanceTab {
                 @Override public void onTextChanged(CharSequence s, int st, int b, int c) { updateConversion(); }
                 @Override public void afterTextChanged(Editable s) { }
             });
+            Spinner method = root.findViewById(R.id.bal_method);
+            ArrayAdapter<String> ad = new ArrayAdapter<>(a,
+                    android.R.layout.simple_spinner_dropdown_item, Config.WITHDRAW_METHODS);
+            method.setAdapter(ad);
+            method.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) { updateDestinationHint(); }
+                @Override public void onNothingSelected(AdapterView<?> p) { }
+            });
             root.findViewById(R.id.bal_submit).setOnClickListener(v -> submit());
+            updateDestinationHint();
         }
         return root;
+    }
+
+    /** Petunjuk isian tujuan menyesuaikan metode: dompet digital atau rekening bank. */
+    private void updateDestinationHint() {
+        TextInputLayout til = root.findViewById(R.id.bal_dest);
+        if (til == null) return;
+        til.setHint(Config.isEwallet(selectedMethod())
+                ? "Nomor HP terdaftar di " + selectedMethod()
+                : "Nomor rekening " + selectedMethod());
+    }
+
+    private String selectedMethod() {
+        Spinner sp = root.findViewById(R.id.bal_method);
+        Object item = sp.getSelectedItem();
+        return item == null ? "" : item.toString();
     }
 
     private long requestedPoints() {
@@ -88,7 +117,8 @@ class BalanceTab {
                 Models.Withdrawal w = list.get(i);
                 View row = LayoutInflater.from(a).inflate(R.layout.item_info, null, false);
                 ((TextView) row.findViewById(R.id.info_label)).setText(
-                        Util.dateTime(w.createdAt) + " · " + w.method);
+                        Util.dateTime(w.createdAt) + " · " + w.method
+                                + (Util.isBlank(w.accountName) ? "" : " · " + w.accountName));
                 TextView v = row.findViewById(R.id.info_value);
                 v.setText(Util.rupiah(w.amountRupiah) + " · " + w.status);
                 v.setTextColor(androidx.core.content.ContextCompat.getColor(a, "PAID".equals(w.status) ? R.color.success
@@ -103,21 +133,28 @@ class BalanceTab {
     private void submit() {
         long points = requestedPoints();
         if (points <= 0) { Ui.error(a, "Jumlah poin tidak valid"); return; }
-        EditText methodEt = root.findViewById(R.id.bal_method);
+        String method = selectedMethod();
+        EditText holderEt = root.findViewById(R.id.bal_holder);
         EditText destEt = root.findViewById(R.id.bal_dest);
-        String method = methodEt.getText() == null ? "" : methodEt.getText().toString().trim();
+        String holder = holderEt.getText() == null ? "" : holderEt.getText().toString().trim();
         String dest = destEt.getText() == null ? "" : destEt.getText().toString().trim();
-        if (method.isEmpty()) { Ui.error(a, "Isi metode pencairan (DANA/OVO/BCA)"); return; }
-        if (dest.isEmpty()) { Ui.error(a, "Isi nomor tujuan"); return; }
+        if (!Repository.isWithdrawMethod(method)) { Ui.error(a, "Pilih metode pencairan"); return; }
+        if (holder.isEmpty()) { Ui.error(a, "Isi nama pemilik rekening"); return; }
+        if (dest.isEmpty()) {
+            Ui.error(a, Config.isEwallet(method) ? "Isi nomor HP " + method : "Isi nomor rekening " + method);
+            return;
+        }
 
         try {
-            Models.Withdrawal w = a.repo().requestWithdrawal(a.user, points, method, dest);
-            methodEt.setText(""); destEt.setText("");
+            Models.Withdrawal w = a.repo().requestWithdrawal(a.user, points, method, holder, dest);
+            holderEt.setText(""); destEt.setText("");
             ((EditText) root.findViewById(R.id.bal_amount)).setText("");
             refresh();
             a.onSessionReady(a.repo().user(a.user.userId));
             Ui.info(a, "Pengajuan dikirim",
-                    "ID: " + w.withdrawalId + "\nJumlah: " + Util.rupiah(w.amountRupiah)
+                    "ID: " + w.withdrawalId
+                            + "\nMetode: " + w.method + " · " + w.accountName + " · " + w.destination
+                            + "\nJumlah: " + Util.rupiah(w.amountRupiah)
                             + "\nStatus: MENUNGGU REVIEW ADMIN"
                             + "\n\nPoin dipotong sementara sampai admin menyetujui. Jika ditolak, poin dikembalikan otomatis.");
         } catch (Repository.RuleException e) {

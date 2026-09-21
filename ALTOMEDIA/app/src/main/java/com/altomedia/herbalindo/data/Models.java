@@ -135,9 +135,27 @@ public final class Models {
         public String orderId, userId, orderNumber, paymentMethod = "QRIS", paymentStatus = "UNPAID",
                 orderStatus = "PENDING", shippingCourier = "", trackingNumber = "",
                 shippingAddressText = "", shippingName = "", shippingPhone = "", note = "";
+        /**
+         * Data pembayaran yang diisi pembeli agar admin dapat mencocokkan dengan
+         * mutasi yang benar-benar diterima. {@code paidAmount} adalah nominal yang
+         * pembeli nyatakan sudah ditransfer, bukan total pesanan.
+         */
+        public String buyerName = "", paidFrom = "", paidNote = "";
+        public long paidAmount;
         public List<OrderItem> items = new ArrayList<>();
         public long subtotal, shippingCost, total;
         public String createdAt, updatedAt;
+
+        /**
+         * Kesamaan nominal transfer dengan total pesanan.
+         *
+         * Mengembalikan {@code null} bila pembeli belum mengisi data transfer,
+         * sehingga admin dapat membedakan "belum diisi" dari "tidak cocok".
+         */
+        public Boolean paidMatches() {
+            if (paidAmount <= 0) return null;
+            return paidAmount == total;
+        }
 
         public JSONObject toJson() throws JSONException {
             JSONObject o = new JSONObject();
@@ -150,6 +168,8 @@ public final class Models {
             o.put("orderStatus", orderStatus); o.put("shippingCourier", shippingCourier);
             o.put("trackingNumber", trackingNumber); o.put("shippingAddressText", shippingAddressText);
             o.put("shippingName", shippingName); o.put("shippingPhone", shippingPhone);
+            o.put("buyerName", buyerName); o.put("paidAmount", paidAmount);
+            o.put("paidFrom", paidFrom); o.put("paidNote", paidNote);
             o.put("note", note); o.put("createdAt", createdAt); o.put("updatedAt", updatedAt);
             return o;
         }
@@ -172,6 +192,10 @@ public final class Models {
                 ord.shippingAddressText = o.optString("shippingAddressText");
                 ord.shippingName = o.optString("shippingName");
                 ord.shippingPhone = o.optString("shippingPhone");
+                ord.buyerName = o.optString("buyerName");
+                ord.paidAmount = o.optLong("paidAmount");
+                ord.paidFrom = o.optString("paidFrom");
+                ord.paidNote = o.optString("paidNote");
                 ord.note = o.optString("note");
                 ord.createdAt = o.optString("createdAt"); ord.updatedAt = o.optString("updatedAt");
             } catch (JSONException ignored) { }
@@ -260,13 +284,16 @@ public final class Models {
     /* ---------------- withdrawals/{withdrawalId} ---------------- */
     public static class Withdrawal {
         public String withdrawalId, userId, method, destination, status = "PENDING", adminId, note = "", date, createdAt, processedAt;
+        /** Nama pemilik rekening/dompet digital sesuai data yang diisi member. */
+        public String accountName = "";
         public long amountPoints, amountRupiah;
 
         public JSONObject toJson() throws JSONException {
             JSONObject o = new JSONObject();
             o.put("withdrawalId", withdrawalId); o.put("userId", userId);
             o.put("amountPoints", amountPoints); o.put("amountRupiah", amountRupiah);
-            o.put("method", method); o.put("destination", destination); o.put("status", status);
+            o.put("method", method); o.put("destination", destination);
+            o.put("accountName", accountName); o.put("status", status);
             o.put("adminId", adminId); o.put("note", note); o.put("date", date);
             o.put("createdAt", createdAt); o.put("processedAt", processedAt);
             return o;
@@ -278,6 +305,7 @@ public final class Models {
                 w.withdrawalId = o.optString("withdrawalId"); w.userId = o.optString("userId");
                 w.amountPoints = o.optLong("amountPoints"); w.amountRupiah = o.optLong("amountRupiah");
                 w.method = o.optString("method"); w.destination = o.optString("destination");
+                w.accountName = o.optString("accountName");
                 w.status = o.optString("status", "PENDING");
                 w.adminId = o.optString("adminId", null); w.note = o.optString("note");
                 w.date = o.optString("date"); w.createdAt = o.optString("createdAt");

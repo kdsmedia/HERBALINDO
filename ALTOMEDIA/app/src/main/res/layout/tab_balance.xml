@@ -89,18 +89,34 @@
             android:textSize="13sp"
             android:textStyle="bold" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Metode Pencairan"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp" />
+
+        <Spinner
+            android:id="@+id/bal_method"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_box"
+            android:minHeight="48dp" />
+
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.Herbalindo.Input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:hint="Metode (DANA/OVO/BCA)">
+            android:hint="Nama Pemilik Rekening">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/bal_method"
+                android:id="@+id/bal_holder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
+                android:inputType="textPersonName"
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -109,7 +125,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:hint="Nomor Tujuan / Rekening">
+            android:hint="Nomor Rekening / Nomor HP">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/bal_dest"

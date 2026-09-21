@@ -56,6 +56,7 @@ class ProductsTab {
             shown++;
             View row = LayoutInflater.from(a).inflate(R.layout.item_product, null, false);
             ((TextView) row.findViewById(R.id.item_name)).setText(p.name);
+            ImageLoader.load(row.findViewById(R.id.item_image), p.imageUrl, R.drawable.ic_product_placeholder);
             String priceText = Util.rupiah(p.effectivePrice());
             String sub = p.category + " · " + p.sku + " · stok " + p.stock;
             if (p.hasPromo()) sub = "PROMO · " + sub;

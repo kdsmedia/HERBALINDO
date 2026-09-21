@@ -54,7 +54,9 @@ class WithdrawalsSection {
 
             ((TextView) card.findViewById(R.id.ac_body)).setText(
                     "Poin dipotong " + Util.num(w.amountPoints)
-                            + "\nMetode " + w.method + " → " + w.destination
+                            + "\nMetode " + w.method
+                            + "\nNama pemilik: " + (Util.isBlank(w.accountName) ? "—" : w.accountName)
+                            + "\nNomor tujuan: " + w.destination
                             + "\nKontak member: " + (owner == null ? "-" : owner.contact())
                             + "\nSaldo poin saat ini: " + (owner == null ? "-" : Util.num(owner.points))
                             + (Util.isBlank(w.note) ? "" : "\nCatatan: " + w.note));
@@ -108,8 +110,10 @@ class WithdrawalsSection {
         new AlertDialog.Builder(a)
                 .setTitle(approved ? "Setujui withdrawal" : "Tolak withdrawal")
                 .setMessage(approved
-                        ? "Pastikan transfer " + Util.rupiah(w.amountRupiah) + " ke " + w.method + " " + w.destination
-                          + " sudah dilakukan melalui aplikasi bank/e-wallet Anda. Tindakan ini tercatat pada audit log."
+                        ? "Transfer " + Util.rupiah(w.amountRupiah) + " ke " + w.method
+                          + " " + w.destination + " a.n. " + (Util.isBlank(w.accountName) ? "-" : w.accountName)
+                          + ".\nPastikan data ini cocok dengan tujuan yang Anda kirim melalui aplikasi bank/e-wallet Anda. "
+                          + "Tindakan ini tercatat pada audit log."
                         : "Poin " + Util.num(w.amountPoints) + " akan dikembalikan ke saldo member. Sertakan alasan penolakan.")
                 .setView(box)
                 .setNegativeButton("Batal", null)

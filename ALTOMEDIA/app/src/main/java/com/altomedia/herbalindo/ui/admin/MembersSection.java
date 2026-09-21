@@ -57,6 +57,7 @@ class MembersSection {
             actions.removeAllViews();
             actions.addView(action("+ Saldo", R.color.success, v -> adjustBalance(u, 1)));
             actions.addView(action("− Saldo", R.color.warning, v -> adjustBalance(u, -1)));
+            actions.addView(action("Tetapkan Poin", R.color.brand_accent_dark, v -> setPoints(u)));
             actions.addView(action(u.fraudFlag ? "Hapus Fraud" : "Tandai Fraud", R.color.danger, v -> toggleFraud(u)));
             actions.addView(action("ACTIVE".equals(u.status) ? "Suspend" : "Aktifkan",
                     R.color.info, v -> toggleStatus(u)));
@@ -111,6 +112,48 @@ class MembersSection {
                         a.repo().adminAdjustBalance(u.userId, direction * n, r, a.user.userId);
                         a.refreshActive();
                         Ui.ok(a, "Saldo " + u.name + " disesuaikan");
+                    } catch (Repository.RuleException e) {
+                        Ui.error(a, e.getMessage());
+                    }
+                })
+                .show();
+    }
+
+    /**
+     * Menetapkan saldo poin member ke angka tertentu.
+     *
+     * Admin memasukkan hasil akhir, bukan selisih, lalu melihat perubahan
+     * sebelum dan sesudahnya pada konfirmasi agar tidak salah tetapkan.
+     */
+    private void setPoints(Models.User u) {
+        LinearLayout box = new LinearLayout(a);
+        box.setOrientation(LinearLayout.VERTICAL);
+        box.setPadding(28, 8, 28, 0);
+        EditText target = new EditText(a);
+        target.setHint("Poin akhir yang diinginkan");
+        target.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        target.setText(String.valueOf(u.points));
+        EditText reason = new EditText(a);
+        reason.setHint("Alasan (wajib, tercatat di audit log)");
+        box.addView(target);
+        box.addView(reason);
+
+        new androidx.appcompat.app.AlertDialog.Builder(a)
+                .setTitle("Tetapkan poin " + u.name)
+                .setMessage("Saat ini " + Util.num(u.points) + " poin ("
+                        + Util.rupiah(a.repo().pointsToRupiah(u.points)) + ").")
+                .setView(box)
+                .setNegativeButton("Batal", null)
+                .setPositiveButton("Simpan", (d, w) -> {
+                    long n;
+                    try { n = Long.parseLong(target.getText().toString().trim()); }
+                    catch (Exception e) { Ui.error(a, "Poin harus berupa angka"); return; }
+                    String r = reason.getText().toString().trim();
+                    if (r.length() < 3) { Ui.error(a, "Alasan minimal 3 karakter"); return; }
+                    try {
+                        a.repo().adminSetPoints(u.userId, n, r, a.user.userId);
+                        a.refreshActive();
+                        Ui.ok(a, "Poin " + u.name + " → " + Util.num(n));
                     } catch (Repository.RuleException e) {
                         Ui.error(a, e.getMessage());
                     }

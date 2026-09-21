@@ -84,6 +84,21 @@ public class OrderDetailActivity extends BaseActivity {
                 Util.isBlank(order.trackingNumber) ? "Belum tersedia" : order.trackingNumber));
         if (!Util.isBlank(order.note)) ship.addView(Rows.info(this, "Catatan", order.note));
 
+        LinearLayout pay = findViewById(R.id.od_payment);
+        pay.removeAllViews();
+        pay.addView(Rows.info(this, "Status", Config.paymentLabel(order.paymentStatus)));
+        if (Util.isBlank(order.buyerName) && order.paidAmount <= 0) {
+            pay.addView(Rows.info(this, "Data transfer", "Belum dikirim"));
+        } else {
+            pay.addView(Rows.info(this, "Nama pengirim",
+                    Util.isBlank(order.buyerName) ? "—" : order.buyerName));
+            pay.addView(Rows.info(this, "Nominal ditransfer",
+                    order.paidAmount > 0 ? Util.rupiah(order.paidAmount) : "—"));
+            Boolean cocok = order.paidMatches();
+            pay.addView(Rows.info(this, "Kesesuaian", cocok == null ? "Belum dinilai"
+                    : cocok ? "SESUAI" : "TIDAK SESUAI"));
+        }
+
         findViewById(R.id.od_pay).setVisibility(
                 "PAID".equals(order.paymentStatus) || "REFUNDED".equals(order.paymentStatus)
                         ? View.GONE : View.VISIBLE);

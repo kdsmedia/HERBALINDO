@@ -19,12 +19,13 @@
             android:padding="14dp">
 
             <ImageView
+                android:id="@+id/det_image"
                 android:layout_width="match_parent"
                 android:layout_height="190dp"
                 android:background="@drawable/bg_thumb"
                 android:contentDescription="@string/products"
-                android:padding="44dp"
-                android:src="@mipmap/ic_launcher_round" />
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_product_placeholder" />
 
             <TextView
                 android:id="@+id/det_name"

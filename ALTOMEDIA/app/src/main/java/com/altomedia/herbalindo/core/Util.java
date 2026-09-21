@@ -63,4 +63,11 @@ public final class Util {
     public static boolean isPhone(String s) {
         return s != null && s.matches("^0\\d{8,13}$");
     }
+
+    /** URL gambar harus memakai skema http atau https, bukan skema lain. */
+    public static boolean isHttpUrl(String s) {
+        if (s == null) return false;
+        String t = s.trim().toLowerCase(Locale.US);
+        return t.startsWith("http://") || t.startsWith("https://");
+    }
 }

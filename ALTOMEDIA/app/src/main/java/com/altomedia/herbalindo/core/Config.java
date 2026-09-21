@@ -76,19 +76,29 @@ public final class Config {
     public static final String C_ADMIN_LOGS = "admin_logs";
     public static final String C_STOCK_MOVEMENTS = "stock_movements";
 
-    public static final String[] ORDER_FLOW = {
-        "PENDING", "WAITING_PAYMENT", "PAID", "PROCESSING", "SHIPPED", "DELIVERED", "COMPLETED"
-    };
+    /** Metode pencairan saldo yang tersedia (dropdown, bukan isian bebas). */
+    public static final String[] WITHDRAW_METHODS = {"DANA", "OVO", "GOPAY", "BCA"};
 
+    /** Metode pencairan berjenis dompet digital memakai nomor HP sebagai tujuan. */
+    public static boolean isEwallet(String method) {
+        return "DANA".equals(method) || "OVO".equals(method) || "GOPAY".equals(method);
+    }
+
+    /** Status pembayaran. VERIFYING dipakai saat pembeli mengirim data transfer. */
     public static String paymentLabel(String status) {
         switch (status) {
             case "UNPAID": return "BELUM DIBAYAR";
+            case "VERIFYING": return "MENUNGGU VERIFIKASI";
             case "PAID": return "LUNAS";
             case "REFUNDED": return "DIKEMBALIKAN";
             case "FAILED": return "GAGAL";
             default: return status;
         }
     }
+
+    public static final String[] ORDER_FLOW = {
+        "PENDING", "WAITING_PAYMENT", "PAID", "PROCESSING", "SHIPPED", "DELIVERED", "COMPLETED"
+    };
 
     public static String orderLabel(String status) {
         switch (status) {

@@ -22,6 +22,7 @@ class OrdersSection {
     private String filter = "ALL";
 
     private static final String[] FILTERS = {"ALL", "WAITING_PAYMENT", "PAID", "PROCESSING", "SHIPPED", "DELIVERED", "COMPLETED", "CANCELLED", "REFUNDED"};
+    private static final String[] FILTER_LABELS = {"Semua", "Belum bayar", "Lunas", "Diproses", "Dikirim", "Diterima", "Selesai", "Dibatalkan", "Dikembalikan"};
 
     OrdersSection(AdminActivity a) { this.a = a; }
 
@@ -29,7 +30,7 @@ class OrdersSection {
         if (root == null) {
             root = LayoutInflater.from(a).inflate(R.layout.section_orders, null, false);
             Spinner sp = root.findViewById(R.id.ord_filter);
-            ArrayAdapter<String> ad = new ArrayAdapter<>(a, android.R.layout.simple_spinner_dropdown_item, FILTERS);
+            ArrayAdapter<String> ad = new ArrayAdapter<>(a, android.R.layout.simple_spinner_dropdown_item, FILTER_LABELS);
             sp.setAdapter(ad);
             sp.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
                 @Override public void onItemSelected(android.widget.AdapterView<?> p, View v, int pos, long id) {
@@ -43,6 +44,32 @@ class OrdersSection {
     }
 
     void refresh() { if (root != null) render(); }
+
+    /**
+     * Menyusun keterangan pembayaran untuk admin.
+     *
+     * Bagian terpenting adalah perbandingan nominal yang pembeli nyatakan
+     * dengan total pesanan, karena admin perlu memutuskan berdasarkan mutasi
+     * yang benar-benar masuk.
+     */
+    private String paymentInfo(Models.Order o) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\nPembayaran: ").append(Config.paymentLabel(o.paymentStatus));
+        if (Util.isBlank(o.buyerName) && o.paidAmount <= 0) {
+            sb.append("\nData transfer: belum diisi pembeli");
+            return sb.toString();
+        }
+        Boolean cocok = o.paidMatches();
+        sb.append("\nNama pengirim: ").append(Util.isBlank(o.buyerName) ? "—" : o.buyerName);
+        sb.append("\nNominal ditransfer: Rp")
+                .append(o.paidAmount > 0 ? Util.num(o.paidAmount) : "—");
+        sb.append("\nTagihan: ").append(Util.rupiah(o.total));
+        sb.append("\nKesesuaian: ").append(cocok == null ? "belum diisi"
+                : cocok ? "SESUAI" : "TIDAK SESUAI (selisih " + Util.rupiah(Math.abs(o.total - o.paidAmount)) + ")");
+        if (!Util.isBlank(o.paidFrom)) sb.append("\nDari: ").append(o.paidFrom);
+        if (!Util.isBlank(o.paidNote)) sb.append("\nCatatan pembeli: ").append(o.paidNote);
+        return sb.toString();
+    }
 
     private void render() {
         LinearLayout list = root.findViewById(R.id.ord_list);
@@ -70,14 +97,15 @@ class OrdersSection {
                     items.toString() + "\nTotal " + Util.rupiah(o.total)
                             + " · " + Config.paymentLabel(o.paymentStatus)
                             + "\nKirim ke: " + o.shippingName + " · " + o.shippingPhone
-                            + "\n" + o.shippingAddressText
-                            + (Util.isBlank(o.trackingNumber) ? "" : "\nResi: " + o.shippingCourier + " " + o.trackingNumber));
+                            + "\nAlamat: " + o.shippingAddressText
+                            + (Util.isBlank(o.trackingNumber) ? "" : "\nResi: " + o.shippingCourier + " " + o.trackingNumber)
+                            + paymentInfo(o));
 
             LinearLayout actions = card.findViewById(R.id.ac_actions);
             actions.removeAllViews();
 
             if (!"PAID".equals(o.paymentStatus) && !"REFUNDED".equals(o.paymentStatus)) {
-                actions.addView(btn(actions, "Verifikasi Bayar", R.color.success, v -> mark(o, "PAID", "Pembayaran diverifikasi admin")));
+                actions.addView(btn(actions, "Verifikasi Bayar", R.color.success, v -> askVerify(o)));
             }
             if ("PAID".equals(o.orderStatus)) {
                 actions.addView(btn(actions, "Proses", R.color.info, v -> mark(o, "PROCESSING", "Pesanan mulai diproses")));
@@ -100,7 +128,9 @@ class OrdersSection {
         }
         TextView empty = root.findViewById(R.id.ord_empty);
         empty.setVisibility(shown == 0 ? View.VISIBLE : View.GONE);
-        empty.setText("Tidak ada pesanan dengan status " + filter);
+        int idx = 0;
+        for (int i = 0; i < FILTERS.length; i++) if (FILTERS[i].equals(filter)) idx = i;
+        empty.setText("Tidak ada pesanan dengan status " + FILTER_LABELS[idx]);
     }
 
     private android.widget.Button btn(LinearLayout parent, String text, int colorRes, View.OnClickListener l) {
@@ -129,6 +159,75 @@ class OrdersSection {
         } catch (Exception e) {
             Ui.error(a, "Gagal mengubah status: " + e.getMessage());
         }
+    }
+
+    /**
+     * Meminta admin memverifikasi pembayaran.
+     *
+     * Bila nominal yang dinyatakan pembeli berbeda dari tagihan, perbedaannya
+     * ditampilkan lebih dulu agar admin tidak meloloskan pesanan tanpa sadar.
+     */
+    private void askVerify(Models.Order o) {
+        Boolean cocok = o.paidMatches();
+        StringBuilder msg = new StringBuilder(o.orderNumber);
+        msg.append("\nTagihan: ").append(Util.rupiah(o.total));
+        msg.append("\nNama pengirim: ").append(Util.isBlank(o.buyerName) ? "belum diisi" : o.buyerName);
+        msg.append("\nNominal ditransfer: ")
+                .append(o.paidAmount > 0 ? Util.rupiah(o.paidAmount) : "belum diisi");
+        msg.append("\nKesesuaian: ").append(cocok == null ? "belum diisi pembeli"
+                : cocok ? "SESUAI" : "TIDAK SESUAI, selisih " + Util.rupiah(Math.abs(o.total - o.paidAmount)));
+        msg.append("\n\nVerifikasi hanya setelah dana benar-benar masuk pada rekening/QRIS Anda.");
+
+        androidx.appcompat.app.AlertDialog.Builder b = new androidx.appcompat.app.AlertDialog.Builder(a)
+                .setTitle("Verifikasi pembayaran")
+                .setMessage(msg.toString())
+                .setNegativeButton("Batal", null)
+                .setPositiveButton("Tandai LUNAS", (d, w) ->
+                        mark(o, "PAID", "Pembayaran diverifikasi admin"
+                                + (cocok != null && !cocok ? " (nominal beda)" : "")));
+        if (cocok == null) {
+            b.setNeutralButton("Isi data manual", (d, w) -> askManualPayment(o));
+        }
+        b.show();
+    }
+
+    /** Mengisi atau mengoreksi data transfer atas nama pembeli (mis. transfer tanpa keterangan). */
+    private void askManualPayment(Models.Order o) {
+        LinearLayout box = new LinearLayout(a);
+        box.setOrientation(LinearLayout.VERTICAL);
+        box.setPadding(30, 10, 30, 0);
+        final android.widget.EditText name = new android.widget.EditText(a);
+        name.setHint("Nama pengirim");
+        name.setText(o.buyerName);
+        final android.widget.EditText amount = new android.widget.EditText(a);
+        amount.setHint("Nominal ditransfer (angka)");
+        amount.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        if (o.paidAmount > 0) amount.setText(String.valueOf(o.paidAmount));
+        final android.widget.EditText from = new android.widget.EditText(a);
+        from.setHint("Bank / e-wallet pengirim (opsional)");
+        from.setText(o.paidFrom);
+        box.addView(name);
+        box.addView(amount);
+        box.addView(from);
+
+        new androidx.appcompat.app.AlertDialog.Builder(a)
+                .setTitle("Data transfer " + o.orderNumber)
+                .setView(new android.widget.ScrollView(a) {{ addView(box); }})
+                .setNegativeButton("Batal", null)
+                .setPositiveButton("Simpan", (d, w) -> {
+                    String n = name.getText().toString().trim();
+                    long amt;
+                    try { amt = Long.parseLong(amount.getText().toString().trim()); }
+                    catch (Exception e) { Ui.error(a, "Nominal harus berupa angka"); return; }
+                    try {
+                        a.repo().submitPayment(o.orderId, n, amt, from.getText().toString(), o.paidNote);
+                        a.refreshActive();
+                        Ui.ok(a, "Data pembayaran tersimpan");
+                    } catch (Repository.RuleException e) {
+                        Ui.error(a, e.getMessage());
+                    }
+                })
+                .show();
     }
 
     private void askTracking(Models.Order o) {

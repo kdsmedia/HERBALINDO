@@ -35,6 +35,7 @@ public class ProductDetailActivity extends BaseActivity {
         findViewById(R.id.toolbar_action).setVisibility(View.GONE);
 
         ((TextView) findViewById(R.id.det_name)).setText(product.name);
+        ImageLoader.load(findViewById(R.id.det_image), product.imageUrl, R.drawable.ic_product_placeholder);
         ((TextView) findViewById(R.id.det_meta)).setText("SKU " + product.sku + " · " + product.category
                 + " · berat " + product.weight + " g");
         ((TextView) findViewById(R.id.det_price)).setText(Util.rupiah(product.effectivePrice()));

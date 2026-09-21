@@ -546,6 +546,37 @@ public class Repository {
         }
     }
 
+    /**
+     * Mencatat data pembayaran yang diisi pembeli.
+     *
+     * Admin memerlukan keterangan ini untuk mencocokkan pesanan dengan mutasi
+     * yang benar-benar masuk. Nominal dinyatakan oleh pembeli, jadi kebenarannya
+     * tetap diverifikasi admin, bukan dipercaya begitu saja. Karena itu status
+     * pembayaran tidak langsung menjadi PAID melainkan VERIFYING.
+     */
+    public Models.Order submitPayment(String orderId, String buyerName, long paidAmount,
+                                      String paidFrom, String paidNote) throws RuleException {
+        Models.Order o = order(orderId);
+        if (o == null) throw new RuleException("Pesanan tidak ditemukan");
+        if ("PAID".equals(o.paymentStatus)) throw new RuleException("Pembayaran sudah terverifikasi");
+        if (Util.isBlank(buyerName) || buyerName.trim().length() < 3)
+            throw new RuleException("Nama pengirim minimal 3 karakter");
+        if (paidAmount <= 0) throw new RuleException("Nominal transfer harus lebih dari 0");
+        try {
+            o.buyerName = buyerName.trim();
+            o.paidAmount = paidAmount;
+            o.paidFrom = paidFrom == null ? "" : paidFrom.trim();
+            o.paidNote = paidNote == null ? "" : paidNote.trim();
+            o.updatedAt = Util.nowIso();
+            o.paymentStatus = "VERIFYING";
+            db.put(Config.C_ORDERS, o.orderId, o.toJson().toString());
+            syncPaymentDoc(o);
+            log(o.userId, "PAYMENT_SUBMIT", o.orderNumber, Util.rupiah(paidAmount) + " dari " + o.buyerName);
+            return o;
+        } catch (Exception e) {
+            throw new RuleException("Gagal menyimpan data pembayaran: " + e.getMessage());
+        }
+    }
     public Models.Order order(String orderId) {
         String j = db.get(Config.C_ORDERS, orderId);
         return j == null ? null : Models.Order.from(j);
@@ -579,14 +610,7 @@ public class Repository {
         o.updatedAt = Util.nowIso();
         try {
             db.put(Config.C_ORDERS, o.orderId, o.toJson().toString());
-            for (String j : db.all(Config.C_PAYMENTS)) {
-                JSONObject pay = new JSONObject(j);
-                if (o.orderId.equals(pay.optString("orderId"))) {
-                    pay.put("status", o.paymentStatus);
-                    if ("PAID".equals(o.paymentStatus) && pay.isNull("paidAt")) pay.put("paidAt", Util.nowIso());
-                    db.put(Config.C_PAYMENTS, pay.getString("paymentId"), pay.toString());
-                }
-            }
+            syncPaymentDoc(o);
         } catch (Exception e) { throw new IllegalStateException(e); }
 
         if (!prev.equals(status)) log(actorId, "ORDER_STATUS", o.orderNumber, prev + " -> " + status
@@ -597,6 +621,18 @@ public class Repository {
             qualifyReferral(o);
         }
         if ("REFUNDED".equals(status) || "CANCELLED".equals(status)) revokeForOrder(o, actorId);
+    }
+
+    /** Menyelaraskan dokumen pembayaran dengan status pembayaran pada order. */
+    private void syncPaymentDoc(Models.Order o) throws Exception {
+        for (String j : db.all(Config.C_PAYMENTS)) {
+            JSONObject pay = new JSONObject(j);
+            if (o.orderId.equals(pay.optString("orderId"))) {
+                pay.put("status", o.paymentStatus);
+                if ("PAID".equals(o.paymentStatus) && pay.isNull("paidAt")) pay.put("paidAt", Util.nowIso());
+                db.put(Config.C_PAYMENTS, pay.getString("paymentId"), pay.toString());
+            }
+        }
     }
 
     private void grantPurchasePoints(Models.Order o) {
@@ -699,14 +735,24 @@ public class Repository {
         return e;
     }
 
-    public Models.Withdrawal requestWithdrawal(Models.User u, long amountPoints, String method, String destination)
-            throws RuleException {
+    public Models.Withdrawal requestWithdrawal(Models.User u, long amountPoints, String method,
+                                               String accountName, String destination) throws RuleException {
         Models.Settings s = settings();
         Eligibility e = eligibility(u);
         if (!e.ok) throw new RuleException("Syarat withdrawal belum terpenuhi");
         if (amountPoints <= 0) throw new RuleException("Jumlah tidak valid");
         if (amountPoints > u.points) throw new RuleException("Poin tidak cukup");
-        if (Util.isBlank(destination)) throw new RuleException("Nomor rekening/e-wallet wajib diisi");
+        if (!isWithdrawMethod(method)) throw new RuleException("Pilih metode: " + daftarMetode());
+        method = method.trim();
+        if (Util.isBlank(accountName) || accountName.trim().length() < 3)
+            throw new RuleException("Nama pemilik rekening minimal 3 karakter");
+        if (Util.isBlank(destination)) throw new RuleException(
+                Config.isEwallet(method) ? "Nomor HP dompet digital wajib diisi"
+                                         : "Nomor rekening wajib diisi");
+        if (Config.isEwallet(method) && !Util.isPhone(destination.trim()))
+            throw new RuleException("Nomor HP dompet digital tidak valid (contoh 08xxxxxxxxxx)");
+        if ("BCA".equals(method) && !destination.trim().matches("^\\d{6,20}$"))
+            throw new RuleException("Nomor rekening BCA harus 6-20 digit angka");
         long rp = pointsToRupiah(amountPoints);
         if (rp < s.minWithdrawRupiah) throw new RuleException("Minimum withdrawal " + Util.rupiah(s.minWithdrawRupiah));
 
@@ -715,7 +761,7 @@ public class Repository {
             w.withdrawalId = "WD-" + System.currentTimeMillis();
             w.userId = u.userId;
             w.amountPoints = amountPoints; w.amountRupiah = rp;
-            w.method = method; w.destination = destination;
+            w.method = method; w.accountName = accountName.trim(); w.destination = destination.trim();
             w.status = "PENDING"; w.date = Util.todayKey();
             w.createdAt = Util.nowIso();
             db.put(Config.C_WITHDRAWALS, w.withdrawalId, w.toJson().toString());
@@ -724,6 +770,23 @@ public class Repository {
         } catch (Exception ex) {
             throw new RuleException("Gagal mengajukan withdrawal: " + ex.getMessage());
         }
+    }
+
+    /** Daftar metode pencairan untuk pesan bantuan, dipisah koma tanpa kelas Android. */
+    private static String daftarMetode() {
+        StringBuilder sb = new StringBuilder();
+        for (String m : Config.WITHDRAW_METHODS) {
+            if (sb.length() > 0) sb.append(", ");
+            sb.append(m);
+        }
+        return sb.toString();
+    }
+
+    /** Metode pencairan hanya boleh salah satu dari daftar dropdown. */
+    public static boolean isWithdrawMethod(String method) {
+        if (Util.isBlank(method)) return false;
+        for (String m : Config.WITHDRAW_METHODS) if (m.equals(method.trim())) return true;
+        return false;
     }
 
     public List<Models.Withdrawal> allWithdrawals() {
@@ -784,6 +847,26 @@ public class Repository {
         if (user(userId) == null) throw new RuleException("Member tidak ditemukan");
         addPoints(userId, amount, amount >= 0 ? "ADMIN_CREDIT" : "ADMIN_DEBIT", reason, null);
         log(adminId, "SALDO_ADJUST", userId, (amount >= 0 ? "+" : "") + amount + " poin | " + reason);
+    }
+
+    /**
+     * Menetapkan saldo poin member ke nilai tertentu.
+     *
+     * Berbeda dari {@link #adminAdjustBalance} yang menambah atau mengurangi,
+     * cara ini langsung menentukan hasil akhir sehingga admin dapat mengoreksi
+     * saldo tanpa menghitung selisihnya. Selisihnya tetap dicatat pada ledger
+     * agar riwayat poin tetap utuh dan dapat diaudit.
+     */
+    public void adminSetPoints(String userId, long targetPoints, String reason, String adminId) throws RuleException {
+        if (targetPoints < 0) throw new RuleException("Poin tidak boleh negatif");
+        if (Util.isBlank(reason) || reason.trim().length() < 3) throw new RuleException("Alasan wajib diisi");
+        Models.User u = user(userId);
+        if (u == null) throw new RuleException("Member tidak ditemukan");
+        long delta = targetPoints - u.points;
+        if (delta == 0) throw new RuleException("Poin sudah bernilai " + Util.num(targetPoints));
+        addPoints(userId, delta, delta >= 0 ? "ADMIN_SET" : "ADMIN_SET", reason, null);
+        log(adminId, "POIN_SET", userId,
+                Util.num(u.points) + " → " + Util.num(targetPoints) + " poin | " + reason);
     }
 
     public void setUserStatus(String userId, String status, String adminId) throws RuleException {
