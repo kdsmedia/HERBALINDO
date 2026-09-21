@@ -124,6 +124,13 @@ perubahan yang menyentuh layar, jalur pembukaan, atau penyimpanan, andalkan
 - Saat menguji layar, ingat `Repository.createOrder` mengosongkan keranjang.
   Layar checkout yang dibuka setelahnya akan selesai sendiri karena keranjang
   kosong — bukan tanda adanya cacat.
+- Alur "tambah produk baru" menulis stok dalam dua langkah: `saveProduct`
+  dengan `stock = 0`, lalu `adjustStock` sebesar stok awal. Menyetel `stock`
+  langsung pada `saveProduct` membuat stok terhitung dua kali. Uji
+  `adminDapatMenambahProdukBaruDanStokAwalnyaTercatat` menjaga aturan ini.
+- `markStatus` ke `CANCELLED`/`REFUNDED` memakai penanda `revocationDone` pada
+  order. Tanpa penanda itu, pemanggilan berulang mengembalikan stok dan
+  memotong poin berkali-kali.
 
 ## Aturan bisnis inti
 
@@ -183,6 +190,13 @@ Hal yang mudah salah:
   dan SHA256SUMS.txt.
 - Sebelum setiap rilis: naikkan `versionCode`, jalankan unit test dan
   `verify_project.py`, lalu bangun ulang paket.
+- Kredensial signing dibaca dari `keystore/keystore.properties`
+  (`signing.storeFile`, `signing.storePassword`, `signing.keyAlias`,
+  `signing.keyPassword`). Berkas itu diabaikan git; bila hilang, build rilis
+  gagal dengan pesan yang jelas, bukan menandatangani dengan kunci salah.
+- Sertifikat ALTOMEDIA sah sampai 5 Februari 2054 (alias `kdsmedia`).
+  Sidik SHA-256-nya `24bbfec790bf5c02652aba29eb9fcc053eccf90e7b0880fe820449013129fb68`;
+  nilai inilah yang harus tertulis di `release/RELEASE_NOTES.md`.
 
 ### Catatan token
 
@@ -202,7 +216,7 @@ masih berisi nilai contoh (`REPLACE_WITH_YOUR_FIREBASE_PROJECT_ID` dan
 
 Merge telah diselesaikan dengan mempertahankan implementasi **Java** sebagai
 kode utama, karena implementasi inilah yang benar-benar dapat dijalankan,
-memiliki 76 unit test, dan telah menghasilkan APK serta AAB rilis.
+memiliki 96 unit test, dan telah menghasilkan APK serta AAB rilis.
 
 Spesifikasi pada Bab 12 memang menyebut Firebase. Apabila di kemudian hari
 aplikasi akan dihubungkan ke Firebase, diperlukan proyek Firebase yang nyata
