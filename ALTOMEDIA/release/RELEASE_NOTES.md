@@ -13,7 +13,7 @@ Paket rilis ditandatangani dengan sertifikat ALTOMEDIA:
 
 ```
 CN=ALTOMEDIA, OU=Developer, O=ALTOMEDIA, L=Karawang, ST=Jawa Barat, C=ID
-SHA-256: bab18b5ef926b5b7ae04ae1192ae282c72f1db4ca4437d74f296550e93e801d5
+SHA-256: 24bbfec790bf5c02652aba29eb9fcc053eccf90e7b0880fe820449013129fb68
 ```
 
 ## Fitur utama
@@ -27,6 +27,10 @@ SHA-256: bab18b5ef926b5b7ae04ae1192ae282c72f1db4ca4437d74f296550e93e801d5
 - Riwayat pesanan, mutasi poin, dan riwayat pencairan
 - Ubah password akun dengan verifikasi password lama
 - Panel admin: ringkasan, pesanan, produk dan stok, member, pencairan, pengaturan, serta audit log
+- Admin dapat menambah produk baru lengkap dengan URL gambar, harga, komisi poin, deskripsi, dan stok awal
+- Admin dapat menyetujui pencairan dan memverifikasi pembayaran transfer dengan mencocokkan nominal
+- Pembeli dapat mengirim konfirmasi transfer berisi nama pengirim, nominal, dan catatan
+- Pembatalan dan pengembalian pesanan diproses sekali saja sehingga stok serta poin tidak berubah dua kali
 
 ## Persyaratan teknis
 
