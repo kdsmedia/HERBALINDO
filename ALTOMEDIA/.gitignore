@@ -8,9 +8,12 @@ app/build/
 *.iml
 .DS_Store
 
-# Berkas hasil build
+# Berkas hasil build. Artifact rilis di folder release/ tetap dilacak agar
+# setiap build terbaru bisa langsung diambil dari repo.
 *.apk
 *.aab
+!release/*.apk
+!release/*.aab
 *.ap_
 *.dex
 
