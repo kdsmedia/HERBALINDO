@@ -19,10 +19,25 @@ android {
 
     signingConfigs {
         release {
-            storeFile rootProject.file("keystore/ALTOMEDIA.jks")
-            storePassword "Kdsmedia@123"
-            keyAlias "kdsmedia"
-            keyPassword "Kdsmedia@123"
+            // Kredensial dibaca dari keystore/keystore.properties (tidak
+            // disimpan di git) agar build rilis tetap dapat direproduksi.
+            def props = new Properties()
+            def propFile = rootProject.file("keystore/keystore.properties")
+            if (!propFile.exists()) {
+                throw new GradleException("Berkas keystore/keystore.properties tidak ditemukan")
+            }
+            propFile.withInputStream { props.load(it) }
+            def storePath = props.getProperty("signing.storeFile", "keystore/ALTOMEDIA.jks")
+            def storePass = props.getProperty("signing.storePassword")
+            def alias = props.getProperty("signing.keyAlias")
+            def keyPass = props.getProperty("signing.keyPassword")
+            if (!storePass || !alias || !keyPass) {
+                throw new GradleException("keystore.properties harus memuat signing.storePassword, signing.keyAlias, dan signing.keyPassword")
+            }
+            storeFile rootProject.file(storePath)
+            storePassword storePass
+            keyAlias alias
+            keyPassword keyPass
         }
     }
 

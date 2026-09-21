@@ -30,7 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:hint="@string/name">
+                android:hint="Nama Kontak Penerima">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/co_name"
@@ -60,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:hint="Alamat Lengkap">
+                android:hint="Alamat Lengkap (jalan, nomor rumah, RT/RW, kelurahan, kecamatan)">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/co_address"

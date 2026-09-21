@@ -511,7 +511,8 @@ public class Repository {
             o.subtotal = cartSubtotal(); o.shippingCost = cartShipping(); o.total = cartTotal();
             o.paymentMethod = "QRIS"; o.paymentStatus = "UNPAID";
             o.shippingName = name; o.shippingPhone = phone;
-            o.shippingAddressText = address + ", " + city + " " + postal;
+            o.shippingAddressText = Util.isBlank(postal) ? address + ", " + city
+                    : address + ", " + city + " " + postal;
             o.note = note == null ? "" : note;
             o.createdAt = Util.nowIso(); o.updatedAt = o.createdAt;
             db.put(Config.C_ORDERS, o.orderId, o.toJson().toString());
