@@ -64,6 +64,11 @@ public class ProductDetailActivity extends BaseActivity {
 
     @Override protected void onSessionReady(Models.User user) { /* data produk statis saat layar dibuka */ }
 
+    @Override protected void onDestroy() {
+        AdsManager.get(this).destroyBanner(findViewById(R.id.det_banner));
+        super.onDestroy();
+    }
+
     private void renderQty() {
         ((TextView) findViewById(R.id.det_qty)).setText(String.valueOf(qty));
         Button add = findViewById(R.id.det_add);

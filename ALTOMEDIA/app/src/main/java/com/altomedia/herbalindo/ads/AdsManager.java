@@ -3,6 +3,7 @@ package com.altomedia.herbalindo.ads;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,6 +38,9 @@ public class AdsManager {
     private RewardedAd rewardedAd;
     private InterstitialAd interstitialAd;
 
+    /** Banner yang sedang terpasang, dipetakan dari wadahnya. */
+    private final java.util.Map<ViewGroup, AdView> bannerViews = new java.util.WeakHashMap<>();
+
     private boolean rewardedLoading;
     private boolean interstitialLoading;
     private boolean initialized;
@@ -56,19 +60,42 @@ public class AdsManager {
 
     /* ================= BANNER ================= */
 
-    public void loadBanner(@Nullable AdView view) {
-        if (view == null) return;
-        try {
-            // Ukuran dan unit iklan ditetapkan dari kode, tidak bergantung pada
-            // atribut XML. AdView melempar IllegalStateException bila keduanya
-            // belum lengkap saat loadAd dipanggil.
+    /**
+     * Memasang banner AdMob ke dalam wadah. AdView dibuat dari kode, bukan dari
+     * XML, karena SDK iklan menolak AdView di XML tanpa atribut {@code adUnitId}
+     * dan menolak atribut itu ditimpa setelah dibaca dari XML. Dibuat dari kode,
+     * unit uji/produksi tetap dapat dipilih saat runtime.
+     *
+     * @param container wadah tempat banner dipasang; boleh null.
+     * @return AdView yang dipasang, atau null bila wadah tidak ada.
+     */
+    @Nullable
+    public AdView loadBanner(@Nullable ViewGroup container) {
+        if (container == null) return null;
+        AdView view = bannerViews.get(container);
+        if (view == null) {
+            view = new AdView(container.getContext());
             view.setAdSize(AdSize.BANNER);
             view.setAdUnitId(Config.bannerUnit());
-            view.loadAd(new AdRequest.Builder().build());
-        } catch (RuntimeException e) {
-            // Banner gagal tidak boleh menjatuhkan layar yang memuatnya.
-            Log.w(TAG, "Banner gagal dimuat: " + e.getMessage());
+            container.addView(view);
+            bannerViews.put(container, view);
+            try {
+                view.loadAd(new AdRequest.Builder().build());
+            } catch (RuntimeException e) {
+                // Banner gagal tidak boleh menjatuhkan layar yang memuatnya.
+                Log.w(TAG, "Banner gagal dimuat: " + e.getMessage());
+            }
         }
+        return view;
+    }
+
+    /** Melepas dan menghapus banner dari wadahnya. Panggil saat host berhenti. */
+    public void destroyBanner(@Nullable ViewGroup container) {
+        if (container == null) return;
+        AdView view = bannerViews.remove(container);
+        if (view == null) return;
+        container.removeView(view);
+        view.destroy();
     }
 
     /* ================= REWARDED ================= */

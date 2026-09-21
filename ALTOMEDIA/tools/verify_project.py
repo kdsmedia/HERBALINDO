@@ -128,6 +128,20 @@ for path in layouts:
     except ET.ParseError as e:
         problems.append("%s XML tidak valid: %s" % (os.path.relpath(path, ROOT), e))
 
+# --- AdView tidak boleh dideklarasikan langsung di layout ---
+# SDK iklan menolak AdView XML tanpa atribut "adUnitId" (IllegalArgumentException
+# "Required xml attribute \"adUnitId\" was missing."), tetapi adUnitId juga tidak
+# dapat ditimpa dari kode ("The ad unit ID can only be set once on AdView."),
+# sehingga unit uji tidak mungkin dipakai pada build debug bila banner ditulis di
+# XML. Banner wajib dipasang lewat AdsManager.loadBanner(container).
+ADS_VIEW = "com.google.android.gms.ads.AdView"
+for path in layouts:
+    src = open(path, encoding="utf-8").read()
+    if ADS_VIEW in src:
+        problems.append(
+            "%s: AdView tidak boleh ditulis di layout; pasang lewat "
+            "AdsManager.loadBanner(container)" % os.path.relpath(path, ROOT))
+
 if problems:
     print("Ditemukan %d masalah:" % len(problems))
     for p in problems:

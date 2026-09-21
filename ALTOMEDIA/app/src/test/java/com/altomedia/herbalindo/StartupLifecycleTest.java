@@ -206,6 +206,27 @@ public class StartupLifecycleTest {
         return o;
     }
 
+    /**
+     * Banner AdMob harus benar-benar terpasang di layar Member dengan unit iklan
+     * yang dipilih runtime. Bila banner ditulis di XML, SDK menolak memuat dan
+     * unit uji tidak pernah dipakai; pengujian ini mengunci perilaku tersebut.
+     */
+    @Test public void bannerIklanTerpasangDenganUnitYangBenar() throws Exception {
+        Models.User u = Repository.get(ctx).register("Siti Aminah", "081234567890", "rahasia1", null);
+        Session.set(ctx, u);
+
+        ActivityController<MemberActivity> c = Robolectric.buildActivity(MemberActivity.class).setup();
+        MemberActivity a = c.get();
+        android.view.ViewGroup wadah = a.findViewById(R.id.member_banner);
+        assertNotNull("Wadah banner tidak ada", wadah);
+        assertEquals("Wadah banner harus memuat tepat satu AdView", 1, wadah.getChildCount());
+        com.google.android.gms.ads.AdView banner =
+                (com.google.android.gms.ads.AdView) wadah.getChildAt(0);
+        assertEquals("Unit iklan banner harus berasal dari Config",
+                com.altomedia.herbalindo.core.Config.bannerUnit(), banner.getAdUnitId());
+        c.pause().stop().destroy();
+    }
+
     /** Layar detail tanpa data yang sah harus menutup diri dengan rapi, bukan menjatuhkan aplikasi. */
     @Test public void layarDetailTanpaDataSahTidakMenjatuhkanAplikasi() throws Exception {
         Models.User u = Repository.get(ctx).register("Siti Aminah", "081234567891", "rahasia1", null);

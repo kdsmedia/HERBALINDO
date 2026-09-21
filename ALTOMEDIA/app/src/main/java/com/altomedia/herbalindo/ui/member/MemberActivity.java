@@ -88,6 +88,11 @@ public class MemberActivity extends BaseActivity {
         if (headerCart != null) headerCart.setText("Keranjang " + repo.cart().size());
     }
 
+    @Override protected void onDestroy() {
+        AdsManager.get(this).destroyBanner(findViewById(R.id.member_banner));
+        super.onDestroy();
+    }
+
     void refreshHeader() {
         if (headerCart != null) headerCart.setText("Keranjang " + repo.cart().size());
     }

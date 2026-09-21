@@ -52,7 +52,7 @@ poin, referral satu tingkat, saldo Rupiah, penarikan saldo (withdrawal), iklan
 rewarded, dan panel admin — semuanya berada dalam SATU aplikasi yang sama.
 Rilis ini sudah lolos audit internal untuk kebersihan manifes, aturan bisnis
 pada Repository, dan kesiapan persyaratan Google Play, serta diverifikasi oleh
-107 unit test yang seluruhnya lulus.
+114 unit test yang seluruhnya lulus.
 
 --------------------------------------------------------------------------------
 FITUR UTAMA
@@ -243,7 +243,7 @@ CATATAN TEKNIS
   * Izin AD_ID (com.google.android.gms.permission.AD_ID) dideklarasikan.
   * Formulir Keamanan Data (Data Safety) wajib diisi di Play Console.
 - Izin yang diminta: INTERNET, ACCESS_NETWORK_STATE, VIBRATE, AD_ID.
-- Pengujian: 107 unit test JVM (RepositoryTest, DbStoreTest,
+- Pengujian: 114 unit test JVM (RepositoryTest, DbStoreTest,
   StartupLifecycleTest) dengan Robolectric 4.13 pada SDK 34.
 
 --------------------------------------------------------------------------------
