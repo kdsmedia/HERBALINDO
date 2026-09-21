@@ -809,4 +809,152 @@ public class RepositoryTest {
         for (int i = 0; i < 20; i++) repo.watchAd(u.userId);
         return repo.user(u.userId);
     }
+
+    /* ---------------- Bab 11.5: promo dan periode promo ---------------- */
+
+    private Models.Product produkUji(String id, String sku, String nama) {
+        Models.Product p = new Models.Product();
+        p.productId = id; p.sku = sku; p.name = nama;
+        p.category = "Herbal Diet";
+        p.description = "Produk untuk pengujian promo";
+        p.price = 100000; p.points = 500;
+        p.stock = 0; p.weight = 100;
+        p.status = "ACTIVE";
+        return p;
+    }
+
+    @Test public void promoHanyaBerlakuDiDalamPeriode() throws Exception {
+        Models.Product p = produkUji("PRD-PRM-001", "PRM-001", "Herbal Promo");
+        p.promoPrice = 75000;
+        p.promoStart = "2020-01-01";
+        p.promoEnd = "2020-12-31";
+        repo.saveProduct(p, "USR-ADMIN");
+        Models.Product saved = repo.product("PRD-PRM-001");
+        assertEquals("promo kedaluwarsa tidak mengubah harga", 100000, saved.effectivePrice());
+        assertFalse(saved.hasPromo());
+    }
+
+    @Test public void promoBerjalanMenggantikanHargaNormal() throws Exception {
+        java.text.SimpleDateFormat f = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US);
+        java.util.Calendar c = java.util.Calendar.getInstance();
+        c.add(java.util.Calendar.DAY_OF_YEAR, -1);
+        String kemarin = f.format(c.getTime());
+        c.add(java.util.Calendar.DAY_OF_YEAR, 2);
+        String besok = f.format(c.getTime());
+
+        Models.Product p = produkUji("PRD-PRM-002", "PRM-002", "Herbal Promo Aktif");
+        p.promoPrice = 75000;
+        p.promoStart = kemarin; p.promoEnd = besok;
+        repo.saveProduct(p, "USR-ADMIN");
+        Models.Product saved = repo.product("PRD-PRM-002");
+        assertTrue(saved.hasPromo());
+        assertEquals(75000, saved.effectivePrice());
+    }
+
+    @Test public void statusPromoDapatDimatikanTanpaMenghapusHarganya() throws Exception {
+        Models.Product p = produkUji("PRD-PRM-003", "PRM-003", "Herbal Promo Mati");
+        p.promoPrice = 75000;
+        p.promoActive = false;
+        repo.saveProduct(p, "USR-ADMIN");
+        Models.Product saved = repo.product("PRD-PRM-003");
+        assertFalse(saved.hasPromo());
+        assertEquals(100000, saved.effectivePrice());
+        assertEquals("harga promo tetap tersimpan", 75000, saved.promoPrice);
+    }
+
+    /* ---------------- Bab 11.6: kategori ---------------- */
+
+    @Test public void kategoriAwalTersediaDanDapatDitambah() throws Exception {
+        assertTrue(repo.categoryNames().contains("Herbal Diet"));
+        repo.saveCategory("Herbal Anak", "USR-ADMIN");
+        assertTrue(repo.categoryNames().contains("Herbal Anak"));
+    }
+
+    @Test public void kategoriGandaDitolak() throws Exception {
+        try {
+            repo.saveCategory("Herbal Diet", "USR-ADMIN");
+            fail("kategori ganda seharusnya ditolak");
+        } catch (Repository.RuleException e) {
+            assertTrue(e.getMessage().contains("sudah ada"));
+        }
+    }
+
+    @Test public void kategoriTerlaluPendekDitolak() throws Exception {
+        try {
+            repo.saveCategory("ab", "USR-ADMIN");
+            fail("nama kategori terlalu pendek seharusnya ditolak");
+        } catch (Repository.RuleException e) {
+            assertTrue(e.getMessage().contains("minimal 3"));
+        }
+    }
+
+    /* ---------------- Riwayat pergerakan stok ---------------- */
+
+    @Test public void riwayatStokTerbaruLebihDahuluDanMenyimpanSku() throws Exception {
+        repo.adjustStock("PRD-HBA-001", 5, "Uji tambah", "USR-ADMIN");
+        repo.adjustStock("PRD-HBA-001", 7, "Uji tambah lagi", "USR-ADMIN");
+        repo.adjustStock("PRD-HBA-001", -3, "Uji kurangi", "USR-ADMIN");
+
+        java.util.List<org.json.JSONObject> m = repo.stockMovements();
+        assertTrue("riwayat harus terisi", m.size() >= 3);
+        assertEquals("Uji kurangi", m.get(0).optString("reason"));
+        assertEquals("HBA-001", m.get(0).optString("sku"));
+        assertEquals(-3, m.get(0).optInt("delta"));
+
+        for (int i = 1; i < m.size(); i++) {
+            assertTrue("urutan harus menurun berdasarkan waktu",
+                    m.get(i - 1).optString("createdAt").compareTo(m.get(i).optString("createdAt")) >= 0);
+        }
+    }
+
+    /* ---------------- Bab 13.4: deteksi fraud ---------------- */
+
+    @Test public void akunDenganNamaSamaTerdeteksiSebagaiDuplikat() throws Exception {
+        member("Siti Aminah", "081234567890", null);
+        member("Siti Aminah", "081234567891", null);
+        boolean ada = false;
+        for (Repository.FraudFinding f : repo.fraudFindings()) {
+            if ("AKUN_DUPLIKAT".equals(f.code)) ada = true;
+        }
+        assertTrue("dua akun bernama sama harus terdeteksi", ada);
+    }
+
+    @Test public void rewardIklanMelebihiBatasTerdeteksiDanMemblokir() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        for (int i = 0; i < 20; i++) repo.watchAd(u.userId);
+        // Batas harian diturunkan agar data lama yang melewati batas terdeteksi.
+        Models.Settings s = repo.settings();
+        s.adMaxPerDay = 5;
+        repo.saveSettings(s, "USR-ADMIN");
+
+        boolean ada = false;
+        for (Repository.FraudFinding f : repo.fraudFindings()) {
+            if ("REWARD_BERLEBIH".equals(f.code)) { ada = true; assertTrue(f.blocking); }
+        }
+        assertTrue("reward melebihi batas harus terdeteksi", ada);
+    }
+
+    @Test public void penandaanFraudOtomatisMemblokirPencairan() throws Exception {
+        Models.User u = siapTarik();
+        Models.Settings s = repo.settings();
+        s.adMaxPerDay = 5;
+        repo.saveSettings(s, "USR-ADMIN");
+
+        int ditandai = repo.applyFraudFindings("USR-ADMIN");
+        assertTrue("harus ada member yang ditandai", ditandai >= 1);
+        assertTrue("akun pelanggar harus terflag fraud", repo.user(u.userId).fraudFlag);
+
+        java.util.List<String[]> cek = repo.eligibility(u).checks;
+        boolean lolos = true;
+        for (String[] baris : cek) {
+            if ("Tidak terkena pembatasan fraud".equals(baris[1]) && "0".equals(baris[0])) lolos = false;
+        }
+        assertFalse("penarikan harus terblokir setelah ditandai fraud", lolos);
+    }
+
+    @Test public void memberTanpaPelanggaranTidakDitandai() throws Exception {
+        member("Siti Aminah", "081234567890", null);
+        assertEquals("tidak boleh ada penandaan tanpa temuan memblokir",
+                0, repo.applyFraudFindings("USR-ADMIN"));
+    }
 }

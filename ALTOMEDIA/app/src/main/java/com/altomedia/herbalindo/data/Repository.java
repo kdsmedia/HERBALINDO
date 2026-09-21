@@ -131,6 +131,37 @@ public class Repository {
         return o;
     }
 
+    /* ================= KATEGORI ================= */
+    public List<JSONObject> allCategories() {
+        List<JSONObject> out = new ArrayList<>();
+        for (String j : db.all(Config.C_CATEGORIES)) {
+            try { out.add(new JSONObject(j)); } catch (Exception ignored) { }
+        }
+        return out;
+    }
+
+    public List<String> categoryNames() {
+        List<String> out = new ArrayList<>();
+        for (JSONObject o : allCategories()) {
+            if (!"INACTIVE".equals(o.optString("status"))) out.add(o.optString("name"));
+        }
+        return out;
+    }
+
+    public void saveCategory(String name, String adminId) throws RuleException {
+        String trimmed = name == null ? "" : name.trim();
+        if (trimmed.length() < 3) throw new RuleException("Nama kategori minimal 3 karakter");
+        for (JSONObject o : allCategories()) {
+            if (trimmed.equalsIgnoreCase(o.optString("name")))
+                throw new RuleException("Kategori " + trimmed + " sudah ada");
+        }
+        try {
+            String id = Util.id("CAT");
+            db.put(Config.C_CATEGORIES, id, cat(id, trimmed).toString());
+            log(adminId, "CATEGORY_CREATE", id, trimmed);
+        } catch (Exception e) { throw new IllegalStateException(e); }
+    }
+
     private Models.Product createProduct(String name, String sku, String category, String desc,
                                          String comp, String usage, String warn,
                                          long price, long promo, int stock, int weight, long points) throws Exception {
@@ -333,19 +364,35 @@ public class Repository {
         try {
             db.put(Config.C_PRODUCTS, p.productId, p.toJson().toString());
             JSONObject m = new JSONObject();
-            m.put("id", Util.id("STK")); m.put("productId", productId); m.put("delta", delta);
+            m.put("id", Util.id("STK")); m.put("productId", productId);
+            // Urutan riwayat ditentukan nomor urut, bukan waktu, karena
+            // beberapa perubahan dapat terjadi pada detik yang sama.
+            m.put("seq", db.all(Config.C_STOCK_MOVEMENTS).size() + 1);
+            // SKU disimpan agar riwayat tetap terbaca walau produk sudah diubah.
+            m.put("sku", p.sku); m.put("name", p.name); m.put("delta", delta);
             m.put("reason", reason); m.put("actorId", actorId); m.put("stockAfter", p.stock);
             m.put("createdAt", Util.nowIso());
             db.put(Config.C_STOCK_MOVEMENTS, m.getString("id"), m.toString());
         } catch (Exception e) { throw new IllegalStateException(e); }
     }
 
+    /**
+     * Riwayat pergerakan stok, terbaru lebih dahulu.
+     *
+     * Urutan memakai nomor urut penyimpanan, bukan urutan penyimpanan maupun
+     * waktu, karena keduanya tidak dapat diandalkan saat beberapa perubahan
+     * terjadi pada detik yang sama.
+     */
     public List<JSONObject> stockMovements() {
         List<JSONObject> out = new ArrayList<>();
-        List<String> js = db.all(Config.C_STOCK_MOVEMENTS);
-        for (int i = js.size() - 1; i >= 0; i--) {
-            try { out.add(new JSONObject(js.get(i))); } catch (Exception ignored) { }
+        for (String j : db.all(Config.C_STOCK_MOVEMENTS)) {
+            try { out.add(new JSONObject(j)); } catch (Exception ignored) { }
         }
+        java.util.Collections.sort(out, (a, b) -> {
+            long sa = a.optLong("seq", 0), sb = b.optLong("seq", 0);
+            if (sa != sb) return Long.compare(sb, sa);
+            return b.optString("createdAt").compareTo(a.optString("createdAt"));
+        });
         return out;
     }
 
@@ -728,7 +775,11 @@ public class Repository {
         public List<String[]> checks = new ArrayList<>(); // {ok("1"/"0"), text}
     }
 
-    public Eligibility eligibility(Models.User u) {
+    public Eligibility eligibility(Models.User user) {
+        // Ambil ulang dari penyimpanan: objek yang dipegang pemanggil bisa
+        // sudah kedaluwarsa, misalnya setelah penandaan fraud.
+        Models.User u = user == null ? null : user(user.userId);
+        if (u == null) throw new IllegalStateException("Member tidak ditemukan");
         Models.Settings s = settings();
         Eligibility e = new Eligibility();
         e.saldo = pointsToRupiah(u.points);
@@ -899,6 +950,146 @@ public class Repository {
         u.fraudFlag = flag;
         saveUser(u);
         log(adminId, "MEMBER_FRAUD", userId, flag ? "DITANDAI" : "DIBERSIHKAN");
+    }
+
+    /* ================= DETEKSI FRAUD (BAB 13.4) ================= */
+
+    /** Satu temuan pemeriksaan anti-fraud beserta alasan yang dapat dibaca admin. */
+    public static class FraudFinding {
+        public String userId, userName, code, detail;
+        public boolean blocking;
+
+        FraudFinding(String userId, String userName, String code, String detail, boolean blocking) {
+            this.userId = userId; this.userName = userName;
+            this.code = code; this.detail = detail; this.blocking = blocking;
+        }
+    }
+
+    /**
+     * Memeriksa pola yang disebut Bab 13.4: akun duplikat, referral
+     * mencurigakan, transaksi berulang, pembatalan setelah bonus, dan
+     * penyalahgunaan reward iklan.
+     *
+     * Temuan bersifat laporan untuk admin; hanya pola yang sudah pasti
+     * merugikan (bonus referral dicairkan lalu pesanannya dibatalkan) yang
+     * bersifat memblokir pencairan.
+     */
+    public List<FraudFinding> fraudFindings() {
+        List<FraudFinding> out = new ArrayList<>();
+        List<Models.User> users = members();
+
+        detectDuplicateAccounts(users, out);
+        detectReferralPola(users, out);
+        detectTransaksiBerulang(users, out);
+        detectBatalSetelahBonus(users, out);
+        detectRewardBerlebih(users, out);
+
+        return out;
+    }
+
+    /** Akun berbeda yang memakai nama sama persis. */
+    private void detectDuplicateAccounts(List<Models.User> users, List<FraudFinding> out) {
+        java.util.Map<String, List<Models.User>> byName = new java.util.HashMap<>();
+        for (Models.User u : users) {
+            String key = u.name == null ? "" : u.name.trim().toLowerCase(java.util.Locale.US);
+            if (key.length() < 3) continue;
+            byName.computeIfAbsent(key, k -> new ArrayList<>()).add(u);
+        }
+        for (java.util.Map.Entry<String, List<Models.User>> e : byName.entrySet()) {
+            if (e.getValue().size() < 2) continue;
+            StringBuilder ids = new StringBuilder();
+            for (Models.User u : e.getValue()) {
+                if (ids.length() > 0) ids.append(", ");
+                ids.append(u.phone.isEmpty() ? u.email : u.phone);
+            }
+            for (Models.User u : e.getValue()) {
+                out.add(new FraudFinding(u.userId, u.name, "AKUN_DUPLIKAT",
+                        e.getValue().size() + " akun memakai nama sama: " + ids, false));
+            }
+        }
+    }
+
+    /** Pengundang yang mengumpulkan banyak referral dalam waktu singkat. */
+    private void detectReferralPola(List<Models.User> users, List<FraudFinding> out) {
+        final int batasSehari = 5;
+        java.util.Map<String, Integer> perHari = new java.util.HashMap<>();
+        for (Models.Referral r : allReferrals()) {
+            String hari = r.createdAt == null || r.createdAt.length() < 10 ? "" : r.createdAt.substring(0, 10);
+            String key = r.inviterId + "|" + hari;
+            perHari.put(key, perHari.getOrDefault(key, 0) + 1);
+        }
+        for (java.util.Map.Entry<String, Integer> e : perHari.entrySet()) {
+            if (e.getValue() < batasSehari) continue;
+            String inviterId = e.getKey().split("\\|")[0];
+            Models.User u = user(inviterId);
+            if (u == null) continue;
+            out.add(new FraudFinding(u.userId, u.name, "REFERRAL_MENCURIGAKAN",
+                    e.getValue() + " referral masuk pada satu hari (" + e.getKey().split("\\|")[1] + ")", false));
+        }
+    }
+
+    /** Pembeli yang membuat banyak pesanan pada hari yang sama. */
+    private void detectTransaksiBerulang(List<Models.User> users, List<FraudFinding> out) {
+        final int batasSehari = 8;
+        java.util.Map<String, Integer> perHari = new java.util.HashMap<>();
+        for (Models.Order o : allOrders()) {
+            String hari = o.createdAt == null || o.createdAt.length() < 10 ? "" : o.createdAt.substring(0, 10);
+            String key = o.userId + "|" + hari;
+            perHari.put(key, perHari.getOrDefault(key, 0) + 1);
+        }
+        for (java.util.Map.Entry<String, Integer> e : perHari.entrySet()) {
+            if (e.getValue() < batasSehari) continue;
+            String userId = e.getKey().split("\\|")[0];
+            Models.User u = user(userId);
+            if (u == null) continue;
+            out.add(new FraudFinding(u.userId, u.name, "TRANSAKSI_BERULANG",
+                    e.getValue() + " pesanan pada satu hari (" + e.getKey().split("\\|")[1] + ")", false));
+        }
+    }
+
+    /** Bonus referral yang sudah masuk lalu pesanannya dibatalkan. */
+    private void detectBatalSetelahBonus(List<Models.User> users, List<FraudFinding> out) {
+        for (Models.Referral r : allReferrals()) {
+            if (!"CANCELLED".equals(r.status) || r.bonusPoints <= 0) continue;
+            Models.User u = user(r.inviterId);
+            if (u == null) continue;
+            out.add(new FraudFinding(u.userId, u.name, "BATAL_SETELAH_BONUS",
+                    "Bonus referral " + Util.num(r.bonusPoints) + " poin ditarik kembali setelah pesanan dibatalkan", true));
+        }
+    }
+
+    /** Reward iklan yang tidak wajar, misalnya tercatat melebihi batas harian. */
+    private void detectRewardBerlebih(List<Models.User> users, List<FraudFinding> out) {
+        Models.Settings s = settings();
+        java.util.Map<String, Integer> perHari = new java.util.HashMap<>();
+        for (JSONObject r : adRewards()) {
+            String key = r.optString("userId") + "|" + r.optString("date");
+            perHari.put(key, perHari.getOrDefault(key, 0) + 1);
+        }
+        for (java.util.Map.Entry<String, Integer> e : perHari.entrySet()) {
+            if (e.getValue() <= s.adMaxPerDay) continue;
+            String userId = e.getKey().split("\\|")[0];
+            Models.User u = user(userId);
+            if (u == null) continue;
+            out.add(new FraudFinding(u.userId, u.name, "REWARD_BERLEBIH",
+                    e.getValue() + " reward iklan pada " + e.getKey().split("\\|")[1]
+                            + " (batas " + s.adMaxPerDay + ")", true));
+        }
+    }
+
+    /** Menandai seluruh member yang muncul pada temuan yang bersifat memblokir. */
+    public int applyFraudFindings(String adminId) {
+        int ditandai = 0;
+        for (FraudFinding f : fraudFindings()) {
+            if (!f.blocking) continue;
+            Models.User u = user(f.userId);
+            if (u == null || u.fraudFlag) continue;
+            u.fraudFlag = true;
+            saveUser(u);
+            log(adminId, "MEMBER_FRAUD", f.userId, "OTOMATIS: " + f.code + " | " + f.detail);
+            ditandai++;
+        }
+        return ditandai;
     }
 
     public static class Stats {

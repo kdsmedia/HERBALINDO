@@ -32,6 +32,15 @@
             android:visibility="gone" />
 
         <Button
+            android:id="@+id/sec_add2"
+            style="@style/Widget.Herbalindo.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:text="Kategori"
+            android:visibility="gone" />
+
+        <Button
             android:id="@+id/sec_add"
             style="@style/Widget.Herbalindo.Button"
             android:layout_width="wrap_content"

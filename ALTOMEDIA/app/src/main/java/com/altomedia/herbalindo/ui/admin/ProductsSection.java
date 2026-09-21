@@ -30,6 +30,10 @@ class ProductsSection {
             add.setVisibility(View.VISIBLE);
             add.setText("Tambah Produk");
             add.setOnClickListener(v -> productForm(null));
+
+            Button category = root.findViewById(R.id.sec_add2);
+            category.setVisibility(View.VISIBLE);
+            category.setOnClickListener(v -> addCategory());
         }
         return root;
     }
@@ -48,7 +52,8 @@ class ProductsSection {
                     p.stock <= p.minStock ? R.color.danger : R.color.success));
             ((TextView) card.findViewById(R.id.ac_body)).setText(
                     "Harga " + Util.rupiah(p.price)
-                            + (p.hasPromo() ? " → promo " + Util.rupiah(p.promoPrice) : "")
+                            + (p.hasPromo() ? " → promo " + Util.rupiah(p.promoPrice) + p.promoPeriodLabel()
+                                            : (p.promoPrice > 0 ? " (promo tidak aktif" + p.promoPeriodLabel() + ")" : ""))
                             + " · poin " + Util.num(p.points) + "/unit"
                             + "\nMinimum stok " + p.minStock + " · berat " + p.weight + " g"
                             + "\n" + p.description);
@@ -74,10 +79,12 @@ class ProductsSection {
         StringBuilder sb = new StringBuilder();
         java.util.List<org.json.JSONObject> movements = a.repo().stockMovements();
         int shown = 0;
-        for (int i = movements.size() - 1; i >= 0 && shown < 20; i--, shown++) {
+        // Daftar sudah terbaru lebih dahulu; ambil 20 pertama.
+        for (int i = 0; i < movements.size() && shown < 20; i++, shown++) {
             org.json.JSONObject m = movements.get(i);
             sb.append(Util.dateTime(m.optString("createdAt"))).append("\n  ")
-                    .append(m.optString("sku")).append(" → ").append(m.optInt("delta") > 0 ? "+" : "")
+                    .append(m.optString("sku", m.optString("productId"))).append(" → ")
+                    .append(m.optInt("delta") > 0 ? "+" : "")
                     .append(m.optInt("delta")).append(" (sisa ").append(m.optInt("stockAfter")).append(")")
                     .append(" · ").append(m.optString("reason")).append("\n");
         }
@@ -134,6 +141,14 @@ class ProductsSection {
         skuField.setEnabled(isNew);
         EditText category = field(box, "Kategori", isNew ? "Herbal Diet" : existing.category);
         EditText promo = field(box, "Harga promo (0 = tanpa promo)", isNew ? "0" : String.valueOf(existing.promoPrice));
+        EditText promoStart = field(box, "Promo mulai (yyyy-MM-dd, kosong = bebas)",
+                isNew ? "" : existing.promoStart);
+        EditText promoEnd = field(box, "Promo berakhir (yyyy-MM-dd, kosong = bebas)",
+                isNew ? "" : existing.promoEnd);
+        android.widget.CheckBox promoOn = new android.widget.CheckBox(a);
+        promoOn.setText("Promo aktif");
+        promoOn.setChecked(isNew || existing.promoActive);
+        box.addView(promoOn);
         EditText minStock = field(box, "Minimum stok (peringatan)", isNew ? "5" : String.valueOf(existing.minStock));
         EditText weight = field(box, "Berat (gram)", isNew ? "100" : String.valueOf(existing.weight));
         EditText comp = field(box, "Komposisi", isNew ? "" : existing.composition);
@@ -156,6 +171,9 @@ class ProductsSection {
                         edited.category = category.getText().toString().trim();
                         edited.price = parse(price.getText().toString());
                         edited.promoPrice = parse(promo.getText().toString());
+                        edited.promoStart = promoStart.getText().toString().trim();
+                        edited.promoEnd = promoEnd.getText().toString().trim();
+                        edited.promoActive = promoOn.isChecked();
                         edited.points = parse(points.getText().toString());
                         edited.minStock = (int) parse(minStock.getText().toString());
                         edited.weight = (int) parse(weight.getText().toString());
@@ -197,6 +215,30 @@ class ProductsSection {
     }
 
     /**
+     * Menambah kategori produk.
+     *
+     * Kategori dipakai agar produk mudah dikelompokkan saat katalog bertambah.
+     */
+    private void addCategory() {
+        final EditText input = new EditText(a);
+        input.setHint("Nama kategori baru");
+        new AlertDialog.Builder(a)
+                .setTitle("Tambah Kategori")
+                .setView(input)
+                .setNegativeButton("Batal", null)
+                .setPositiveButton("Simpan", (d, w) -> {
+                    try {
+                        a.repo().saveCategory(input.getText().toString(), a.user.userId);
+                        a.refreshActive();
+                        Ui.ok(a, "Kategori ditambahkan");
+                    } catch (Exception e) {
+                        Ui.error(a, e.getMessage());
+                    }
+                })
+                .show();
+    }
+
+    /**
      * Memeriksa isian form produk. Mengembalikan pesan masalah, atau
      * {@code null} bila seluruh isian sah.
      */
@@ -215,7 +257,30 @@ class ProductsSection {
             return "URL gambar harus diawali http:// atau https://";
         if (p.promoPrice > 0 && p.promoPrice >= p.price)
             return "Harga promo harus lebih kecil dari harga normal";
+        if (!p.promoStart.isEmpty() && !isIsoDate(p.promoStart))
+            return "Tanggal promo mulai harus berformat yyyy-MM-dd";
+        if (!p.promoEnd.isEmpty() && !isIsoDate(p.promoEnd))
+            return "Tanggal promo berakhir harus berformat yyyy-MM-dd";
+        if (!p.promoStart.isEmpty() && !p.promoEnd.isEmpty() && p.promoEnd.compareTo(p.promoStart) < 0)
+            return "Tanggal promo berakhir tidak boleh sebelum tanggal mulai";
+        if (Util.isBlank(p.category)) return "Kategori wajib diisi";
         return null;
+    }
+
+    /**
+     * Memeriksa tanggal berformat {@code yyyy-MM-dd} sekaligus memastikan
+     * tanggalnya benar-benar ada (31 Februari ditolak).
+     */
+    private boolean isIsoDate(String s) {
+        if (!s.matches("^\\d{4}-\\d{2}-\\d{2}$")) return false;
+        try {
+            java.text.SimpleDateFormat f = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US);
+            f.setLenient(false);
+            f.parse(s);
+            return true;
+        } catch (java.text.ParseException e) {
+            return false;
+        }
     }
 
     private long parse(String s) {

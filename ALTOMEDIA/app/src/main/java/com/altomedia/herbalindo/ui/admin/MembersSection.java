@@ -26,6 +26,10 @@ class MembersSection {
             root = LayoutInflater.from(a).inflate(R.layout.section_list, null, false);
             ((TextView) root.findViewById(R.id.sec_title)).setText("Daftar Member");
             root.findViewById(R.id.sec_add).setVisibility(View.GONE);
+            android.widget.Button scan = root.findViewById(R.id.sec_add2);
+            scan.setVisibility(View.VISIBLE);
+            scan.setText("Cek Fraud");
+            scan.setOnClickListener(v -> openFraudReport());
         }
         return root;
     }
@@ -158,6 +162,44 @@ class MembersSection {
                         Ui.error(a, e.getMessage());
                     }
                 })
+                .show();
+    }
+
+    /**
+     * Menampilkan hasil pemeriksaan anti-fraud Bab 13.4.
+     *
+     * Temuan yang bersifat memblokir dapat langsung ditandai ke akunnya,
+     * sedangkan temuan lain hanya dilaporkan agar admin menilai sendiri.
+     */
+    private void openFraudReport() {
+        java.util.List<Repository.FraudFinding> findings = a.repo().fraudFindings();
+        StringBuilder sb = new StringBuilder();
+        if (findings.isEmpty()) {
+            sb.append("Tidak ada pola mencurigakan yang terdeteksi.");
+        } else {
+            int blocking = 0;
+            for (Repository.FraudFinding f : findings) {
+                if (f.blocking) blocking++;
+                sb.append(f.blocking ? "[BLOKIR] " : "[PANTAU] ")
+                        .append(f.code).append(" — ").append(f.userName).append("\n  ")
+                        .append(f.detail).append("\n\n");
+            }
+            sb.append(findings.size()).append(" temuan, ").append(blocking).append(" bersifat memblokir.");
+        }
+        android.content.DialogInterface.OnClickListener aksiBlokir = (d, w) -> {
+            try {
+                int n = a.repo().applyFraudFindings(a.user.userId);
+                a.refreshActive();
+                Ui.ok(a, n == 0 ? "Tidak ada temuan baru untuk ditandai" : n + " member ditandai fraud");
+            } catch (Exception e) {
+                Ui.error(a, e.getMessage());
+            }
+        };
+        new android.app.AlertDialog.Builder(a)
+                .setTitle("Laporan Anti-Fraud")
+                .setMessage(sb.toString())
+                .setNeutralButton("Tutup", null)
+                .setPositiveButton("Tandai Blokir", aksiBlokir)
                 .show();
     }
 

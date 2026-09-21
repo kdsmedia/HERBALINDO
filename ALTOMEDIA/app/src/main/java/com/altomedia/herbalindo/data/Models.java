@@ -67,12 +67,39 @@ public final class Models {
                 usage = "", warning = "", imageUrl = "", status = "ACTIVE";
         public long price, promoPrice, points;
         public int stock, minStock, weight;
+        /** Periode promo dalam format tanggal {@code yyyy-MM-dd}; kosong berarti tanpa batas. */
+        public String promoStart = "", promoEnd = "";
+        /** Admin dapat mematikan promo tanpa menghapus harga dan periodenya. */
+        public boolean promoActive = true;
         public String createdAt, updatedAt;
 
+        /**
+         * Harga promo berlaku bila harganya masuk akal, promonya dinyalakan,
+         * dan tanggal hari ini berada di dalam periode promo.
+         */
         public long effectivePrice() {
-            return (promoPrice > 0 && promoPrice < price) ? promoPrice : price;
+            return hasPromo() ? promoPrice : price;
         }
-        public boolean hasPromo() { return promoPrice > 0 && promoPrice < price; }
+
+        public boolean hasPromo() {
+            if (promoPrice <= 0 || promoPrice >= price || !promoActive) return false;
+            String today = dateToday();
+            if (!promoStart.isEmpty() && today.compareTo(promoStart) < 0) return false;
+            if (!promoEnd.isEmpty() && today.compareTo(promoEnd) > 0) return false;
+            return true;
+        }
+
+        private static String dateToday() {
+            return new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
+                    .format(new java.util.Date());
+        }
+
+        /** Label singkat periode promo untuk ditampilkan di katalog. */
+        public String promoPeriodLabel() {
+            if (promoStart.isEmpty() && promoEnd.isEmpty()) return "";
+            return " (" + (promoStart.isEmpty() ? "…" : promoStart) + " s.d. "
+                    + (promoEnd.isEmpty() ? "…" : promoEnd) + ")";
+        }
 
         /** Produk tayang bila status bukan INACTIVE. */
         public boolean active() { return !"INACTIVE".equals(status); }
@@ -86,6 +113,8 @@ public final class Models {
             o.put("composition", composition); o.put("usage", usage); o.put("warning", warning);
             o.put("imageUrl", imageUrl); o.put("status", status);
             o.put("price", price); o.put("promoPrice", promoPrice); o.put("points", points);
+            o.put("promoStart", promoStart); o.put("promoEnd", promoEnd);
+            o.put("promoActive", promoActive);
             o.put("stock", stock); o.put("minStock", minStock); o.put("weight", weight);
             o.put("createdAt", createdAt); o.put("updatedAt", updatedAt);
             return o;
@@ -102,6 +131,8 @@ public final class Models {
                 p.imageUrl = o.optString("imageUrl"); p.status = o.optString("status", "ACTIVE");
                 p.price = o.optLong("price"); p.promoPrice = o.optLong("promoPrice");
                 p.points = o.optLong("points"); p.stock = o.optInt("stock");
+                p.promoStart = o.optString("promoStart"); p.promoEnd = o.optString("promoEnd");
+                p.promoActive = o.optBoolean("promoActive", true);
                 p.minStock = o.optInt("minStock"); p.weight = o.optInt("weight");
                 p.createdAt = o.optString("createdAt"); p.updatedAt = o.optString("updatedAt");
             } catch (JSONException ignored) { }
