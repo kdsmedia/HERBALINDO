@@ -24,6 +24,7 @@ public class Repository {
     public static final String ADMIN_PHONE = "085813899649";
     public static final String ADMIN_PASSWORD = "Kdsmedia@123";
     private static final String META_ADMIN_VERSION = "admin_credentials_version";
+    private static final String META_SETTINGS_VERSION = "settings_version";
 
     public static class RuleException extends Exception {
         public RuleException(String msg) { super(msg); }
@@ -48,6 +49,7 @@ public class Repository {
         db = store;
         if (db.count(Config.C_USERS) == 0) seed();
         updateAdminCredentials();
+        updateWithdrawDefaults();
     }
 
     /**
@@ -74,6 +76,28 @@ public class Repository {
             db.putMeta(META_ADMIN_VERSION, "2");
         } catch (Exception e) {
             throw new IllegalStateException("Gagal menyelaraskan akun admin", e);
+        }
+    }
+
+    /**
+     * Menurunkan batas minimum withdrawal pada perangkat yang sudah terpasang.
+     *
+     * Nilai lama Rp50.000 lebih tinggi daripada nominal pilihan tertinggi
+     * (Rp20.000), sehingga tanpa penyesuaian ini seluruh penarikan akan ditolak
+     * oleh aturan minimum. Dijalankan sekali saja dan hanya bila admin belum
+     * menyesuaikan sendiri; bila sudah, nilainya dibiarkan.
+     */
+    private void updateWithdrawDefaults() {
+        try {
+            if ("1".equals(db.getMeta(META_SETTINGS_VERSION, ""))) return;
+            Models.Settings s = settings();
+            if (s.minWithdrawRupiah > Config.DEFAULT_MIN_WITHDRAW) {
+                s.minWithdrawRupiah = Config.DEFAULT_MIN_WITHDRAW;
+                saveSettings(s, null);
+            }
+            db.putMeta(META_SETTINGS_VERSION, "1");
+        } catch (Exception e) {
+            throw new IllegalStateException("Gagal menyelaraskan batas withdrawal", e);
         }
     }
 
@@ -952,13 +976,20 @@ public class Repository {
         return e;
     }
 
-    public Models.Withdrawal requestWithdrawal(Models.User u, long amountPoints, String method,
+    /**
+     * Mengajukan pencairan saldo sebesar salah satu nominal pada
+     * {@link Config#WITHDRAW_OPTIONS_RUPIAH}. Jumlah dalam rupiah, bukan poin,
+     * karena member memilih nominal yang tertera pada antarmuka. Poin yang
+     * dipotong dihitung dari nominal tersebut sehingga pembulatan konversi
+     * tidak pernah membuat saldo terpotong lebih besar daripada yang diminta.
+     */
+    public Models.Withdrawal requestWithdrawal(Models.User u, long amountRupiah, String method,
                                                String accountName, String destination) throws RuleException {
         Models.Settings s = settings();
         Eligibility e = eligibility(u);
         if (!e.ok) throw new RuleException("Syarat withdrawal belum terpenuhi");
-        if (amountPoints <= 0) throw new RuleException("Jumlah tidak valid");
-        if (amountPoints > u.points) throw new RuleException("Poin tidak cukup");
+        if (!isWithdrawOption(amountRupiah))
+            throw new RuleException("Pilih nominal pencairan: " + daftarNominal());
         if (!isWithdrawMethod(method)) throw new RuleException("Pilih metode: " + daftarMetode());
         method = method.trim();
         if (Util.isBlank(accountName) || accountName.trim().length() < 3)
@@ -970,14 +1001,18 @@ public class Repository {
             throw new RuleException("Nomor HP dompet digital tidak valid (contoh 08xxxxxxxxxx)");
         if ("BCA".equals(method) && !destination.trim().matches("^\\d{6,20}$"))
             throw new RuleException("Nomor rekening BCA harus 6-20 digit angka");
-        long rp = pointsToRupiah(amountPoints);
-        if (rp < s.minWithdrawRupiah) throw new RuleException("Minimum withdrawal " + Util.rupiah(s.minWithdrawRupiah));
+        if (amountRupiah < s.minWithdrawRupiah)
+            throw new RuleException("Minimum withdrawal " + Util.rupiah(s.minWithdrawRupiah));
+        if (amountRupiah > e.saldo)
+            throw new RuleException("Saldo tidak cukup, saldo tersedia " + Util.rupiah(e.saldo));
+        long amountPoints = rupiahToPoints(amountRupiah);
+        if (amountPoints > u.points) throw new RuleException("Poin tidak cukup");
 
         try {
             Models.Withdrawal w = new Models.Withdrawal();
             w.withdrawalId = "WD-" + System.currentTimeMillis();
             w.userId = u.userId;
-            w.amountPoints = amountPoints; w.amountRupiah = rp;
+            w.amountPoints = amountPoints; w.amountRupiah = amountRupiah;
             w.method = method; w.accountName = accountName.trim(); w.destination = destination.trim();
             w.status = "PENDING"; w.date = Util.todayKey();
             w.createdAt = Util.nowIso();
@@ -987,6 +1022,32 @@ public class Repository {
         } catch (Exception ex) {
             throw new RuleException("Gagal mengajukan withdrawal: " + ex.getMessage());
         }
+    }
+
+    /** Nominal pencairan hanya boleh salah satu dari daftar pilihan tetap. */
+    public static boolean isWithdrawOption(long rupiah) {
+        for (long v : Config.WITHDRAW_OPTIONS_RUPIAH) if (v == rupiah) return true;
+        return false;
+    }
+
+    /** Nominal pencairan yang boleh dipilih, hanya yang terjangkau saldo member. */
+    public List<Long> withdrawOptionsFor(Models.User u) {
+        if (u == null) return new ArrayList<>();
+        Models.User fresh = user(u.userId);
+        long saldo = pointsToRupiah((fresh == null ? u : fresh).points);
+        List<Long> out = new ArrayList<>();
+        for (long v : Config.WITHDRAW_OPTIONS_RUPIAH) if (v <= saldo) out.add(v);
+        return out;
+    }
+
+    /** Daftar nominal pencairan untuk pesan bantuan, dipisah koma. */
+    private static String daftarNominal() {
+        StringBuilder sb = new StringBuilder();
+        for (long v : Config.WITHDRAW_OPTIONS_RUPIAH) {
+            if (sb.length() > 0) sb.append(", ");
+            sb.append(Util.rupiah(v));
+        }
+        return sb.toString();
     }
 
     /** Daftar metode pencairan untuk pesan bantuan, dipisah koma tanpa kelas Android. */

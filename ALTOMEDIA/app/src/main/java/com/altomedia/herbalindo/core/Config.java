@@ -23,7 +23,15 @@ public final class Config {
     public static final int DEFAULT_AD_MAX_PER_DAY = 20;
     public static final int DEFAULT_REFERRAL_BONUS = 5000;
     public static final long DEFAULT_REFERRAL_MIN_ORDER = 50000L;
-    public static final long DEFAULT_MIN_WITHDRAW = 50000L;
+    public static final long DEFAULT_MIN_WITHDRAW = 100L;
+
+    /*
+     * Nominal penarikan saldo yang tersedia. Member hanya memilih salah satu
+     * nilai ini; isian bebas dihapus agar jumlah yang dicairkan selalu sama
+     * dengan nilai yang disetujui admin.
+     */
+    public static final long[] WITHDRAW_OPTIONS_RUPIAH = {
+            100L, 200L, 500L, 1000L, 2000L, 5000L, 10000L, 20000L};
     public static final int DEFAULT_MAX_WITHDRAW_PER_DAY = 1;
     public static final long DEFAULT_SHIPPING_FLAT = 15000L;
 

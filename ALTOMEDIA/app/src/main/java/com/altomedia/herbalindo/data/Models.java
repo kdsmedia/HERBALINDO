@@ -396,7 +396,7 @@ public final class Models {
         public long pointsPerUnit = 10000, rupiahPerUnit = 1000;
         public long checkinPoints = 10, adPoints = 5, adMaxPerDay = 20;
         public long referralBonus = 5000, referralMinOrder = 50000;
-        public long minWithdrawRupiah = 50000, maxWithdrawPerDay = 1;
+        public long minWithdrawRupiah = 100, maxWithdrawPerDay = 1;
         public boolean requireAdsForWithdraw = true, purchasePointsEnabled = true;
         public long shippingFlat = 15000, freeShippingMin = 0;
         public boolean admobEnabled = true;
@@ -426,7 +426,7 @@ public final class Models {
                 s.adMaxPerDay = o.optLong("adMaxPerDay", 20);
                 s.referralBonus = o.optLong("referralBonus", 5000);
                 s.referralMinOrder = o.optLong("referralMinOrder", 50000);
-                s.minWithdrawRupiah = o.optLong("minWithdrawRupiah", 50000);
+                s.minWithdrawRupiah = o.optLong("minWithdrawRupiah", 100);
                 s.maxWithdrawPerDay = o.optLong("maxWithdrawPerDay", 1);
                 s.requireAdsForWithdraw = o.optBoolean("requireAdsForWithdraw", true);
                 s.purchasePointsEnabled = o.optBoolean("purchasePointsEnabled", true);

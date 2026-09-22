@@ -244,7 +244,7 @@ public class RepositoryTest {
         assertEquals(110, u.points);
         assertFalse("saldo masih di bawah minimum", repo.eligibility(u).ok);
 
-        try { repo.requestWithdrawal(u, 110, "DANA", "Siti Aminah", "081234567890"); fail("harus gagal"); }
+        try { repo.requestWithdrawal(u, 100, "DANA", "Siti Aminah", "081234567890"); fail("harus gagal"); }
         catch (Repository.RuleException e) { assertTrue(e.getMessage().contains("belum terpenuhi")); }
     }
 
@@ -256,10 +256,11 @@ public class RepositoryTest {
         Models.User fresh = repo.user(u.userId);
         assertTrue(repo.eligibility(fresh).ok);
 
-        Models.Withdrawal w = repo.requestWithdrawal(fresh, 500000, "DANA", "Siti Aminah", "081234567890");
-        assertEquals(50000, w.amountRupiah);
+        Models.Withdrawal w = repo.requestWithdrawal(fresh, 20000, "DANA", "Siti Aminah", "081234567890");
+        assertEquals(20000, w.amountRupiah);
+        assertEquals(200000, w.amountPoints);
         assertEquals("PENDING", w.status);
-        assertEquals(600100 - 500000, repo.user(u.userId).points);
+        assertEquals(600100 - 200000, repo.user(u.userId).points);
 
         repo.processWithdrawal(w.withdrawalId, "REJECTED", "USR-ADMIN", "rekening salah");
         assertEquals(600100, repo.user(u.userId).points);
@@ -270,7 +271,7 @@ public class RepositoryTest {
         Models.User u = member("Siti Aminah", "081234567890", null);
         repo.addPoints(u.userId, 600000, "ADMIN_CREDIT", "saldo uji", null);
         for (int i = 0; i < 20; i++) repo.watchAd(u.userId);
-        Models.Withdrawal w = repo.requestWithdrawal(repo.user(u.userId), 500000, "BCA", "Siti Aminah", "1234567890");
+        Models.Withdrawal w = repo.requestWithdrawal(repo.user(u.userId), 20000, "BCA", "Siti Aminah", "1234567890");
         repo.processWithdrawal(w.withdrawalId, "PAID", "USR-ADMIN", "transfer");
 
         boolean paid = false;
@@ -283,9 +284,9 @@ public class RepositoryTest {
         repo.addPoints(u.userId, 2000000, "ADMIN_CREDIT", "saldo uji", null);
         for (int i = 0; i < 20; i++) repo.watchAd(u.userId);
 
-        repo.requestWithdrawal(repo.user(u.userId), 500000, "DANA", "Siti Aminah", "081234567890");
+        repo.requestWithdrawal(repo.user(u.userId), 20000, "DANA", "Siti Aminah", "081234567890");
         try {
-            repo.requestWithdrawal(repo.user(u.userId), 500000, "DANA", "Siti Aminah", "081234567890");
+            repo.requestWithdrawal(repo.user(u.userId), 20000, "DANA", "Siti Aminah", "081234567890");
             fail("harus gagal");
         } catch (Repository.RuleException e) { assertTrue(e.getMessage().contains("belum terpenuhi")); }
     }
@@ -295,10 +296,68 @@ public class RepositoryTest {
         repo.addPoints(u.userId, 2000000, "ADMIN_CREDIT", "saldo uji", null);
         for (int i = 0; i < 20; i++) repo.watchAd(u.userId);
 
-        Models.Withdrawal w = repo.requestWithdrawal(repo.user(u.userId), 500000, "DANA", "Siti Aminah", "081234567890");
+        Models.Withdrawal w = repo.requestWithdrawal(repo.user(u.userId), 20000, "DANA", "Siti Aminah", "081234567890");
         repo.processWithdrawal(w.withdrawalId, "REJECTED", "USR-ADMIN", "gagal");
-        Models.Withdrawal again = repo.requestWithdrawal(repo.user(u.userId), 500000, "DANA", "Siti Aminah", "081234567890");
+        Models.Withdrawal again = repo.requestWithdrawal(repo.user(u.userId), 20000, "DANA", "Siti Aminah", "081234567890");
         assertEquals("PENDING", again.status);
+    }
+
+    /* ---------------- Bab 9: nominal penarikan tetap ---------------- */
+
+    @Test public void penarikanHanyaMenerimaNominalPilihan() throws Exception {
+        Models.User u = siapTarik();
+        for (long salah : new long[]{1, 50, 99, 150, 250, 300, 7500, 15000, 25000, 50000, 100000}) {
+            try {
+                repo.requestWithdrawal(u, salah, "DANA", "Siti Aminah", "081234567890");
+                fail("nominal di luar daftar harus gagal: " + salah);
+            } catch (Repository.RuleException e) {
+                assertTrue(e.getMessage().contains("Pilih nominal"));
+            }
+        }
+        for (long benar : Config.WITHDRAW_OPTIONS_RUPIAH) {
+            Models.Withdrawal w = repo.requestWithdrawal(u, benar, "DANA", "Siti Aminah", "081234567890");
+            assertEquals(benar, w.amountRupiah);
+            assertEquals(benar * 10, w.amountPoints);
+            repo.processWithdrawal(w.withdrawalId, "REJECTED", "USR-ADMIN", "uji");
+        }
+    }
+
+    @Test public void nominalPenarikanMengikutiSaldoYangTersedia() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        assertTrue("saldo kosong tidak menawarkan nominal", repo.withdrawOptionsFor(u).isEmpty());
+
+        // 15.000 poin = Rp1.500, sehingga hanya nominal sampai Rp1.000 yang layak.
+        repo.addPoints(u.userId, 15000, "ADMIN_CREDIT", "saldo uji", null);
+        java.util.List<Long> opsi = repo.withdrawOptionsFor(repo.user(u.userId));
+        assertEquals(4, opsi.size());
+        assertEquals(Long.valueOf(100), opsi.get(0));
+        assertEquals(Long.valueOf(1000), opsi.get(opsi.size() - 1));
+
+        for (long v : Config.WITHDRAW_OPTIONS_RUPIAH) {
+            assertEquals(v <= 1000, opsi.contains(v));
+        }
+    }
+
+    @Test public void penarikanTidakBisaMelebihiSaldoMember() throws Exception {
+        Models.User u = siapTarikKecil();
+        assertEquals(6010, repo.pointsToRupiah(u.points));
+        // Saldo Rp6.010: nominal sampai Rp5.000 saja yang tersedia.
+        assertEquals(java.util.Arrays.asList(100L, 200L, 500L, 1000L, 2000L, 5000L),
+                repo.withdrawOptionsFor(u));
+
+        try {
+            repo.requestWithdrawal(u, 20000, "DANA", "Siti Aminah", "081234567890");
+            fail("nominal di atas saldo harus gagal");
+        } catch (Repository.RuleException e) {
+            assertTrue(e.getMessage().contains("Saldo tidak cukup"));
+        }
+
+        Models.Withdrawal w = repo.requestWithdrawal(u, 5000, "DANA", "Siti Aminah", "081234567890");
+        assertEquals(5000, w.amountRupiah);
+        assertEquals(50000, w.amountPoints);
+        assertEquals(10100, repo.user(u.userId).points);
+        assertEquals(java.util.Arrays.asList(100L, 200L, 500L, 1000L),
+                repo.withdrawOptionsFor(repo.user(u.userId)));
     }
 
     /* ---------------- Bab 6: order & stok ---------------- */
@@ -584,20 +643,20 @@ public class RepositoryTest {
         Models.User u = siapTarik();
         for (String salah : new String[]{"", "  ", "BITCOIN", "bca", "OVO2", "DANA BANK"}) {
             try {
-                repo.requestWithdrawal(u, 500000, salah, "Siti Aminah", "081234567890");
+                repo.requestWithdrawal(u, 20000, salah, "Siti Aminah", "081234567890");
                 fail("metode di luar daftar harus gagal: [" + salah + "]");
             } catch (Repository.RuleException e) {
                 assertTrue(e.getMessage().contains("Pilih metode"));
             }
         }
         // Spasi di tepi dirapikan, bukan dianggap metode lain.
-        Models.Withdrawal spasi = repo.requestWithdrawal(u, 500000, "  DANA  ", "Siti Aminah", "081234567890");
+        Models.Withdrawal spasi = repo.requestWithdrawal(u, 20000, "  DANA  ", "Siti Aminah", "081234567890");
         assertEquals("DANA", spasi.method);
         repo.processWithdrawal(spasi.withdrawalId, "REJECTED", "USR-ADMIN", "uji");
 
         for (String benar : Config.WITHDRAW_METHODS) {
             String tujuan = Config.isEwallet(benar) ? "081234567890" : "1234567890";
-            Models.Withdrawal w = repo.requestWithdrawal(u, 500000, benar, "Siti Aminah", tujuan);
+            Models.Withdrawal w = repo.requestWithdrawal(u, 20000, benar, "Siti Aminah", tujuan);
             assertEquals(benar, w.method);
             assertEquals("Siti Aminah", w.accountName);
             assertEquals("PENDING", w.status);
@@ -607,17 +666,17 @@ public class RepositoryTest {
 
     @Test public void penarikanMewajibkanNamaPemilikRekening() throws Exception {
         Models.User u = siapTarik();
-        try { repo.requestWithdrawal(u, 500000, "DANA", "", "081234567890"); fail("harus gagal"); }
+        try { repo.requestWithdrawal(u, 20000, "DANA", "", "081234567890"); fail("harus gagal"); }
         catch (Repository.RuleException e) { assertTrue(e.getMessage().contains("Nama pemilik")); }
-        try { repo.requestWithdrawal(u, 500000, "DANA", "Al", "081234567890"); fail("harus gagal"); }
+        try { repo.requestWithdrawal(u, 20000, "DANA", "Al", "081234567890"); fail("harus gagal"); }
         catch (Repository.RuleException e) { assertTrue(e.getMessage().contains("Nama pemilik")); }
     }
 
     @Test public void penarikanMemvalidasiNomorSesuaiJenisMetode() throws Exception {
         Models.User u = siapTarik();
-        try { repo.requestWithdrawal(u, 500000, "DANA", "Siti Aminah", "12345"); fail("harus gagal"); }
+        try { repo.requestWithdrawal(u, 20000, "DANA", "Siti Aminah", "12345"); fail("harus gagal"); }
         catch (Repository.RuleException e) { assertTrue(e.getMessage().contains("Nomor HP")); }
-        try { repo.requestWithdrawal(u, 500000, "BCA", "Siti Aminah", "0812"); fail("harus gagal"); }
+        try { repo.requestWithdrawal(u, 20000, "BCA", "Siti Aminah", "0812"); fail("harus gagal"); }
         catch (Repository.RuleException e) { assertTrue(e.getMessage().contains("rekening BCA")); }
     }
 
@@ -807,6 +866,14 @@ public class RepositoryTest {
     private Models.User siapTarik() throws Exception {
         Models.User u = member("Siti Aminah", "081234567890", null);
         repo.addPoints(u.userId, 600000, "ADMIN_CREDIT", "saldo uji", null);
+        for (int i = 0; i < 20; i++) repo.watchAd(u.userId);
+        return repo.user(u.userId);
+    }
+
+    /** Saldo Rp6.000 saja, cukup untuk nominal kecil tetapi tidak untuk yang besar. */
+    private Models.User siapTarikKecil() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        repo.addPoints(u.userId, 60000, "ADMIN_CREDIT", "saldo uji", null);
         for (int i = 0; i < 20; i++) repo.watchAd(u.userId);
         return repo.user(u.userId);
     }

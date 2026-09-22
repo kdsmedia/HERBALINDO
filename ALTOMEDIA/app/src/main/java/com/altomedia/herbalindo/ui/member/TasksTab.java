@@ -38,6 +38,16 @@ class TasksTab {
         return root;
     }
 
+    /** Daftar nominal penarikan untuk teks aturan, dipisah koma. */
+    private static String daftarNominal() {
+        StringBuilder sb = new StringBuilder();
+        for (long v : com.altomedia.herbalindo.core.Config.WITHDRAW_OPTIONS_RUPIAH) {
+            if (sb.length() > 0) sb.append(", ");
+            sb.append(Util.rupiah(v));
+        }
+        return sb.toString();
+    }
+
     void refresh() {
         if (root == null) return;
         Models.User u = a.repo().user(a.user.userId);
@@ -94,6 +104,7 @@ class TasksTab {
                 "1. Referral hanya 1 tingkat: bonus dibayarkan kepada pengundang langsung saat pesanan pertama "
                         + "teman terverifikasi. Tidak ada bonus berantai.\n"
                         + "2. Withdrawal membutuhkan saldo minimal " + Util.rupiah(s.minWithdrawRupiah)
+                        + ", nominal dipilih dari daftar " + daftarNominal()
                         + ", menonton " + s.adMaxPerDay + " iklan berhadiah pada hari yang sama, akun aktif, "
                         + "dan maksimal " + s.maxWithdrawPerDay + " pengajuan per hari.\n"
                         + "3. Konversi poin: " + Util.num(s.pointsPerUnit) + " poin = " + Util.rupiah(s.rupiahPerUnit) + ".\n"

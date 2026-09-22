@@ -62,6 +62,13 @@ class SettingsSection {
                 }));
     }
 
+    /** Nominal penarikan tertinggi yang tersedia, dipakai membatasi nilai minimum admin. */
+    private static long maxWithdrawOption() {
+        long max = 0;
+        for (long v : com.altomedia.herbalindo.core.Config.WITHDRAW_OPTIONS_RUPIAH) if (v > max) max = v;
+        return max;
+    }
+
     private void set(int id, long value) {
         EditText et = root.findViewById(id);
         if (et != null) et.setText(String.valueOf(value));
@@ -94,6 +101,9 @@ class SettingsSection {
         if (refBonus < 0) errors.add(new String[]{"Bonus referral", "tidak boleh negatif"});
         if (refMin < 0) errors.add(new String[]{"Minimum order referral", "tidak boleh negatif"});
         if (minWd < 0) errors.add(new String[]{"Minimum withdrawal", "tidak boleh negatif"});
+        if (minWd > maxWithdrawOption())
+            errors.add(new String[]{"Minimum saldo", "maksimal " + Util.rupiah(maxWithdrawOption())
+                    + " agar seluruh nominal penarikan tetap dapat dipilih"});
         if (maxWd <= 0) errors.add(new String[]{"Batas withdrawal harian", "harus minimal 1"});
         if (shipping < 0) errors.add(new String[]{"Ongkir", "tidak boleh negatif"});
         if (freeShipping < 0) errors.add(new String[]{"Gratis ongkir mulai", "tidak boleh negatif"});

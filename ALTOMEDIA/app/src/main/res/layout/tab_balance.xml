@@ -66,20 +66,21 @@
             android:layout_marginTop="6dp"
             android:orientation="vertical" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Herbalindo.Input"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:hint="Jumlah Poin">
+            android:text="Nominal Penarikan"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/bal_amount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:maxLines="1" />
-        </com.google.android.material.textfield.TextInputLayout>
+        <Spinner
+            android:id="@+id/bal_amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_box"
+            android:minHeight="48dp" />
 
         <TextView
             android:id="@+id/bal_amount_rp"
@@ -89,6 +90,14 @@
             android:textColor="@color/brand_green_dark"
             android:textSize="13sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Nominal dipilih dari daftar; isian bebas tidak tersedia agar jumlah yang dicairkan pasti."
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp" />
 
         <TextView
             android:layout_width="match_parent"

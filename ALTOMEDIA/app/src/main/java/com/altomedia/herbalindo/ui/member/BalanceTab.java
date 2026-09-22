@@ -1,7 +1,5 @@
 package com.altomedia.herbalindo.ui.member;
 
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,22 +18,29 @@ import com.altomedia.herbalindo.data.Models;
 import com.altomedia.herbalindo.data.Repository;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /** Tab Saldo: ringkasan, syarat withdrawal yang transparan, dan pengajuan. */
 class BalanceTab {
 
     private final MemberActivity a;
     private View root;
+    /** Nominal rupiah yang sedang dipilih pada daftar, 0 bila belum ada. */
+    private long selectedAmount;
 
     BalanceTab(MemberActivity a) { this.a = a; }
 
     View view() {
         if (root == null) {
             root = LayoutInflater.from(a).inflate(R.layout.tab_balance, null, false);
-            EditText amount = root.findViewById(R.id.bal_amount);
-            amount.addTextChangedListener(new TextWatcher() {
-                @Override public void beforeTextChanged(CharSequence s, int st, int c, int af) { }
-                @Override public void onTextChanged(CharSequence s, int st, int b, int c) { updateConversion(); }
-                @Override public void afterTextChanged(Editable s) { }
+            Spinner amount = root.findViewById(R.id.bal_amount);
+            amount.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
+                    selectedAmount = shownAmounts().isEmpty() ? 0 : shownAmounts().get(pos);
+                    updateConversion();
+                }
+                @Override public void onNothingSelected(AdapterView<?> p) { }
             });
             Spinner method = root.findViewById(R.id.bal_method);
             ArrayAdapter<String> ad = new ArrayAdapter<>(a,
@@ -66,18 +71,39 @@ class BalanceTab {
         return item == null ? "" : item.toString();
     }
 
-    private long requestedPoints() {
-        EditText et = root.findViewById(R.id.bal_amount);
-        String v = et.getText() == null ? "" : et.getText().toString().trim();
-        if (v.isEmpty()) return 0;
-        try { return Long.parseLong(v); } catch (NumberFormatException e) { return -1; }
+    /** Daftar nominal pada dropdown; hanya yang terjangkau saldo yang ditampilkan. */
+    private List<Long> shownAmounts() {
+        return new ArrayList<>(a.repo().withdrawOptionsFor(a.user));
     }
 
     private void updateConversion() {
         TextView tv = root.findViewById(R.id.bal_amount_rp);
-        long p = requestedPoints();
-        if (p <= 0) { tv.setText("Masukkan jumlah poin"); return; }
-        tv.setText("≈ " + Util.rupiah(a.repo().pointsToRupiah(p)));
+        if (selectedAmount <= 0) {
+            tv.setText("Saldo belum cukup untuk nominal penarikan mana pun");
+            return;
+        }
+        tv.setText("Poin terpotong " + Util.num(a.repo().rupiahToPoints(selectedAmount)));
+    }
+
+    /**
+     * Menyusun ulang daftar nominal sesuai saldo terkini. Pilihan yang sedang
+     * aktif dipertahankan bila masih tersedia, agar refresh akibat penyelesaian
+     * iklan tidak mengembalikan pilihan ke nominal terkecil.
+     */
+    private void bindAmountSpinner() {
+        Spinner sp = root.findViewById(R.id.bal_amount);
+        if (sp == null) return;
+        List<Long> options = shownAmounts();
+        List<String> labels = new ArrayList<>();
+        for (Long v : options) labels.add(Util.rupiah(v));
+        ArrayAdapter<String> ad = new ArrayAdapter<>(a,
+                android.R.layout.simple_spinner_dropdown_item, labels);
+        sp.setAdapter(ad);
+
+        int keep = options.indexOf(selectedAmount);
+        if (keep >= 0) sp.setSelection(keep);
+        selectedAmount = options.isEmpty() ? 0 : options.get(keep >= 0 ? keep : 0);
+        updateConversion();
     }
 
     void refresh() {
@@ -85,6 +111,8 @@ class BalanceTab {
         Models.User u = a.repo().user(a.user.userId);
         a.user = u;
         Models.Settings s = a.repo().settings();
+
+        bindAmountSpinner();
 
         ((TextView) root.findViewById(R.id.bal_saldo)).setText(Util.rupiah(a.repo().pointsToRupiah(u.points)));
         ((TextView) root.findViewById(R.id.bal_points)).setText(
@@ -131,8 +159,10 @@ class BalanceTab {
     }
 
     private void submit() {
-        long points = requestedPoints();
-        if (points <= 0) { Ui.error(a, "Jumlah poin tidak valid"); return; }
+        if (selectedAmount <= 0) {
+            Ui.error(a, "Saldo belum cukup untuk penarikan. Selesaikan lebih banyak tugas terlebih dahulu.");
+            return;
+        }
         String method = selectedMethod();
         EditText holderEt = root.findViewById(R.id.bal_holder);
         EditText destEt = root.findViewById(R.id.bal_dest);
@@ -146,9 +176,8 @@ class BalanceTab {
         }
 
         try {
-            Models.Withdrawal w = a.repo().requestWithdrawal(a.user, points, method, holder, dest);
+            Models.Withdrawal w = a.repo().requestWithdrawal(a.user, selectedAmount, method, holder, dest);
             holderEt.setText(""); destEt.setText("");
-            ((EditText) root.findViewById(R.id.bal_amount)).setText("");
             refresh();
             a.onSessionReady(a.repo().user(a.user.userId));
             Ui.info(a, "Pengajuan dikirim",
