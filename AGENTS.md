@@ -40,8 +40,8 @@ ALTOMEDIA/
 Build memerlukan `JAVA_HOME` dan `ANDROID_HOME`:
 
 ```bash
-export JAVA_HOME=/workspace/tools/jdk-17.0.13+11
-export ANDROID_HOME=/workspace/tools/android-sdk
+export JAVA_HOME=/workspace/tools/jdk-17.0.20.1+1
+export ANDROID_HOME=/workspace/android-sdk
 GRADLE=/workspace/tools/gradle-8.14.3/bin/gradle
 ```
 
@@ -110,6 +110,17 @@ konsistensi statis, dan pemeriksaan isi APK.
    Menulis ulang `toAuth()` dengan akses `private` menyebabkan kegagalan
    kompilasi "attempting to assign weaker access privileges".
 
+10. **Jangan menyimpan objek `Models.User` yang dibaca sebelum operasi lain.**
+    Poin dan XP ditambahkan ke dokumen terbaru di penyimpanan, bukan ke objek
+    di tangan pemanggil. Menulis ulang objek lama (`saveUser(user)`) menimpa
+    tambahan itu. `createOrder` pernah menjadi bug ini: alamat pengiriman
+    disimpan memakai objek basi, sehingga poin dan XP dari pesanan sebelumnya
+    hilang. Selalu baca ulang dengan `user(userId)` sebelum menulis.
+
+11. **Id penanda bisa didefinisikan di `values/ids.xml`, bukan hanya lewat
+    `@+id` pada layout.** `Insets` memakai `R.id.sysbar_pad_*` sebagai penanda
+    padding. Pemeriksa `tools/verify_project.py` sudah mengenali keduanya.
+
 ## Pengujian
 
 Alur bisnis diuji dengan `MemoryStore`; itu tidak mewakili perangkat. Untuk
@@ -136,6 +147,17 @@ perubahan yang menyentuh layar, jalur pembukaan, atau penyimpanan, andalkan
 
 - Konversi poin: 10.000 poin = Rp1.000 (`Config.POINTS_PER_UNIT` /
   `RUPIAH_PER_UNIT`, dan `Models.Settings`).
+- Level akun dihitung dari **XP**, bukan poin (`level/Levels.java`). Kurva
+  `100 * (L-1) * L / 2`: Lv2 di 100 XP, Lv5 di 1.000 XP, Lv10 di 4.500 XP.
+- Sumber XP: pembelian 1 XP per Rp1.000 nilai pesanan (`XP_PER_RUPIAH_UNIT`),
+  referral terverifikasi 250 XP, check-in 15 XP + 5 XP per hari beruntun
+  (maks 30 hari), iklan berhadiah 5 XP, dan keaktifan harian 15 XP.
+- XP **tidak pernah berkurang**. Pembatalan pesanan mengembalikan poin dan
+  stok, tetapi XP tetap; ini sengaja agar level tidak turun.
+- Setiap peristiwa XP ditulis ke koleksi `xp_events` dengan kode
+  `type + "|" + refId`, dan `xp()` menghitung ulang dari peristiwa yang unik.
+  Cara ini yang mencegah satu pesanan dihitung dua kali ketika `markStatus`
+  dipanggil ulang. Jangan mengganti dengan penambahan langsung ke `user.xp`.
 - Referral ID: tepat 6 digit angka, unik, tidak dapat diubah member.
 - Referral hanya **satu tingkat** (pengundang → yang diundang). Dilarang
   menerapkan bonus berantai.
@@ -216,7 +238,7 @@ masih berisi nilai contoh (`REPLACE_WITH_YOUR_FIREBASE_PROJECT_ID` dan
 
 Merge telah diselesaikan dengan mempertahankan implementasi **Java** sebagai
 kode utama, karena implementasi inilah yang benar-benar dapat dijalankan,
-memiliki 118 unit test, dan telah menghasilkan APK serta AAB rilis.
+memiliki 133 unit test, dan telah menghasilkan APK serta AAB rilis.
 
 Spesifikasi pada Bab 12 memang menyebut Firebase. Apabila di kemudian hari
 aplikasi akan dihubungkan ke Firebase, diperlukan proyek Firebase yang nyata
