@@ -136,4 +136,31 @@ public class AdminReproTest {
         assertEquals(AdminActivity.class.getName(), next.getComponent().getClassName());
         c.destroy();
     }
+
+    /** Tombol kembali menutup menu samping lebih dulu, bukan langsung keluar. */
+    @Test public void tombolKembaliMenutupMenuSamping() {
+        Models.User admin = Repository.get(ctx).user("USR-ADMIN");
+        Session.set(ctx, admin);
+        ActivityController<AdminActivity> c = Robolectric.buildActivity(AdminActivity.class).setup();
+        AdminActivity a = c.get();
+        androidx.drawerlayout.widget.DrawerLayout drawer = a.findViewById(R.id.adm_drawer);
+
+        a.findViewById(R.id.adm_menu).performClick();
+        layout(drawer);
+        assertTrue("Menu samping tidak terbuka",
+                drawer.isDrawerVisible(androidx.core.view.GravityCompat.START));
+
+        // Lewat dispatcher, bukan onBackPressed, karena Android 16 tidak lagi
+        // memanggil onBackPressed untuk gerakan kembali.
+        a.getOnBackPressedDispatcher().onBackPressed();
+        layout(drawer);
+        assertFalse("Menu samping tidak tertutup oleh tombol kembali",
+                drawer.isDrawerVisible(androidx.core.view.GravityCompat.START));
+        assertFalse("Layar admin ikut tertutup padahal menu baru ditutup", a.isFinishing());
+
+        a.getOnBackPressedDispatcher().onBackPressed();
+        layout(drawer);
+        assertTrue("Layar admin tidak tertutup pada tekanan kedua", a.isFinishing());
+        c.pause().stop().destroy();
+    }
 }

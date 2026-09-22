@@ -1351,7 +1351,9 @@ public class Repository {
         for (Models.User u : users) {
             String key = u.name == null ? "" : u.name.trim().toLowerCase(java.util.Locale.US);
             if (key.length() < 3) continue;
-            byName.computeIfAbsent(key, k -> new ArrayList<>()).add(u);
+            List<Models.User> grup = byName.get(key);
+            if (grup == null) { grup = new ArrayList<>(); byName.put(key, grup); }
+            grup.add(u);
         }
         for (java.util.Map.Entry<String, List<Models.User>> e : byName.entrySet()) {
             if (e.getValue().size() < 2) continue;
@@ -1374,7 +1376,8 @@ public class Repository {
         for (Models.Referral r : allReferrals()) {
             String hari = r.createdAt == null || r.createdAt.length() < 10 ? "" : r.createdAt.substring(0, 10);
             String key = r.inviterId + "|" + hari;
-            perHari.put(key, perHari.getOrDefault(key, 0) + 1);
+            Integer jumlah = perHari.get(key);
+            perHari.put(key, jumlah == null ? 1 : jumlah + 1);
         }
         for (java.util.Map.Entry<String, Integer> e : perHari.entrySet()) {
             if (e.getValue() < batasSehari) continue;
@@ -1393,7 +1396,8 @@ public class Repository {
         for (Models.Order o : allOrders()) {
             String hari = o.createdAt == null || o.createdAt.length() < 10 ? "" : o.createdAt.substring(0, 10);
             String key = o.userId + "|" + hari;
-            perHari.put(key, perHari.getOrDefault(key, 0) + 1);
+            Integer jumlah = perHari.get(key);
+            perHari.put(key, jumlah == null ? 1 : jumlah + 1);
         }
         for (java.util.Map.Entry<String, Integer> e : perHari.entrySet()) {
             if (e.getValue() < batasSehari) continue;
@@ -1422,7 +1426,8 @@ public class Repository {
         java.util.Map<String, Integer> perHari = new java.util.HashMap<>();
         for (JSONObject r : adRewards()) {
             String key = r.optString("userId") + "|" + r.optString("date");
-            perHari.put(key, perHari.getOrDefault(key, 0) + 1);
+            Integer jumlah = perHari.get(key);
+            perHari.put(key, jumlah == null ? 1 : jumlah + 1);
         }
         for (java.util.Map.Entry<String, Integer> e : perHari.entrySet()) {
             if (e.getValue() <= s.adMaxPerDay) continue;

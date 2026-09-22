@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.activity.OnBackPressedCallback;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -64,6 +65,7 @@ public class AdminActivity extends BaseActivity {
 
         setContentView(R.layout.activity_admin);
         applyInsets();
+        pasangPenangananKembali();
         container = findViewById(R.id.adm_container);
         drawer = findViewById(R.id.adm_drawer);
         sectionLabel = findViewById(R.id.adm_title);
@@ -132,13 +134,24 @@ public class AdminActivity extends BaseActivity {
         if (repo != null) refreshActive();
     }
 
-    /** Tombol kembali menutup menu samping lebih dulu, bukan langsung keluar. */
-    @Override public void onBackPressed() {
-        if (drawer != null && drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-            return;
-        }
-        super.onBackPressed();
+    /**
+     * Tombol kembali menutup menu samping lebih dulu, bukan langsung keluar.
+     *
+     * <p>Sejak Android 16 gerakan kembali tidak lagi memanggil
+     * {@code onBackPressed}, sehingga penanganan dipasang lewat
+     * {@link OnBackPressedCallback} agar tetap berlaku.</p>
+     */
+    private void pasangPenangananKembali() {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override public void handleOnBackPressed() {
+                if (drawer != null && drawer.isDrawerOpen(GravityCompat.START)) {
+                    drawer.closeDrawer(GravityCompat.START);
+                    return;
+                }
+                setEnabled(false);
+                getOnBackPressedDispatcher().onBackPressed();
+            }
+        });
     }
 
     void show(String section) {

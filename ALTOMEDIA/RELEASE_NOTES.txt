@@ -53,9 +53,13 @@ Fitur baru
 
 Perbaikan
     - Aplikasi tidak lagi berhenti ketika panel admin dibuka tanpa sesi admin.
+    - Gerakan kembali pada Android 16 kini menutup menu samping dengan benar;
+      sebelumnya penanganan tombol kembali diabaikan pada perangkat tersebut.
     - Email dan nomor HP member tidak dapat bertabrakan dengan akun lain saat
       disunting admin.
     - Akun admin tidak dapat dihapus dari daftar member.
+    - Perhitungan deteksi fraud tidak lagi memakai API level 24 sehingga aman
+      pada Android 5.0 (minSdk 21).
 
 Perubahan tampilan
     - Panel admin memakai menu samping yang meluncur dari kiri. Sebelumnya
@@ -63,7 +67,8 @@ Perubahan tampilan
       terpotong; kini seluruh bagian terlihat sekaligus.
 
 Catatan teknis
-    - Pengujian bertambah menjadi 188 unit test dan seluruhnya lulus.
+    - Pengujian bertambah menjadi 190 unit test dan seluruhnya lulus.
+    - Pemeriksaan lint rilis bersih tanpa error.
     - Skema penyimpanan tidak berubah; pengaturan lama tetap terbaca karena
       kolom baru memiliki nilai bawaan.
     - Paket tetap ditandatangani dengan sertifikat ALTOMEDIA (alias kdsmedia).
