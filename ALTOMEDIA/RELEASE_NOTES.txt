@@ -13,6 +13,62 @@ saja.
 
 
 ================================================================================
+VERSI 1.0.3 (versionCode 4)
+Tanggal: 20 September 2026
+================================================================================
+
+PEMBARUAN
+
+Ringkasan untuk Play Console (salin bagian ini):
+
+    Pembaruan HERBALINDO.
+
+    - Popup ajakan bergabung ke grup WhatsApp resmi saat aplikasi dibuka
+    - Admin dapat mencari, menyunting, memblokir, dan menghapus akun member
+    - Admin dapat menambah, mengurangi, dan menetapkan saldo member
+    - Menu panel admin kini meluncur dari kiri dan lebih sederhana
+    - Perbaikan aplikasi berhenti saat panel admin dibuka tanpa sesi
+
+Rincian lengkap:
+
+Fitur baru
+    - Popup "BERGABUNG WHATSAPP RESMI HERBALINDO" tampil sekali setiap aplikasi
+      dibuka, lengkap dengan banner, keterangan manfaat, tombol JOIN, dan
+      tombol tutup.
+    - Tautan grup WhatsApp dapat diubah admin dari menu Pengaturan, disertai
+      tombol pratinjau dan tombol mematikan popup. Tautan bawaan mengarah ke
+      grup resmi.
+    - Tautan yang bukan alamat http/https yang sah ditolak, sehingga popup
+      tidak dapat diarahkan ke aplikasi lain oleh nilai pengaturan.
+    - Pencarian member pada panel admin berdasarkan User ID, Referral ID,
+      nomor HP, email, atau nama.
+    - Admin dapat menyunting nama, email, nomor HP, dan kata sandi member.
+      Kata sandi hanya diganti bila kolomnya diisi.
+    - Admin dapat menambah, mengurangi, dan menetapkan saldo poin member
+      dengan alasan wajib yang tercatat pada audit log.
+    - Admin dapat memblokir akun (member tidak dapat masuk) dan
+      mengaktifkannya kembali.
+    - Admin dapat menghapus akun member beserta poin, pesanan, pembayaran,
+      referral, tugas harian, reward iklan, dan riwayat withdrawal miliknya.
+
+Perbaikan
+    - Aplikasi tidak lagi berhenti ketika panel admin dibuka tanpa sesi admin.
+    - Email dan nomor HP member tidak dapat bertabrakan dengan akun lain saat
+      disunting admin.
+    - Akun admin tidak dapat dihapus dari daftar member.
+
+Perubahan tampilan
+    - Panel admin memakai menu samping yang meluncur dari kiri. Sebelumnya
+      tujuh bagian disusun sebagai deretan tab sehingga label panjang
+      terpotong; kini seluruh bagian terlihat sekaligus.
+
+Catatan teknis
+    - Pengujian bertambah menjadi 188 unit test dan seluruhnya lulus.
+    - Skema penyimpanan tidak berubah; pengaturan lama tetap terbaca karena
+      kolom baru memiliki nilai bawaan.
+    - Paket tetap ditandatangani dengan sertifikat ALTOMEDIA (alias kdsmedia).
+
+================================================================================
 VERSI 1.0.2 (versionCode 3)
 Tanggal: 20 September 2026
 ================================================================================
