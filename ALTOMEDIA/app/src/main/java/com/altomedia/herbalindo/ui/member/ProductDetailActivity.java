@@ -25,6 +25,7 @@ public class ProductDetailActivity extends BaseActivity {
     @Override protected void onCreate(@Nullable Bundle s) {
         super.onCreate(s);
         setContentView(R.layout.activity_product_detail);
+        applyInsets();
         String id = getIntent().getStringExtra("productId");
         product = repo.product(id);
         if (product == null) { Ui.error(this, "Produk tidak ditemukan"); finish(); return; }

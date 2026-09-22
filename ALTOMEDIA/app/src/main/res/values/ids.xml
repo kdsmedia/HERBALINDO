@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Penanda agar padding sistem tidak ditumpuk dua kali saat inset
+         dilaporkan berulang (mis. saat papan tombol atau rotasi berubah). -->
+    <item name="sysbar_pad_top" type="id" />
+    <item name="sysbar_pad_start" type="id" />
+    <item name="sysbar_pad_end" type="id" />
+    <item name="sysbar_pad_bottom" type="id" />
+</resources>

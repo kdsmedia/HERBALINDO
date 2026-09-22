@@ -44,6 +44,7 @@ public class MemberActivity extends BaseActivity {
         user = Session.current(this);
         if (user == null) { toAuth(); return; }
         setContentView(R.layout.activity_member);
+        applyInsets();
 
         container = findViewById(R.id.tab_container);
         headerName = findViewById(R.id.hdr_name);
@@ -96,6 +97,18 @@ public class MemberActivity extends BaseActivity {
     void refreshHeader() {
         if (headerCart != null) headerCart.setText("Keranjang " + repo.cart().size());
     }
+
+    /**
+     * Hanya header yang menerima tambahan jarak atas; akar tata letak tidak
+     * boleh ikut menerima sisipan karena layar ini memakai {@code adjustResize}
+     * sehingga isi yang bisa digulir akan kehilangan ruang saat papan tombol
+     * muncul. Sisa jendela tetap lewat kurungan sistem ({@code decorFitsSystemWindows}).
+     */
+    @Override protected View insetTarget() {
+        return findViewById(R.id.member_header);
+    }
+
+    @Override protected boolean insetTopOnly() { return true; }
 
     void show(String tab) {
         if (isFinishing()) return;

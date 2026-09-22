@@ -7,11 +7,13 @@
     android:orientation="vertical">
 
     <!--
-      Header tahan sempit: nama pengguna dipotong dengan elipsis (satu baris)
-      agar tidak pernah mendorong tombol keranjang keluar layar, dan tombol
-      keranjang memiliki ukuran minimum yang tetap.
+      Header ringkas: tinggi isi dikunci 40dp agar satu baris dan tidak lagi
+      memakan ruang layar. Nama pengguna dipotong dengan elipsis sehingga tidak
+      pernah mendorong tombol keranjang keluar layar. Jarak aman dari bilah
+      status ditambahkan dari kode oleh Insets, bukan di sini.
     -->
     <LinearLayout
+        android:id="@+id/member_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/brand_green_dark"
@@ -19,17 +21,17 @@
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="14dp"
-        android:paddingTop="10dp"
+        android:paddingTop="6dp"
         android:paddingEnd="14dp"
-        android:paddingBottom="10dp">
+        android:paddingBottom="6dp">
 
         <ImageView
-            android:layout_width="34dp"
-            android:layout_height="34dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:layout_marginEnd="10dp"
             android:background="@drawable/bg_circle_green"
             android:contentDescription="@string/app_name"
-            android:padding="7dp"
+            android:padding="6dp"
             android:src="@drawable/ic_product_placeholder"
             app:tint="@color/brand_accent" />
 
@@ -46,7 +48,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textColor="@color/text_on_brand"
-                android:textSize="16sp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -56,25 +58,22 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textColor="@color/brand_green_pale"
-                android:textSize="11sp" />
+                android:textSize="10sp" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/hdr_cart"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="28dp"
             android:layout_marginStart="10dp"
             android:background="@drawable/bg_accent_pill"
-            android:drawablePadding="4dp"
             android:gravity="center_vertical"
-            android:minHeight="34dp"
+            android:maxLines="1"
             android:paddingStart="12dp"
-            android:paddingTop="6dp"
             android:paddingEnd="12dp"
-            android:paddingBottom="6dp"
             android:text="Keranjang 0"
             android:textColor="@color/text_primary"
-            android:textSize="12sp"
+            android:textSize="11sp"
             android:textStyle="bold" />
     </LinearLayout>
 

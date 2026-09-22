@@ -24,6 +24,7 @@ public class CheckoutActivity extends BaseActivity {
     @Override protected void onCreate(@Nullable Bundle s) {
         super.onCreate(s);
         setContentView(R.layout.activity_checkout);
+        applyInsets();
         findViewById(R.id.toolbar_back).setOnClickListener(v -> finish());
         ((TextView) findViewById(R.id.toolbar_title)).setText("Checkout");
         findViewById(R.id.toolbar_action).setVisibility(View.GONE);

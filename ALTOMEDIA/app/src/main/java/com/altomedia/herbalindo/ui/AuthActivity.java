@@ -31,6 +31,7 @@ public class AuthActivity extends BaseActivity {
         super.onCreate(s);
         if (Session.current(this) != null) { routeByRole(); return; }
         setContentView(R.layout.activity_auth);
+        applyInsets();
         repo = repo();
 
         formLogin = findViewById(R.id.form_login);

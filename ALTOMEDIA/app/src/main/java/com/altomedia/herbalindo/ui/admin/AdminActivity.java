@@ -41,6 +41,7 @@ public class AdminActivity extends BaseActivity {
         if (!"ADMIN".equals(u.role)) { Ui.error(this, "Akses admin diperlukan"); finish(); return; }
 
         setContentView(R.layout.activity_admin);
+        applyInsets();
         container = findViewById(R.id.adm_container);
         tabs = findViewById(R.id.adm_tabs);
         findViewById(R.id.adm_logout).setOnClickListener(v -> Ui.confirm(this, "Keluar",

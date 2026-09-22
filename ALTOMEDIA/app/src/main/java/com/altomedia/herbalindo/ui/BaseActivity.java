@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +25,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override protected void onCreate(@Nullable Bundle s) {
         super.onCreate(s);
+        // Dinyalakan sebelum setContentView pada subkelas agar tata letak sudah
+        // disiapkan untuk area sistem sejak awal, bukan setelah tampil.
+        Insets.enableEdgeToEdge(this);
         repo = Repository.get(this);
     }
 
@@ -59,6 +63,37 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected abstract void onSessionReady(Models.User user);
+
+    /**
+     * Pemilik inset bilah status pada sebuah layar. Bawaan: akar tata letak
+     * ({@code android.R.id.content}).
+     *
+     * <p>Sebagian layar tidak boleh menerima inset pada akar tata letaknya.
+     * Layar member, misalnya, memakai {@code android:windowSoftInputMode="adjustResize"}:
+     * bila akar tata letak ikut dikurangi papan tombol, isi yang bisa digulir
+     * tidak menyisakan ruang saat papan tombol muncul. Karena itu layar tersebut
+     * memindahkan inset ke header dan membiarkan sisanya lewat kurungan sistem
+     * ({@code decorFitsSystemWindows}).</p>
+     */
+    protected View insetTarget() {
+        View content = findViewById(android.R.id.content);
+        return content != null ? content : getWindow().getDecorView();
+    }
+
+    /** {@code true} bila inset hanya ditempelkan pada bagian atas layar. */
+    protected boolean insetTopOnly() { return false; }
+
+    /**
+     * Menyiapkan penyesuaian tepi ke tepi. Panggil tepat setelah
+     * {@code setContentView}.
+     */
+    protected void applyInsets() {
+        if (insetTopOnly()) {
+            Insets.applyTopInset(insetTarget());
+        } else {
+            Insets.applySystemBars(insetTarget());
+        }
+    }
 
     /** Handler utama untuk animasi ringan (progress iklan, dsb.). */
     protected Handler ui() { return handler; }

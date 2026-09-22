@@ -18,7 +18,9 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override protected void onCreate(@Nullable Bundle s) {
         super.onCreate(s);
+        Insets.enableEdgeToEdge(this);
         setContentView(R.layout.activity_splash);
+        Insets.applySystemBars(findViewById(R.id.splash_root));
         handleDeepLink(getIntent());
     }
 

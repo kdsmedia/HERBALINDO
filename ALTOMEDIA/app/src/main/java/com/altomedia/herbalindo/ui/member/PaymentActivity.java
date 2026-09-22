@@ -43,6 +43,7 @@ public class PaymentActivity extends BaseActivity {
     @Override protected void onCreate(@Nullable Bundle s) {
         super.onCreate(s);
         setContentView(R.layout.activity_payment);
+        applyInsets();
         findViewById(R.id.toolbar_back).setOnClickListener(v -> finish());
         ((TextView) findViewById(R.id.toolbar_title)).setText("Pembayaran");
 

@@ -10,6 +10,8 @@ import static org.junit.Assert.fail;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.test.core.app.ApplicationProvider;
 
@@ -264,6 +266,64 @@ public class StartupLifecycleTest {
         }
         assertEquals("Semua produk harus tergambar pada grid", totalProduk, kartuDilihat);
         c.pause().stop().destroy();
+    }
+
+    /**
+     * Header harus menyisakan jarak untuk bilah status pada API 30 ke atas,
+     * tempat aplikasi menggambar sampai tepi layar. Padding asli dari XML
+     * tidak boleh hilang, dan sisipan yang dilaporkan ulang tidak boleh
+     * menumpuk.
+     */
+    @Test public void headerMemberMenyisakanRuangBilahStatus() throws Exception {
+        Models.User u = Repository.get(ctx).register("Budi Santoso", "081234567890", "rahasia1", null);
+        Session.set(ctx, u);
+
+        ActivityController<MemberActivity> c = Robolectric.buildActivity(MemberActivity.class).setup();
+        MemberActivity a = c.get();
+        View header = a.findViewById(R.id.member_header);
+        assertNotNull("Header member tidak ditemukan", header);
+
+        int padTop = header.getPaddingTop();
+        // Pembanding: padding asli dari XML, dibaca dengan memasang tata letak
+        // sekali lagi tanpa penyesuaian sisipan apa pun.
+        View polos = android.view.LayoutInflater.from(a)
+                .inflate(R.layout.activity_member, null, false);
+        int padXml = polos.findViewById(R.id.member_header).getPaddingTop();
+        assertEquals("Padding awal header harus sesuai XML", padXml, padTop);
+
+        if (!com.altomedia.herbalindo.ui.Insets.manual()) {
+            assertEquals("Di bawah API 30 jarak bilah status diurus sistem, "
+                    + "padding tidak boleh ditambah", padXml, padTop);
+        } else {
+            // Sisipan bilah status dikirim sendiri agar nilainya pasti, karena
+            // Robolectric tidak menyediakan jendela nyata.
+            int extra = 64;
+            header.dispatchApplyWindowInsets(statusBarInset(extra));
+            assertEquals("Sisipan bilah status harus ditambahkan ke padding XML",
+                    padXml + extra, header.getPaddingTop());
+
+            // Sisipan dilaporkan ulang (mis. papan tombol dibuka-tutup):
+            // padding tidak boleh bertambah lagi.
+            header.dispatchApplyWindowInsets(statusBarInset(extra));
+            assertEquals("Sisipan berulang tidak boleh menumpuk",
+                    padXml + extra, header.getPaddingTop());
+        }
+
+        // Header harus tetap satu baris ringkas: kedua keterangan dibatasi satu
+        // baris sehingga tingginya tidak dapat bertambah walau teksnya panjang.
+        android.widget.TextView name = a.findViewById(R.id.hdr_name);
+        android.widget.TextView sub = a.findViewById(R.id.hdr_sub);
+        assertEquals("Nama pengguna harus dipotong satu baris", 1, name.getMaxLines());
+        assertEquals("Keterangan harus dipotong satu baris", 1, sub.getMaxLines());
+        assertEquals(android.text.TextUtils.TruncateAt.END, name.getEllipsize());
+        c.pause().stop().destroy();
+    }
+
+    /** Sisipan bilah status buatan pada API tempat tipe ini tersedia. */
+    private android.view.WindowInsets statusBarInset(int topPx) {
+        return new android.view.WindowInsets.Builder()
+                .setSystemWindowInsets(android.graphics.Insets.of(0, topPx, 0, 0))
+                .build();
     }
 
     /** Membuat pesanan satu produk lalu menandainya lunas. */
