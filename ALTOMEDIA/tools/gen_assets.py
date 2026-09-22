@@ -415,7 +415,7 @@ def screen_balance(s):
     y += 96
     draw_text(s.img, 14, y, "SYARAT WITHDRAWAL", 1, TEXT_SEC)
     y += 12
-    for ok, label in [(True, "AKUN AKTIF"), (False, "SALDO MINIMAL RP50.000"),
+    for ok, label in [(True, "AKUN AKTIF"), (False, "SALDO MINIMAL RP100"),
                       (False, "IKLAN HARI INI 6/20"), (True, "MAKSIMAL 1X / HARI")]:
         s.card(12, y, s.W - 12, y + 26, 8)
         if ok:
@@ -427,8 +427,9 @@ def screen_balance(s):
         y += 32
     y += 4
     s.card(12, y, s.W - 12, y + 40, 10)
-    draw_text(s.img, 22, y + 8, "JUMLAH (POIN)", 1, TEXT_SEC)
-    draw_text(s.img, 22, y + 20, "500.000", 3, TEXT)
+    draw_text(s.img, 22, y + 8, "NOMINAL PENARIKAN", 1, TEXT_SEC)
+    draw_text(s.img, 22, y + 20, "RP20.000", 3, TEXT)
+    draw_text(s.img, 22, y + 34, "DIPILIH DARI DAFTAR - TIDAK DIKETIK BEBAS", 1, TEXT_SEC)
     y += 50
     s.card(12, y, s.W - 12, y + 34, 10)
     draw_text(s.img, 22, y + 7, "METODE", 1, TEXT_SEC)

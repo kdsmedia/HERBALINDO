@@ -164,6 +164,16 @@ perubahan yang menyentuh layar, jalur pembukaan, atau penyimpanan, andalkan
 - Withdrawal memerlukan: saldo ≥ batas minimum, jumlah iklan harian terpenuhi
   bila diaktifkan, akun aktif, tidak ditandai curang, dan belum melewati batas
   pengajuan per hari.
+- Nominal withdrawal hanya boleh salah satu nilai
+  `Config.WITHDRAW_OPTIONS_RUPIAH` (Rp100–Rp20.000). Parameter
+  `requestWithdrawal(...)` adalah **rupiah**, bukan poin; poin yang ditahan
+  dihitung dengan `rupiahToPoints`. Isian jumlah bebas tidak boleh dikembalikan
+  karena nilai yang diajukan harus sama dengan nilai yang disetujui admin.
+- `minWithdrawRupiah` wajib ≤ `WITHDRAW_OPTIONS_RUPIAH` tertinggi, jika tidak
+  seluruh pengajuan akan ditolak aturan minimum. `SettingsSection` menolak nilai
+  yang lebih besar, dan `Repository.updateWithdrawDefaults()` menurunkan nilai
+  bawaan lama (50000) sekali saja pada perangkat yang sudah terpasang
+  (penanda `settings_version`).
 - Poin iklan hanya diberikan setelah reward AdMob benar-benar diterima
   (`onUserEarnedReward`), bukan saat iklan mulai tampil.
 - Password disimpan sebagai hash bersalt (`PasswordHasher`), bukan teks asli.
@@ -207,8 +217,8 @@ Hal yang mudah salah:
 
 ## Rilis
 
-- Versi saat ini: **1.0.0**, versionCode **1**, minSdk **21**, targetSdk **36**.
-- Rilis GitHub: `v1.0.0` pada `github.com/kdsmedia/HERBALINDO`, berisi APK, AAB,
+- Versi saat ini: **1.0.1**, versionCode **2**, minSdk **21**, targetSdk **36**.
+- Rilis GitHub: `v1.0.1` pada `github.com/kdsmedia/HERBALINDO`, berisi APK, AAB,
   dan SHA256SUMS.txt.
 - Sebelum setiap rilis: naikkan `versionCode`, jalankan unit test dan
   `verify_project.py`, lalu bangun ulang paket.
@@ -238,7 +248,7 @@ masih berisi nilai contoh (`REPLACE_WITH_YOUR_FIREBASE_PROJECT_ID` dan
 
 Merge telah diselesaikan dengan mempertahankan implementasi **Java** sebagai
 kode utama, karena implementasi inilah yang benar-benar dapat dijalankan,
-memiliki 133 unit test, dan telah menghasilkan APK serta AAB rilis.
+memiliki 136 unit test, dan telah menghasilkan APK serta AAB rilis.
 
 Spesifikasi pada Bab 12 memang menyebut Firebase. Apabila di kemudian hari
 aplikasi akan dihubungkan ke Firebase, diperlukan proyek Firebase yang nyata
@@ -259,7 +269,7 @@ menerima build yang benar.
 
 Setiap kali artefak dibangun ulang:
 
-1. Ganti `ALTOMEDIA/release/HERBALINDO-1.0.0.apk` dan `.aab` dengan hasil build.
+1. Ganti `ALTOMEDIA/release/HERBALINDO-<versi>.apk` dan `.aab` dengan hasil build.
 2. Perbarui `SHA256SUMS.txt`.
 3. Unggah ulang ketiga berkas ke Release dengan token bercakupan `repo`.
 4. Unduh kembali dari Release dan periksa checksumnya.

@@ -36,7 +36,7 @@ Sebelum membangun, buka berkas app/build.gradle dan pastikan:
         minSdk 21
         targetSdk 36
         versionCode 1          ← naikkan angka ini setiap rilis baru
-        versionName "1.0.0"    ← sesuaikan dengan versi yang diterbitkan
+        versionName "1.0.1"    ← sesuaikan dengan versi yang diterbitkan
     }
 
 Aturan penting:
@@ -161,7 +161,7 @@ BAGIAN 6 — MENGUNGGAH RILIS KE PLAY CONSOLE
     2. Unggah berkas app-release.aab pada bagian "App bundles";
     3. Tunggu proses pemeriksaan berkas selesai. Apabila ada kesalahan, Play
        Console akan menampilkan pesan beserta bagian yang bermasalah;
-    4. Isi nama rilis, misalnya "1.0.0 (1)";
+    4. Isi nama rilis, misalnya "1.0.1 (2)";
     5. Isi catatan rilis dengan menyalin isi bagian ringkas dari RELEASE_NOTES.txt;
     6. Klik "Next", tinjau ringkasan, lalu "Save";
     7. Klik "Review release", kemudian "Start rollout".
@@ -236,7 +236,7 @@ diunduh. Langkahnya:
 
     1. Buka halaman repositori di GitHub;
     2. Pilih menu "Releases", lalu "Draft a new release";
-    3. Isi tag, misalnya v1.0.0, dan judul rilis;
+    3. Isi tag, misalnya v1.0.1, dan judul rilis;
     4. Salin isi RELEASE_NOTES.txt ke kolom deskripsi;
     5. Lampirkan berkas berikut pada bagian "Attach binaries":
            app-release.apk

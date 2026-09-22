@@ -35,6 +35,85 @@ CARA BERKAS INI DIKELOLA (WAJIB DIBACA SEBELUM MENAMBAH CATATAN)
    catatan versi lama tanpa penyesuaian.
 
 ================================================================================
+VERSI 1.0.1 — 20 SEPTEMBER 2026
+================================================================================
+versionName    : 1.0.1
+versionCode    : 2
+Tanggal rilis   : 20 September 2026
+Saluran         : Rilis produksi (Google Play + APK distribusi langsung)
+Status          : Pembaruan perbaikan (bug fix release)
+
+--------------------------------------------------------------------------------
+RINGKASAN PEMBARUAN
+--------------------------------------------------------------------------------
+Pencairan saldo kini memakai nominal tetap yang dipilih dari daftar, bukan
+jumlah yang diketik bebas. Perubahan ini membuat jumlah yang diajukan member
+selalu sama dengan jumlah yang disetujui dan ditransfer admin. Batas minimum
+pencairan ikut diturunkan menjadi Rp100 agar seluruh nominal pilihan dapat
+dipakai, dan perhitungan potongan poin diselaraskan dengan nominal rupiah.
+
+--------------------------------------------------------------------------------
+FITUR BARU / PERUBAHAN
+--------------------------------------------------------------------------------
+1. Tab Saldo: jumlah penarikan dipilih dari daftar nominal Rp100, Rp200,
+   Rp500, Rp1.000, Rp2.000, Rp5.000, Rp10.000, dan Rp20.000. Isian jumlah poin
+   bebas dihapus, sehingga tidak ada lagi salah ketik nominal.
+2. Tab Saldo: nominal yang melebihi saldo member tidak ditawarkan, dan baris
+   keterangan menampilkan poin yang akan dipotong untuk nominal terpilih.
+3. Tab Tugas: teks aturan menyebutkan daftar nominal penarikan yang berlaku.
+4. Panel admin > Pengaturan: nilai "Minimum saldo" dibatasi maksimal Rp20.000
+   agar tidak ada nominal pilihan yang menjadi tidak dapat dipakai.
+
+--------------------------------------------------------------------------------
+PERBAIKAN & KUALITAS
+--------------------------------------------------------------------------------
+1. Poin yang dipotong pada pengajuan penarikan dihitung dari nominal rupiah
+   yang dipilih, bukan dari pembulatan konversi poin. Sebelumnya pembulatan
+   dapat memotong saldo lebih besar daripada jumlah yang diminta.
+2. Perangkat yang sudah terpasang menyesuaikan batas minimum pencairan lama
+   (Rp50.000) menjadi Rp100 sekali saja; nilai yang sudah disesuaikan admin
+   tidak diubah.
+3. Nominal di luar daftar (mis. Rp150 atau Rp7.500) ditolak dengan pesan yang
+   menyebutkan daftar nominal yang sah.
+4. Pengujian bertambah menjadi 136 unit test dan seluruhnya lulus, mencakup
+   penolakan nominal di luar daftar, penyesuaian pilihan terhadap saldo
+   tersedia, dan penolakan nominal di atas saldo.
+
+--------------------------------------------------------------------------------
+KEAMANAN
+--------------------------------------------------------------------------------
+1. Validasi di `Repository.requestWithdrawal` kini menolak setiap nominal yang
+   bukan bagian dari daftar resmi, sehingga aturan tidak dapat dilewati dari
+   sisi antarmuka.
+
+--------------------------------------------------------------------------------
+KOMPATIBILITAS
+--------------------------------------------------------------------------------
+- minSdk : 21 (Android 5.0 Lollipop)
+- targetSdk : 36 (Android 16)
+- Tidak ada perubahan kompatibilitas perangkat atau pustaka pada versi ini.
+
+--------------------------------------------------------------------------------
+CATATAN TEKNIS
+--------------------------------------------------------------------------------
+- Nominal penarikan tersimpan di `Config.WITHDRAW_OPTIONS_RUPIAH`; nilai
+  minimum bawaan berubah dari 50000 menjadi 100 pada model Settings.
+- Skema penyimpanan SQLite tidak berubah. Penyesuaian minimum memakai kunci
+  meta `settings_version` agar hanya berjalan sekali.
+- Tanda tangan rilis tetap memakai keystore ALTOMEDIA.jks, alias "kdsmedia".
+
+--------------------------------------------------------------------------------
+ARTEFAK RILIS
+--------------------------------------------------------------------------------
+APK (distribusi langsung) : app-release.apk
+AAB (Google Play)         : app-release.aab
+versionCode artefak        : 2
+================================================================================
+                          AKHIR CATATAN VERSI 1.0.1
+================================================================================
+
+
+================================================================================
 VERSI 1.0.0 — 20 SEPTEMBER 2026
 ================================================================================
 versionName    : 1.0.0
@@ -265,7 +344,7 @@ di Google Play.
 
 
 ================================================================================
-TEMPLATE CATATAN RILIS BERIKUTNYA (SALIN FORMAT INI UNTUK v1.0.1 DAN SETERUSNYA)
+TEMPLATE CATATAN RILIS BERIKUTNYA (SALIN FORMAT INI UNTUK v1.0.2 DAN SETERUSNYA)
 ================================================================================
 Tambahkan blok baru DI ATAS blok v1.0.0 (tepat di bawah blok header "CARA BERKAS
 INI DIKELOLA"), lalu isi setiap subbagian. Hapus subbagian yang benar-benar tidak
@@ -273,10 +352,10 @@ ada perubahannya dengan menulis "Tidak ada perubahan pada versi ini." — jangan
 mengosongkan subbagian tanpa keterangan.
 
 ================================================================================
-VERSI 1.0.1 — <TANGGAL RILIS, contoh: 5 Oktober 2026>
+VERSI 1.0.2 — <TANGGAL RILIS, contoh: 5 Oktober 2026>
 ================================================================================
-versionName    : 1.0.1
-versionCode    : 2
+versionName    : 1.0.2
+versionCode    : 3
 Tanggal rilis   : <tanggal>
 Saluran         : <Rilis produksi / Rilis beta / Uji internal>
 Status          : <Pembaruan pemeliharaan / Pembaruan fitur / Perbaikan bug>
@@ -328,5 +407,5 @@ APK (distribusi langsung) : app-release.apk
 AAB (Google Play)         : app-release.aab
 versionCode artefak        : <angka versionCode pada build ini>
 ================================================================================
-                           AKHIR CATATAN VERSI 1.0.1
+                           AKHIR CATATAN VERSI 1.0.2
 ================================================================================

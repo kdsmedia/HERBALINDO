@@ -22,3 +22,7 @@ local.properties
 *.keystore
 *.jks
 keystore/*.properties
+
+# Sampah Python
+__pycache__/
+*.pyc

@@ -1,16 +1,26 @@
-Rilis perdana aplikasi HERBALINDO — toko produk herbal diet alami dengan sistem member.
+Pembaruan HERBALINDO 1.0.1 — toko produk herbal diet alami dengan sistem member.
 
 ## Berkas unduhan
 
 | Berkas | Ukuran | Kegunaan |
 | --- | --- | --- |
-| `HERBALINDO-1.0.0.aab` | 6,2 MB | Untuk diunggah ke Google Play Console |
-| `HERBALINDO-1.0.0.apk` | 3,5 MB | Untuk pemasangan langsung pada perangkat |
+| `HERBALINDO-1.0.1.aab` | 6,2 MB | Untuk diunggah ke Google Play Console |
+| `HERBALINDO-1.0.1.apk` | 3,5 MB | Untuk pemasangan langsung pada perangkat |
 
 Nilai pemeriksaan berkas tersedia pada `SHA256SUMS.txt`.
 
 ## Perbaikan pada rilis ini
 
+- Pencairan saldo memakai nominal tetap Rp100, Rp200, Rp500, Rp1.000,
+  Rp2.000, Rp5.000, Rp10.000, dan Rp20.000. Jumlah tidak lagi diketik bebas,
+  sehingga nilai yang diajukan member selalu sama dengan nilai yang disetujui
+  dan ditransfer admin
+- Batas minimum pencairan diturunkan menjadi Rp100 agar seluruh nominal dapat
+  dipakai. Perangkat yang sudah terpasang menyesuaikan nilainya sekali saja,
+  dan admin tidak dapat menyetel minimum di atas nominal tertinggi
+- Poin yang dipotong dihitung dari nominal rupiah, sehingga pembulatan
+  konversi tidak lagi membuat saldo terpotong lebih besar daripada jumlah yang
+  diminta; pilihan yang tidak terjangkau saldo juga tidak ditawarkan
 - Level akun: setiap member kini punya level dengan badge di header, kartu
   kemajuan di Beranda, baris level dan riwayat XP di Profil, serta keterangan
   di tab Tugas. Naik level dipercepat oleh pembelian, undangan teman yang
@@ -71,15 +81,15 @@ SHA-256: 24bbfec790bf5c02652aba29eb9fcc053eccf90e7b0880fe820449013129fb68
 | Parameter | Nilai |
 | --- | --- |
 | Nama paket | `com.altomedia.herbalindo` |
-| Version code | 1 |
-| Version name | 1.0.0 |
+| Version code | 2 |
+| Version name | 1.0.1 |
 | Minimum SDK | 21 (Android 5.0 Lollipop) |
 | Target SDK | 36 |
 | Skema tanda tangan | APK Signature Scheme v1, v2, v3, dan v4 |
 
 ## Mutu
 
-- 133 pengujian lulus, tanpa kegagalan
+- 136 pengujian lulus, tanpa kegagalan
 - Pengujian tahap pembukaan menjalankan daur hidup layar yang sesungguhnya pada
   API 21 dan API 33, mencakup layar masuk, delapan layar member, dan panel admin
 - Pengujian penyimpanan memakai basis data SQLite yang sama seperti aplikasi
