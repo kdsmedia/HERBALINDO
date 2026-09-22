@@ -32,10 +32,13 @@ def find_all(exts, base):
 layouts = find_all([".xml"], os.path.join(RES, "layout"))
 java_files = find_all([".java"], JAVA)
 
-# --- id yang didefinisikan sumber daya (layout @+id dan values/ids.xml) ---
+# --- id yang didefinisikan sumber daya (layout @+id dan values id) ---
 defined_ids = set()
 for path in find_all([".xml"], RES):
-    for m in re.finditer(r'@\+id/([A-Za-z_][A-Za-z0-9_]*)', open(path, encoding="utf-8").read()):
+    source = open(path, encoding="utf-8").read()
+    for m in re.finditer(r'@\+id/([A-Za-z_][A-Za-z0-9_]*)', source):
+        defined_ids.add(m.group(1))
+    for m in re.finditer(r'<item[^>]*\bname="([A-Za-z_][A-Za-z0-9_]*)"[^>]*\btype="id"', source):
         defined_ids.add(m.group(1))
 
 # --- nama berkas sumber daya lain ---

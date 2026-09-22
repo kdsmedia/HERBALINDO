@@ -11,6 +11,14 @@ Nilai pemeriksaan berkas tersedia pada `SHA256SUMS.txt`.
 
 ## Perbaikan pada rilis ini
 
+- Level akun: setiap member kini punya level dengan badge di header, kartu
+  kemajuan di Beranda, baris level dan riwayat XP di Profil, serta keterangan
+  di tab Tugas. Naik level dipercepat oleh pembelian, undangan teman yang
+  terverifikasi, dan keaktifan harian; XP tidak pernah berkurang sehingga
+  level tidak turun saat pesanan dibatalkan
+- Header tidak lagi terlalu tinggi atau tertimpa bilah status: tinggi header
+  dipangkas, teks dibuat satu baris, dan inset bilah sistem ditangani di satu
+  tempat untuk seluruh layar
 - Halaman Saldo tidak lagi keluar sendiri saat dibuka. Penyebabnya kode mengambil
   wadah isian nomor tujuan dengan tipe tampilan yang keliru, sehingga Android
   melempar kesalahan tipe saat tab Saldo ditampilkan
@@ -20,6 +28,8 @@ Nilai pemeriksaan berkas tersedia pada `SHA256SUMS.txt`.
   tombol tambah dan kurang jumlah yang kini hanya berupa ikon
 - Katalog produk disusun empat kartu ringkas dalam dua kolom agar tampilan lebih
   rapi; kartu pada baris terakhir tidak lagi melebar sendiri
+- Perbaikan data: pembuatan pesanan tidak lagi menulis ulang dokumen pengguna
+  yang sudah basi, sehingga poin dan XP yang bertambah sebelumnya tidak hilang
 
 Paket rilis ditandatangani dengan sertifikat ALTOMEDIA:
 
@@ -47,6 +57,14 @@ SHA-256: 24bbfec790bf5c02652aba29eb9fcc053eccf90e7b0880fe820449013129fb68
 - Admin dapat menambah kategori produk dengan validasi nama ganda dan nama terlalu pendek
 - Riwayat pergerakan stok per produk tampil terbaru lebih dahulu lengkap dengan SKU dan pelakunya
 - Deteksi fraud otomatis: akun duplikat, referral mencurigakan, transaksi berulang, pembatalan setelah bonus, dan reward iklan berlebih
+- Level akun naik dari tiga jalur: pembelian (1 XP per Rp1.000 nilai pesanan),
+  undangan teman yang terverifikasi (250 XP), dan keaktifan harian (15 XP
+  check-in ditambah 5 XP per hari beruntun serta 5 XP per iklan berhadiah).
+  XP tidak pernah berkurang, sehingga level tidak turun saat pesanan dibatalkan
+- Penyesuaian header: badge level tampil di header, tinggi header dipangkas,
+  dan inset bilah sistem ditangani agar header tidak tertimpa bilah status
+- Perbaikan data: pembuatan pesanan tidak lagi menulis ulang dokumen pengguna
+  yang sudah basi, sehingga poin dan XP tidak hilang saat checkout
 
 ## Persyaratan teknis
 
@@ -61,7 +79,7 @@ SHA-256: 24bbfec790bf5c02652aba29eb9fcc053eccf90e7b0880fe820449013129fb68
 
 ## Mutu
 
-- 118 pengujian lulus, tanpa kegagalan
+- 133 pengujian lulus, tanpa kegagalan
 - Pengujian tahap pembukaan menjalankan daur hidup layar yang sesungguhnya pada
   API 21 dan API 33, mencakup layar masuk, delapan layar member, dan panel admin
 - Pengujian penyimpanan memakai basis data SQLite yang sama seperti aplikasi
