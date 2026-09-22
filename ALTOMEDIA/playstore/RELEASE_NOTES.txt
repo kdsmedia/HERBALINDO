@@ -35,6 +35,55 @@ CARA BERKAS INI DIKELOLA (WAJIB DIBACA SEBELUM MENAMBAH CATATAN)
    catatan versi lama tanpa penyesuaian.
 
 ================================================================================
+VERSI 1.0.6 — 20 SEPTEMBER 2026
+================================================================================
+versionName    : 1.0.6
+versionCode    : 7
+Tanggal rilis   : 20 September 2026
+Saluran         : Rilis produksi (Google Play + APK distribusi langsung)
+Status          : Perbaikan bug (bug fix release)
+
+--------------------------------------------------------------------------------
+RINGKASAN PEMBARUAN
+--------------------------------------------------------------------------------
+
+Penyesuaian saldo pada panel Admin kini benar-benar tersimpan dan memberi
+pesan yang jelas ketika isian belum lengkap. Sebelumnya dialog tertutup lebih
+dahulu sebelum pemeriksaan isian berjalan, sehingga Admin yang mengisi alasan
+kosong atau nominal yang salah hanya melihat dialog menghilang tanpa penjelasan
+dan menyangka saldo sudah berubah. Selain itu, pengurangan saldo yang melebihi
+saldo kini ditolak agar riwayat poin tetap cocok dengan saldo sebenarnya.
+
+--------------------------------------------------------------------------------
+FITUR BARU / PERUBAHAN
+--------------------------------------------------------------------------------
+1. Dialog Ubah Saldo bertahan ketika isian belum benar dan menampilkan pesan
+   kesalahan, sehingga Admin dapat langsung memperbaiki tanpa mengulang.
+2. Pengurangan saldo melebihi saldo ditolak dengan pesan "Saldo tidak cukup,
+   poin tersedia ...", bukan lagi memangkas saldo menjadi nol.
+
+--------------------------------------------------------------------------------
+PERBAIKAN & KUALITAS
+--------------------------------------------------------------------------------
+1. Pola validasi yang sama diterapkan pada seluruh dialog Admin: Tetapkan Poin,
+   Edit dan Hapus Member, Tambah/Ubah Produk, Tambah Kategori, penyesuaian
+   stok, Data Transfer, Nomor Resi, dan keputusan Pencairan Saldo.
+2. Dialog konfirmasi transfer pada sisi member memakai pola yang sama, sehingga
+   nominal yang salah tidak lagi menutup dialog tanpa penjelasan.
+3. Seluruh dialog Admin diseragamkan memakai komponen AndroidX agar perilaku
+   dan tampilannya konsisten.
+4. Aturan batas pengurangan saldo diterapkan juga pada panel Admin versi web.
+5. Pengujian bertambah menjadi 205 unit test dan seluruhnya lulus, tanpa lint
+   error.
+
+--------------------------------------------------------------------------------
+ARTEFAK RILIS
+--------------------------------------------------------------------------------
+- HERBALINDO-1.0.6.apk
+- HERBALINDO-1.0.6.aab
+
+
+================================================================================
 VERSI 1.0.5 — 20 SEPTEMBER 2026
 ================================================================================
 versionName    : 1.0.5

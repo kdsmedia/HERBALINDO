@@ -237,9 +237,45 @@ Hal yang mudah salah:
    `ca-app-pub-3940256099942544/...` hanya sah untuk pengembangan; memakainya di
    produksi meniadakan pendapatan dan dapat menimbulkan pelanggaran.
 
+## Dialog AlertDialog: tombol positif menutup dialog sebelum validasi berjalan
+
+`setPositiveButton(...)` pada `AlertDialog` menutup dialog lebih dahulu, baru
+memanggil pendengarnya. Bila pendengar itu memvalidasi isian dan menolaknya,
+dialog sudah telanjur hilang: admin hanya melihat formulir yang menghilang dan
+menyangka datanya tersimpan, padahal tidak ada yang berubah. Inilah penyebab
+keluhan "penyesuaian saldo tidak berfungsi" pada panel admin.
+
+Karena itu dialog yang memvalidasi isian **wajib** memakai pola berikut, bukan
+`setPositiveButton` dengan aksi langsung:
+
+```java
+AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(a)
+        .setPositiveButton("Simpan", null)   // pendengar diisi setelah show
+        .create();
+dialog.show();
+Ui.submit(dialog, () -> {
+    if (isianSalah) return "Pesan kesalahan";   // dialog tetap terbuka
+    repo.aksi(...);
+    return null;                                 // dialog ditutup
+});
+```
+
+`Ui.submit(...)` mengembalikan pesan kesalahan lewat toast dan hanya menutup
+dialog ketika handler mengembalikan `null`. Jangan menulis ulang logika ini per
+dialog. `Ui.form(...)` sudah memakai pola yang sama untuk formulir kata sandi.
+
+## Pengurangan saldo tidak boleh melebihi saldo
+
+`addPoints` memangkas nilai menjadi nol (`Math.max(0, points + amount)`)
+sementara baris ledger mencatat `amount` apa adanya. Tanpa penjagaan, admin yang
+mengurangi melebihi saldo membuat saldo menjadi nol tetapi riwayat poin
+menuliskan pengurangan penuh, sehingga saldo tidak lagi cocok dengan
+penjumlahannya. `adminAdjustBalance` sekarang menolak pengurangan yang melebihi
+saldo dan aturan yang sama diterapkan pada `js/store.js`.
+
 ## Rilis
 
-- Versi saat ini: **1.0.2**, versionCode **3**, minSdk **21**, targetSdk **36**.
+- Versi saat ini: **1.0.6**, versionCode **7**, minSdk **21**, targetSdk **36**.
 - Tag `v1.0.2` sudah ada pada `github.com/kdsmedia/HERBALINDO`, berisi APK, AAB,
   dan SHA256SUMS.txt di `ALTOMEDIA/release/`. Objek GitHub Release `v1.0.2`
   belum dibuat karena `GITHUB_TOKEN` yang tersedia tidak bercakupan `repo`
@@ -273,7 +309,7 @@ masih berisi nilai contoh (`REPLACE_WITH_YOUR_FIREBASE_PROJECT_ID` dan
 
 Merge telah diselesaikan dengan mempertahankan implementasi **Java** sebagai
 kode utama, karena implementasi inilah yang benar-benar dapat dijalankan,
-memiliki 140 unit test, dan telah menghasilkan APK serta AAB rilis.
+memiliki 205 unit test, dan telah menghasilkan APK serta AAB rilis.
 
 Spesifikasi pada Bab 12 memang menyebut Firebase. Apabila di kemudian hari
 aplikasi akan dihubungkan ke Firebase, diperlukan proyek Firebase yang nyata

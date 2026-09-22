@@ -13,6 +13,48 @@ saja.
 
 
 ================================================================================
+VERSI 1.0.6 (versionCode 7)
+Tanggal: 20 September 2026
+================================================================================
+
+PEMBARUAN
+
+Ringkasan untuk Play Console (salin bagian ini):
+
+    Pembaruan HERBALINDO.
+
+    - Penyesuaian saldo admin kini menampilkan pesan bila isian belum benar
+    - Pengurangan saldo tidak boleh melebihi saldo member
+
+RINCIAN PERBAIKAN
+
+    - Dialog penyesuaian saldo pada panel admin tidak lagi menutup sendiri saat
+      isian ditolak. Sebelumnya tombol simpan menutup dialog lebih dahulu
+      sebelum validasi berjalan, sehingga alasan yang kosong atau nominal yang
+      bukan angka membuat dialog menghilang tanpa penjelasan dan saldo tidak
+      berubah. Kini dialog bertahan sampai isian benar dan pesannya terlihat.
+    - Pengurangan saldo yang melebihi saldo ditolak dengan pesan "Saldo tidak
+      cukup, poin tersedia ...", bukan lagi dipangkas menjadi nol sementara
+      riwayat mencatat pengurangan penuh.
+    - Pola validasi yang sama diterapkan pada seluruh dialog admin: ubah saldo,
+      tetapkan poin, edit dan hapus member, tambah/ubah produk, penyesuaian
+      stok, data transfer, nomor resi, dan keputusan pencairan saldo. Dialog
+      konfirmasi transfer pada sisi member juga ikut diperbaiki.
+    - Seluruh dialog admin memakai komponen AndroidX agar tampilan dan
+      perilakunya seragam.
+    - Aturan batas pengurangan saldo diterapkan juga pada panel admin versi web.
+
+PENGUJIAN
+
+    - 205 pengujian lulus, tanpa kegagalan.
+
+PAKET
+
+    - HERBALINDO-1.0.6.apk  (pemasangan langsung)
+    - HERBALINDO-1.0.6.aab  (unggahan ke Google Play Console)
+
+
+================================================================================
 VERSI 1.0.5 (versionCode 6)
 Tanggal: 20 September 2026
 ================================================================================

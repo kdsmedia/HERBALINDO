@@ -1,15 +1,32 @@
-Pembaruan HERBALINDO 1.0.2 — toko produk herbal diet alami dengan sistem member.
+Pembaruan HERBALINDO 1.0.6 — toko produk herbal diet alami dengan sistem member.
 
 ## Berkas unduhan
 
 | Berkas | Ukuran | Kegunaan |
 | --- | --- | --- |
-| `HERBALINDO-1.0.2.aab` | 6,2 MB | Untuk diunggah ke Google Play Console |
-| `HERBALINDO-1.0.2.apk` | 3,5 MB | Untuk pemasangan langsung pada perangkat |
+| `HERBALINDO-1.0.6.aab` | 6,2 MB | Untuk diunggah ke Google Play Console |
+| `HERBALINDO-1.0.6.apk` | 3,5 MB | Untuk pemasangan langsung pada perangkat |
 
 Nilai pemeriksaan berkas tersedia pada `SHA256SUMS.txt`.
 
 ## Perbaikan pada rilis ini
+
+- Penyesuaian saldo di panel admin tidak lagi gagal tanpa penjelasan. Tombol
+  simpan pada dialog Android menutup dialog lebih dahulu sebelum validasi
+  berjalan, sehingga alasan yang kosong atau nominal yang bukan angka membuat
+  dialog menghilang tanpa pesan dan tanpa perubahan saldo. Kini dialog bertahan
+  sampai isian benar, dan pesan kesalahannya terlihat
+- Pengurangan saldo yang melebihi saldo ditolak dengan pesan "Saldo tidak
+  cukup". Sebelumnya saldo dipangkas menjadi nol sementara catatan riwayat
+  menuliskan pengurangan penuh, sehingga riwayat poin tidak lagi cocok dengan
+  saldo sebenarnya
+- Perilaku itu diperbaiki seragam pada seluruh dialog admin: ubah saldo,
+  tetapkan poin, edit dan hapus member, tambah/ubah produk, penyesuaian stok,
+  data transfer, nomor resi, dan keputusan pencairan saldo. Dialog konfirmasi
+  transfer pada sisi member juga memakai pola yang sama
+- Seluruh dialog admin diseragamkan memakai komponen AndroidX sehingga tampilan
+  dan perilakunya konsisten
+- Aturan yang sama diterapkan pada panel admin versi web (`js/store.js`)
 
 - BCA memakai batas bawah sendiri Rp50.000 karena transfer bank dikenakan
   biaya admin. Dompet digital tetap mulai Rp100. Daftar nominal ditambah
@@ -84,15 +101,15 @@ SHA-256: 24bbfec790bf5c02652aba29eb9fcc053eccf90e7b0880fe820449013129fb68
 | Parameter | Nilai |
 | --- | --- |
 | Nama paket | `com.altomedia.herbalindo` |
-| Version code | 3 |
-| Version name | 1.0.2 |
+| Version code | 7 |
+| Version name | 1.0.6 |
 | Minimum SDK | 21 (Android 5.0 Lollipop) |
 | Target SDK | 36 |
 | Skema tanda tangan | APK Signature Scheme v1, v2, v3, dan v4 |
 
 ## Mutu
 
-- 140 pengujian lulus, tanpa kegagalan
+- 205 pengujian lulus, tanpa kegagalan
 - Pengujian tahap pembukaan menjalankan daur hidup layar yang sesungguhnya pada
   API 21 dan API 33, mencakup layar masuk, delapan layar member, dan panel admin
 - Pengujian penyimpanan memakai basis data SQLite yang sama seperti aplikasi
