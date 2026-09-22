@@ -273,10 +273,25 @@ menuliskan pengurangan penuh, sehingga saldo tidak lagi cocok dengan
 penjumlahannya. `adminAdjustBalance` sekarang menolak pengurangan yang melebihi
 saldo dan aturan yang sama diterapkan pada `js/store.js`.
 
+## Naskah undangan dan tautan Play Store
+
+Teks bagikan undangan disusun dari satu naskah tetap: pembuka, Referral ID,
+besaran bonus poin, keterangan penarikan saldo, penutup, lalu tautan Play Store.
+Tautan memakai `Config.PLAY_STORE_URL`, yang dibentuk dari
+`BuildConfig.APPLICATION_ID`, bukan ditulis tetap. Jangan menuliskan tautan Play
+Store sebagai teks harfiah: salah ketik atau package name yang tertinggal dari
+aplikasi lain membuat calon member tersesat, dan hal itu tidak akan ketahuan
+dari kompilasi. `ShareInviteTest` menekan tombol bagikan sungguhan lalu
+memeriksa isi `Intent.EXTRA_TEXT` untuk menjaga naskah ini.
+
+Naskah yang sama dipakai `shareReferral` pada `js/app.js`; perbarui keduanya bila
+naskah berubah. Panel web tetap menyertakan tautan `?ref=` untuk pendaftaran
+langsung di web.
+
 ## Rilis
 
-- Versi saat ini: **1.0.6**, versionCode **7**, minSdk **21**, targetSdk **36**.
-- Paket terbaru `HERBALINDO-1.0.6.apk`/`.aab` beserta `SHA256SUMS.txt` ada di
+- Versi saat ini: **1.0.7**, versionCode **8**, minSdk **21**, targetSdk **36**.
+- Paket terbaru `HERBALINDO-1.0.7.apk`/`.aab` beserta `SHA256SUMS.txt` ada di
   `ALTOMEDIA/release/`. Objek GitHub Release untuk versi terbaru belum dibuat:
   `GITHUB_TOKEN` yang tersedia tidak bercakupan `repo` (HTTP 403 "Resource not
   accessible by integration" saat `POST /releases`). Buat rilis dengan token
@@ -309,7 +324,7 @@ masih berisi nilai contoh (`REPLACE_WITH_YOUR_FIREBASE_PROJECT_ID` dan
 
 Merge telah diselesaikan dengan mempertahankan implementasi **Java** sebagai
 kode utama, karena implementasi inilah yang benar-benar dapat dijalankan,
-memiliki 205 unit test, dan telah menghasilkan APK serta AAB rilis.
+memiliki 207 unit test, dan telah menghasilkan APK serta AAB rilis.
 
 Spesifikasi pada Bab 12 memang menyebut Firebase. Apabila di kemudian hari
 aplikasi akan dihubungkan ke Firebase, diperlukan proyek Firebase yang nyata

@@ -1,15 +1,25 @@
-Pembaruan HERBALINDO 1.0.6 — toko produk herbal diet alami dengan sistem member.
+Pembaruan HERBALINDO 1.0.7 — toko produk herbal diet alami dengan sistem member.
 
 ## Berkas unduhan
 
 | Berkas | Ukuran | Kegunaan |
 | --- | --- | --- |
-| `HERBALINDO-1.0.6.aab` | 6,2 MB | Untuk diunggah ke Google Play Console |
-| `HERBALINDO-1.0.6.apk` | 3,5 MB | Untuk pemasangan langsung pada perangkat |
+| `HERBALINDO-1.0.7.aab` | 6,2 MB | Untuk diunggah ke Google Play Console |
+| `HERBALINDO-1.0.7.apk` | 3,5 MB | Untuk pemasangan langsung pada perangkat |
 
 Nilai pemeriksaan berkas tersedia pada `SHA256SUMS.txt`.
 
 ## Perbaikan pada rilis ini
+
+- Teks bagikan undangan kini memuat tautan halaman Play Store aplikasi,
+  sehingga calon member yang menerima undangan dapat langsung membuka halaman
+  unduh yang benar. Tautan dibentuk dari package name aplikasi yang sedang
+  dipasang, bukan ditulis tetap, sehingga tidak mungkin menunjuk aplikasi lain
+- Naskah undangan diseragamkan: pembuka, Referral ID, besaran bonus poin,
+  keterangan bahwa komisi dan saldo dapat ditarik setiap hari, penutup, lalu
+  tautan Play Store. Nama member tidak lagi diselipkan di dalam teks
+- Panel admin versi web memakai naskah undangan yang sama agar isi pesan yang
+  diterima calon member konsisten di semua saluran
 
 - Penyesuaian saldo di panel admin tidak lagi gagal tanpa penjelasan. Tombol
   simpan pada dialog Android menutup dialog lebih dahulu sebelum validasi
@@ -101,15 +111,15 @@ SHA-256: 24bbfec790bf5c02652aba29eb9fcc053eccf90e7b0880fe820449013129fb68
 | Parameter | Nilai |
 | --- | --- |
 | Nama paket | `com.altomedia.herbalindo` |
-| Version code | 7 |
-| Version name | 1.0.6 |
+| Version code | 8 |
+| Version name | 1.0.7 |
 | Minimum SDK | 21 (Android 5.0 Lollipop) |
 | Target SDK | 36 |
 | Skema tanda tangan | APK Signature Scheme v1, v2, v3, dan v4 |
 
 ## Mutu
 
-- 205 pengujian lulus, tanpa kegagalan
+- 207 pengujian lulus, tanpa kegagalan
 - Pengujian tahap pembukaan menjalankan daur hidup layar yang sesungguhnya pada
   API 21 dan API 33, mencakup layar masuk, delapan layar member, dan panel admin
 - Pengujian penyimpanan memakai basis data SQLite yang sama seperti aplikasi

@@ -35,6 +35,51 @@ CARA BERKAS INI DIKELOLA (WAJIB DIBACA SEBELUM MENAMBAH CATATAN)
    catatan versi lama tanpa penyesuaian.
 
 ================================================================================
+VERSI 1.0.7 — 20 SEPTEMBER 2026
+================================================================================
+versionName    : 1.0.7
+versionCode    : 8
+Tanggal rilis   : 20 September 2026
+Saluran         : Rilis produksi (Google Play + APK distribusi langsung)
+Status          : Pembaruan konten undangan (marketing copy update)
+
+--------------------------------------------------------------------------------
+RINGKASAN PEMBARUAN
+--------------------------------------------------------------------------------
+
+Teks bagikan undangan member kini memuat tautan resmi halaman Play Store
+aplikasi, sehingga calon member yang menerima undangan dapat langsung membuka
+halaman unduh yang benar. Tautan dibentuk dari package name aplikasi yang
+sedang dipasang, bukan ditulis tetap, sehingga tidak mungkin menunjuk aplikasi
+lain.
+
+--------------------------------------------------------------------------------
+FITUR BARU / PERUBAHAN
+--------------------------------------------------------------------------------
+1. Teks undangan member memuat tautan halaman Play Store HERBALINDO.
+2. Tautan Play Store diturunkan dari package name aplikasi yang berjalan.
+3. Naskah undangan diseragamkan: pembuka, Referral ID, besaran bonus poin,
+   keterangan bahwa komisi dan saldo dapat ditarik setiap hari, penutup, lalu
+   tautan Play Store.
+4. Nama member tidak lagi diselipkan di dalam teks undangan.
+
+--------------------------------------------------------------------------------
+PERBAIKAN & KUALITAS
+--------------------------------------------------------------------------------
+1. Panel admin versi web memakai naskah undangan yang sama, sehingga isi pesan
+   yang diterima calon member selalu konsisten di semua saluran.
+2. Pengujian baru menekan tombol bagikan yang sebenarnya, lalu memeriksa isi
+   teks undangan beserta kecocokan tautan Play Store dengan package name.
+3. Pengujian bertambah menjadi 207 dan seluruhnya lulus, tanpa lint error.
+
+--------------------------------------------------------------------------------
+ARTEFAK RILIS
+--------------------------------------------------------------------------------
+- HERBALINDO-1.0.7.apk
+- HERBALINDO-1.0.7.aab
+
+
+================================================================================
 VERSI 1.0.6 — 20 SEPTEMBER 2026
 ================================================================================
 versionName    : 1.0.6

@@ -867,7 +867,15 @@
   }
   function shareReferral(u) {
     const link = location.origin + location.pathname + '?ref=' + u.referralId;
-    const text = 'Ayo gabung HERBALINDO 🌿\nProduk herbal diet alami + kumpulkan poin jadi saldo.\nGunakan Referral ID saya: ' + u.referralId + '\n' + link;
+    const s = Store.db.settings;
+    const text = 'Ayo bergabung di HERBALINDO\n\n\n'
+      + 'Gunakan Referral ID: ' + u.referralId + '\n'
+      + 'Bonus ' + nm(s.referralBonus) + ' poin\n'
+      + 'Komisi dan saldo dapat ditarik setiap hari\n\n\n'
+      + 'Herbal diet alami, poin harian, dan saldo rupiah.\n\n'
+      + 'Unduh di Play Store:\n'
+      + 'https://play.google.com/store/apps/details?id=com.altomedia.herbalindo\n\n'
+      + link;
     if (navigator.share) navigator.share({ title: 'HERBALINDO', text }).catch(() => { });
     else copy(text);
   }

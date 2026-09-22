@@ -13,6 +13,46 @@ saja.
 
 
 ================================================================================
+VERSI 1.0.7 (versionCode 8)
+Tanggal: 20 September 2026
+================================================================================
+
+PEMBARUAN
+
+Ringkasan untuk Play Console (salin bagian ini):
+
+    Pembaruan HERBALINDO.
+
+    - Teks undangan kini memuat tautan halaman Play Store aplikasi
+    - Naskah undangan diseragamkan dengan informasi bonus dan penarikan saldo
+
+RINCIAN PERUBAHAN
+
+    - Teks bagikan undangan member kini menyertakan tautan resmi halaman Play
+      Store, sehingga calon member langsung diarahkan ke halaman unduh aplikasi
+      yang benar.
+    - Tautan itu dibentuk dari package name aplikasi yang sedang dipasang,
+      bukan ditulis tetap, sehingga tidak mungkin menunjuk ke aplikasi lain.
+    - Naskah undangan diseragamkan: pembuka, Referral ID, besaran bonus poin,
+      keterangan bahwa komisi dan saldo dapat ditarik setiap hari, penutup, lalu
+      tautan Play Store.
+    - Nama member tidak lagi diselipkan di dalam teks undangan.
+    - Panel admin versi web memakai naskah undangan yang sama agar isi pesan
+      yang diterima calon member selalu konsisten.
+
+PENGUJIAN
+
+    - 207 pengujian lulus, tanpa kegagalan.
+    - Pengujian baru menekan tombol bagikan yang sebenarnya lalu memeriksa isi
+      teks undangan, termasuk kecocokan tautan Play Store dengan package name.
+
+PAKET
+
+    - HERBALINDO-1.0.7.apk  (pemasangan langsung)
+    - HERBALINDO-1.0.7.aab  (unggahan ke Google Play Console)
+
+
+================================================================================
 VERSI 1.0.6 (versionCode 7)
 Tanggal: 20 September 2026
 ================================================================================

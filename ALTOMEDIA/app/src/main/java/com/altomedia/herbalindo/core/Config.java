@@ -13,6 +13,14 @@ public final class Config {
     public static final String DEVELOPER = "ALTOMEDIA";
     public static final String CONTACT_EMAIL = "altomediaindonesia@gmail.com";
 
+    /**
+     * Tautan halaman Play Store aplikasi ini. Diturunkan dari
+     * {@link BuildConfig#APPLICATION_ID} supaya alamatnya tidak pernah
+     * melenceng dari package name yang benar-benar dipasang.
+     */
+    public static final String PLAY_STORE_URL =
+            "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID;
+
     // Konversi poin: 10.000 poin = Rp1.000
     public static final int POINTS_PER_UNIT = 10000;
     public static final int RUPIAH_PER_UNIT = 1000;

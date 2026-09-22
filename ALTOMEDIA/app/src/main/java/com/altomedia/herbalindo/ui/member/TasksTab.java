@@ -161,12 +161,12 @@ class TasksTab {
 
     private void shareRef() {
         Models.Settings s = a.repo().settings();
-        String text = "Ayo bergabung di " + Config.APP_NAME + " (" + a.user.name + ").\n\n"
+        String text = "Ayo bergabung di " + Config.APP_NAME + "\n\n\n"
                 + "Gunakan Referral ID: " + a.user.referralId + "\n"
-                + "Bonus " + Util.num(s.referralBonus) + " poin setelah akun Anda terverifikasi "
-                + "(pembelian minimal " + Util.rupiah(s.verifyMinOrder) + ").\n"
-                + "Komisi dan saldo dapat ditarik sesuai syarat aplikasi.\n\n"
-                + "Herbal diet alami, poin harian, dan saldo rupiah.";
+                + "Bonus " + Util.num(s.referralBonus) + " poin\n"
+                + "Komisi dan saldo dapat ditarik setiap hari\n\n\n"
+                + "Herbal diet alami, poin harian, dan saldo rupiah.\n\n"
+                + "Unduh di Play Store:\n" + Config.PLAY_STORE_URL;
         Intent i = new Intent(Intent.ACTION_SEND);
         i.setType("text/plain");
         i.putExtra(Intent.EXTRA_SUBJECT, "Undangan " + Config.APP_NAME);
