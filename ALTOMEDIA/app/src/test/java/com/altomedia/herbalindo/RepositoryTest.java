@@ -14,6 +14,7 @@ import com.altomedia.herbalindo.core.Util;
 import com.altomedia.herbalindo.data.MemoryStore;
 import com.altomedia.herbalindo.data.Models;
 import com.altomedia.herbalindo.data.Repository;
+import com.altomedia.herbalindo.level.Levels;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -994,5 +995,163 @@ public class RepositoryTest {
 
         repo.markStatus(repo.order(o.orderId), "CANCELLED", "USR-ADMIN", "batal");
         assertEquals("pesanan batal tidak dihitung belanja", 0, repo.purchaseTotal(u.userId));
+    }
+
+    /* ---------------- Bab level akun: XP dari belanja, undangan, aktivitas ---------------- */
+
+    @Test public void kurvaLevelNaikSesuaiTotalXp() {
+        assertEquals(1, Levels.levelFor(0));
+        assertEquals(1, Levels.levelFor(99));
+        assertEquals(2, Levels.levelFor(100));
+        assertEquals(2, Levels.levelFor(299));
+        assertEquals(3, Levels.levelFor(300));
+        assertEquals(0, Levels.xpForLevel(1));
+        assertEquals(100, Levels.xpForLevel(2));
+        assertEquals(300, Levels.xpForLevel(3));
+        assertEquals(600, Levels.xpForLevel(4));
+        // Level 4 mulai pada 600 XP: 100 + 200 + 300.
+        assertEquals(4, Levels.levelFor(600));
+        assertEquals(5, Levels.levelFor(1000));
+    }
+
+    @Test public void kemajuanLevelMengikutiXpYangTerkumpul() {
+        long into = Levels.xpIntoLevel(150);
+        assertTrue("XP di dalam level harus berada di antara batas level", into >= 0 && into < Levels.xpForNextLevel(150));
+        assertEquals(50, into);
+        // Level 2 butuh 200 XP penuh: 150 XP berarti baru seperempat jalan.
+        assertEquals(200, Levels.xpForNextLevel(150));
+        assertEquals(0.25f, Levels.progress(150), 0.0001f);
+        assertEquals(0f, Levels.progress(0), 0.0001f);
+        // Dari level 4 (600 XP) ke level 5 (1000 XP) dibutuhkan 400 XP.
+        assertEquals(400, Levels.xpForNextLevel(600));
+    }
+
+    @Test public void pembelianMenambahXpDanMenaikkanLevel() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        assertEquals(1, repo.level(u.userId));
+
+        Models.Order o = buy(u, "PRD-HBA-001", 1);
+        repo.markStatus(o, "PAID", "USR-ADMIN", "verifikasi bayar");
+
+        long harapan = o.total / Config.XP_PER_RUPIAH_UNIT;
+        assertTrue("Nilai pesanan harus menghasilkan XP", harapan > 0);
+        assertEquals(harapan, repo.xp(u.userId));
+        assertEquals(Levels.levelFor(harapan), repo.level(u.userId));
+    }
+
+    @Test public void pembelianBerulangMenaikkanLevelSecaraBertahap() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        long xpAwal = repo.xp(u.userId);
+
+        for (int i = 0; i < 4; i++) {
+            Models.Order o = buy(u, "PRD-HBA-001", 1);
+            repo.markStatus(o, "PAID", "USR-ADMIN", "verifikasi bayar");
+        }
+
+        assertTrue("XP harus bertambah setelah empat pembelian", repo.xp(u.userId) > xpAwal);
+        assertTrue("Level harus naik setelah empat pembelian", repo.level(u.userId) >= 3);
+    }
+
+    @Test public void xpTidakDihitungDuaKaliUntukPesananYangSama() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        Models.Order o = buy(u, "PRD-HBA-001", 1);
+        repo.markStatus(o, "PAID", "USR-ADMIN", "verifikasi bayar");
+        long xp = repo.xp(u.userId);
+
+        repo.markStatus(o, "PAID", "USR-ADMIN", "ulang");
+        repo.markStatus(o, "PROCESSING", "USR-ADMIN", "lanjut");
+        assertEquals("XP pesanan tidak boleh berlipat", xp, repo.xp(u.userId));
+    }
+
+    @Test public void pesananDibatalkanTidakMenurunkanLevel() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        Models.Order o = buy(u, "PRD-HBA-001", 1);
+        repo.markStatus(o, "PAID", "USR-ADMIN", "verifikasi bayar");
+        long xp = repo.xp(u.userId);
+        int level = repo.level(u.userId);
+
+        repo.markStatus(o, "REFUNDED", "USR-ADMIN", "refund");
+
+        assertEquals("XP bersifat tetap meski poin dikembalikan", xp, repo.xp(u.userId));
+        assertEquals(level, repo.level(u.userId));
+        assertEquals(0, repo.user(u.userId).points);
+    }
+
+    @Test public void undanganTerverifikasiMenambahXpPengundang() throws Exception {
+        Models.User inviter = member("Siti Aminah", "081234567890", null);
+        Models.User invited = member("Budi Santoso", "081234567891", inviter.referralId);
+
+        Models.Order o = buy(invited, "PRD-HBA-001", 1);
+        assertEquals(0, repo.xp(inviter.userId));
+
+        repo.markStatus(o, "PAID", "USR-ADMIN", "verifikasi bayar");
+
+        assertEquals(Config.XP_REFERRAL, repo.xp(inviter.userId));
+        assertEquals(Levels.levelFor(Config.XP_REFERRAL), repo.level(inviter.userId));
+    }
+
+    @Test public void undanganBelumTerverifikasiBelumMemberiXp() throws Exception {
+        Models.User inviter = member("Siti Aminah", "081234567890", null);
+        member("Budi Santoso", "081234567891", inviter.referralId);
+        assertEquals(0, repo.xp(inviter.userId));
+    }
+
+    @Test public void checkinHarianMenambahXpSesuaiRantai() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        assertEquals(0, repo.checkinStreak(u.userId));
+
+        repo.checkin(u.userId);
+        assertEquals(Levels.xpForCheckin(1), repo.xp(u.userId));
+        assertEquals(Config.XP_DAILY_CHECKIN + Config.XP_DAILY_STREAK, repo.xp(u.userId));
+        assertEquals(1, repo.checkinStreak(u.userId));
+
+        // Check-in kedua pada hari yang sama ditolak dan tidak menambah XP.
+        try {
+            repo.checkin(u.userId);
+            fail("Check-in ganda seharusnya ditolak");
+        } catch (Repository.RuleException expected) { }
+        assertEquals(Levels.xpForCheckin(1), repo.xp(u.userId));
+    }
+
+    @Test public void iklanBerhadiahMenambahXpTerpisahDariPoin() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        repo.watchAd(u.userId);
+        assertEquals(Config.XP_AD, repo.xp(u.userId));
+        repo.watchAd(u.userId);
+        assertEquals(Config.XP_AD * 2, repo.xp(u.userId));
+    }
+
+    @Test public void xpKeaktifanHarianHanyaSekaliPerHari() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+
+        repo.grantDailyActive(u.userId);
+        assertEquals(Config.XP_DAILY_CHECKIN, repo.xp(u.userId));
+        assertEquals(1, repo.xpEvents(u.userId, 0).size());
+
+        repo.grantDailyActive(u.userId);
+        assertEquals("XP keaktifan harian tidak boleh berulang", Config.XP_DAILY_CHECKIN, repo.xp(u.userId));
+        assertEquals(1, repo.xpEvents(u.userId, 0).size());
+    }
+
+    @Test public void adminTidakMenerimaXpKeaktifanHarian() throws Exception {
+        Models.User admin = repo.login(Repository.ADMIN_EMAIL, Repository.ADMIN_PASSWORD);
+        repo.grantDailyActive(admin.userId);
+        assertEquals(0, repo.xp(admin.userId));
+    }
+
+    @Test public void riwayatXpMencatatSetiapSumber() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        repo.watchAd(u.userId);
+        repo.checkin(u.userId);
+
+        java.util.List<Models.XpEvent> events = repo.xpEvents(u.userId, 0);
+        assertEquals(2, events.size());
+        java.util.Set<String> types = new java.util.HashSet<>();
+        for (Models.XpEvent e : events) {
+            assertTrue("XP harus bernilai positif", e.amount > 0);
+            types.add(e.type);
+        }
+        assertTrue(types.contains("AD"));
+        assertTrue(types.contains("CHECKIN"));
     }
 }

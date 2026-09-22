@@ -434,6 +434,102 @@ public class Repository {
         return out;
     }
 
+    /* ================= XP & LEVEL AKUN ================= */
+
+    /**
+     * Menambah XP anggota. XP tidak pernah berkurang, jadi jumlahnya selalu
+     * naik. Peristiwa dengan {@code refId} dan {@code type} yang sama diabaikan
+     * agar satu pesanan atau satu tautan referral tidak pernah dihitung dua
+     * kali, sebagaimana pencatatan pada buku besar poin.
+     */
+    public long addXp(String userId, long amount, String type, String note, String refId) {
+        Models.User u = user(userId);
+        if (u == null) return 0;
+        if (amount <= 0) return u.xp;
+        for (String j : db.all(Config.C_XP_EVENTS)) {
+            Models.XpEvent e = Models.XpEvent.from(j);
+            if (userId.equals(e.userId) && type != null && type.equals(e.type)
+                    && refId != null && refId.equals(e.refId)) return u.xp;
+        }
+        u.xp = u.xp + amount;
+        saveUser(u);
+        try {
+            Models.XpEvent e = new Models.XpEvent();
+            e.eventId = Util.id("XPE");
+            e.userId = userId; e.amount = amount; e.type = type;
+            e.note = note == null ? "" : note; e.refId = refId;
+            e.date = Util.todayKey(); e.createdAt = Util.nowIso();
+            db.put(Config.C_XP_EVENTS, e.eventId, e.toJson().toString());
+        } catch (Exception e) { throw new IllegalStateException(e); }
+        return u.xp;
+    }
+
+    public long xp(String userId) {
+        Models.User u = user(userId);
+        return u == null ? 0 : u.xp;
+    }
+
+    /** Level akun saat ini. */
+    public int level(String userId) {
+        return com.altomedia.herbalindo.level.Levels.levelFor(xp(userId));
+    }
+
+    /** Riwayat perolehan XP, terbaru lebih dahulu. */
+    public List<Models.XpEvent> xpEvents(String userId, int limit) {
+        List<Models.XpEvent> all = new ArrayList<>();
+        for (String j : db.all(Config.C_XP_EVENTS)) {
+            Models.XpEvent e = Models.XpEvent.from(j);
+            if (userId == null || userId.equals(e.userId)) all.add(e);
+        }
+        List<Models.XpEvent> out = new ArrayList<>();
+        for (int i = all.size() - 1; i >= 0; i--) {
+            out.add(all.get(i));
+            if (limit > 0 && out.size() >= limit) break;
+        }
+        return out;
+    }
+
+    /**
+     * Jumlah hari check-in beruntun yang berakhir hari ini atau kemarin.
+     * Bila hari ini belum check-in, rantai yang dihitung berakhir kemarin
+     * sehingga hasilnya dipakai untuk menentukan XP check-in hari ini.
+     */
+    public long checkinStreak(String userId) {
+        java.util.Set<String> days = new java.util.TreeSet<>();
+        for (String j : db.all(Config.C_POINTS_LEDGER)) {
+            Models.Ledger l = Models.Ledger.from(j);
+            if (!"CHECKIN".equals(l.type) || !userId.equals(l.userId)) continue;
+            if (l.createdAt != null && l.createdAt.length() >= 10) days.add(l.createdAt.substring(0, 10));
+        }
+        if (days.isEmpty()) return 0;
+        java.util.Calendar c = java.util.Calendar.getInstance();
+        if (!days.contains(Util.todayKey())) c.add(java.util.Calendar.DAY_OF_YEAR, -1);
+        long streak = 0;
+        while (days.contains(Util.dayKey(c.getTime()))) {
+            streak++;
+            c.add(java.util.Calendar.DAY_OF_YEAR, -1);
+        }
+        return streak;
+    }
+
+    /**
+     * XP keaktifan harian: diberikan sekali untuk setiap hari ketika anggota
+     * membuka aplikasi. Dipanggil saat layar member aktif sehingga hari tanpa
+     * aktivitas tidak pernah mendapat XP.
+     */
+    public long grantDailyActive(String userId) {
+        Models.User u = user(userId);
+        if (u == null || !"MEMBER".equals(u.role)) return u == null ? 0 : u.xp;
+        String date = Util.todayKey();
+        for (String j : db.all(Config.C_XP_EVENTS)) {
+            Models.XpEvent e = Models.XpEvent.from(j);
+            if (!userId.equals(e.userId) || !"DAILY_ACTIVE".equals(e.type)) continue;
+            if (date.equals(e.date)) return u.xp;
+        }
+        return addXp(userId, Config.XP_DAILY_CHECKIN, "DAILY_ACTIVE",
+                "Aktif " + date, "DAILY-" + date);
+    }
+
     /* ================= DAILY TASK ================= */
     public Models.DailyTask todayTask(String userId) {
         String date = Util.todayKey();
@@ -461,9 +557,13 @@ public class Repository {
     public Models.DailyTask checkin(String userId) throws RuleException {
         Models.DailyTask t = todayTask(userId);
         if (t.checkin) throw new RuleException("Sudah check-in hari ini");
+        long streak = checkinStreak(userId) + 1;
         t.checkin = true;
         saveTask(t);
         addPoints(userId, settings().checkinPoints, "CHECKIN", "Check-in " + t.date, t.taskId);
+        // Keaktifan harian: XP bertambah untuk hari beruntun (Bab level akun).
+        addXp(userId, com.altomedia.herbalindo.level.Levels.xpForCheckin(streak),
+                "CHECKIN", "Check-in hari ke-" + streak, t.taskId);
         return t;
     }
 
@@ -480,8 +580,12 @@ public class Repository {
             r.put("status", "CONFIRMED"); r.put("createdAt", Util.nowIso());
             db.put(Config.C_AD_REWARDS, r.getString("rewardId"), r.toString());
         } catch (Exception e) { throw new IllegalStateException(e); }
-        return addPoints(userId, s.adPoints, "AD",
+        long total = addPoints(userId, s.adPoints, "AD",
                 "Rewarded Ads " + t.adsWatched + "/" + s.adMaxPerDay, t.taskId);
+        // Iklan berhadiah juga menyumbang XP keaktifan, sekali per hari per iklan.
+        addXp(userId, Config.XP_AD, "AD",
+                "Iklan berhadiah hari ini ke-" + t.adsWatched, t.taskId + "-" + t.adsWatched);
+        return total;
     }
 
     public int adsToday(String userId) { return todayTask(userId).adsWatched; }
@@ -578,8 +682,13 @@ public class Repository {
             pay.put("status", "UNPAID"); pay.put("createdAt", Util.nowIso()); pay.put("paidAt", JSONObject.NULL);
             db.put(Config.C_PAYMENTS, pay.getString("paymentId"), pay.toString());
 
-            user.lastAddress = address + "|" + city + "|" + postal;
-            saveUser(user);
+            // Simpan pada dokumen terbaru, bukan objek pemanggil yang mungkin
+            // sudah basi: saldo poin dan XP yang bertambah di tempat lain akan
+            // hilang bila dokumen lama ditulis ulang di sini.
+            Models.User fresh = user(user.userId);
+            if (fresh == null) fresh = user;
+            fresh.lastAddress = address + "|" + city + "|" + postal;
+            saveUser(fresh);
 
             markStatus(o, "WAITING_PAYMENT", user.userId, "Order dibuat");
             cartClear();
@@ -713,6 +822,9 @@ public class Repository {
         long pts = 0;
         for (Models.OrderItem i : o.items) pts += i.points;
         if (pts > 0) addPoints(o.userId, pts, "PURCHASE", "Pembelian " + o.orderNumber, o.orderId);
+        // Jalur level tercepat: nilai pesanan menentukan XP (Bab level akun).
+        addXp(o.userId, com.altomedia.herbalindo.level.Levels.xpForPurchase(o.total),
+                "PURCHASE", "Pembelian " + o.orderNumber, o.orderId);
     }
 
     /** Referral 1 tingkat: bonus hanya untuk pengundang langsung (Bab 3). */
@@ -735,6 +847,8 @@ public class Repository {
         catch (Exception e) { throw new IllegalStateException(e); }
         addPoints(target.inviterId, s.referralBonus, "REFERRAL",
                 "Bonus referral " + (buyer == null ? "" : buyer.name), target.referralId);
+        addXp(target.inviterId, Config.XP_REFERRAL, "REFERRAL",
+                "Undangan terverifikasi " + (buyer == null ? "" : buyer.name), target.referralId);
         log(null, "REFERRAL_VERIFIED", target.referralId, "Bonus " + s.referralBonus + " poin");
     }
 

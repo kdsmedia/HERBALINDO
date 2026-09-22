@@ -60,6 +60,13 @@ class ProfileTab {
         ((TextView) root.findViewById(R.id.prof_row_status)).setText(
                 u.status + (u.verified ? " · TERVERIFIKASI" : " · BELUM VERIFIED"));
         ((TextView) root.findViewById(R.id.prof_row_created)).setText(Util.dateOnly(u.createdAt));
+        ((TextView) root.findViewById(R.id.prof_row_level)).setText(
+                com.altomedia.herbalindo.level.Levels.label(
+                        com.altomedia.herbalindo.level.Levels.levelFor(u.xp)));
+        ((TextView) root.findViewById(R.id.prof_row_xp)).setText(
+                Util.num(u.xp) + " XP · " + Util.num(com.altomedia.herbalindo.level.Levels.xpIntoLevel(u.xp))
+                        + "/" + Util.num(com.altomedia.herbalindo.level.Levels.xpForNextLevel(u.xp))
+                        + " menuju Lv" + (com.altomedia.herbalindo.level.Levels.levelFor(u.xp) + 1));
 
         LinearLayout refs = root.findViewById(R.id.prof_referrals);
         refs.removeAllViews();
@@ -106,6 +113,18 @@ class ProfileTab {
                 ((TextView) row.findViewById(R.id.info_value)).setTextColor(
                         androidx.core.content.ContextCompat.getColor(a, l.amount >= 0 ? R.color.success : R.color.danger));
                 ledger.addView(row);
+            }
+        }
+
+        LinearLayout xpList = root.findViewById(R.id.prof_xp);
+        xpList.removeAllViews();
+        java.util.List<Models.XpEvent> events = a.repo().xpEvents(u.userId, 15);
+        if (events.isEmpty()) {
+            xpList.addView(Rows.info(a, "Belum ada perolehan XP", "-"));
+        } else {
+            for (Models.XpEvent e : events) {
+                xpList.addView(Rows.info(a, e.type + " · " + Util.dateOnly(e.createdAt),
+                        "+" + Util.num(e.amount) + " XP"));
             }
         }
     }

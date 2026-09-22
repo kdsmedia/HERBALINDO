@@ -62,10 +62,25 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/hdr_level"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/bg_accent_pill"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="Lv1"
+            android:textColor="@color/text_primary"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/hdr_cart"
             android:layout_width="wrap_content"
             android:layout_height="28dp"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="8dp"
             android:background="@drawable/bg_accent_pill"
             android:gravity="center_vertical"
             android:maxLines="1"

@@ -19,6 +19,12 @@ public final class Models {
         public String referralId, referredBy, role = "MEMBER", status = "ACTIVE";
         public boolean verified, fraudFlag;
         public long points;
+        /**
+         * XP hanya menambah, dipakai untuk level akun. Dipisah dari
+         * {@link #points} yang menjadi saldo rupiah, sehingga pembatalan
+         * pesanan (yang mengurangi poin) tidak pernah menurunkan level.
+         */
+        public long xp;
         public String createdAt, updatedAt;
         public String lastAddress = "";
 
@@ -31,6 +37,7 @@ public final class Models {
             o.put("verified", verified); o.put("fraudFlag", fraudFlag);
             o.put("points", points); o.put("createdAt", createdAt); o.put("updatedAt", updatedAt);
             o.put("lastAddress", lastAddress);
+            o.put("xp", xp);
             return o;
         }
 
@@ -51,6 +58,7 @@ public final class Models {
                 u.verified = o.optBoolean("verified");
                 u.fraudFlag = o.optBoolean("fraudFlag");
                 u.points = o.optLong("points");
+                u.xp = o.optLong("xp");
                 u.createdAt = o.optString("createdAt");
                 u.updatedAt = o.optString("updatedAt");
                 u.lastAddress = o.optString("lastAddress");
@@ -320,6 +328,32 @@ public final class Models {
                 t.createdAt = o.optString("createdAt"); t.updatedAt = o.optString("updatedAt");
             } catch (JSONException ignored) { }
             return t;
+        }
+    }
+
+    /* ---------------- xp_events/{eventId} ---------------- */
+    /** Riwayat perolehan XP; satu-satunya sumber perhitungan level akun. */
+    public static class XpEvent {
+        public String eventId, userId, type, note = "", refId, date, createdAt;
+        public long amount;
+
+        public JSONObject toJson() throws JSONException {
+            JSONObject o = new JSONObject();
+            o.put("eventId", eventId); o.put("userId", userId); o.put("type", type);
+            o.put("amount", amount); o.put("note", note); o.put("refId", refId);
+            o.put("date", date); o.put("createdAt", createdAt);
+            return o;
+        }
+        public static XpEvent from(String json) {
+            XpEvent e = new XpEvent();
+            try {
+                JSONObject o = new JSONObject(json);
+                e.eventId = o.optString("eventId"); e.userId = o.optString("userId");
+                e.type = o.optString("type"); e.amount = o.optLong("amount");
+                e.note = o.optString("note"); e.refId = o.optString("refId");
+                e.date = o.optString("date"); e.createdAt = o.optString("createdAt");
+            } catch (JSONException ignored) { }
+            return e;
         }
     }
 

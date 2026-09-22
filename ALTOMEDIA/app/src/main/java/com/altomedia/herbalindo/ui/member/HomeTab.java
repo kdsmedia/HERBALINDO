@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.altomedia.herbalindo.R;
@@ -39,6 +40,31 @@ class HomeTab {
         }
     }
 
+    /** Kartu level: pangkat, kemajuan, dan penjelasan cara naik level. */
+    private void renderLevel(Models.User u) {
+        int level = com.altomedia.herbalindo.level.Levels.levelFor(u.xp);
+        long into = com.altomedia.herbalindo.level.Levels.xpIntoLevel(u.xp);
+        long need = com.altomedia.herbalindo.level.Levels.xpForNextLevel(u.xp);
+
+        ((TextView) root.findViewById(R.id.home_level_badge)).setText("Lv" + level);
+        ((TextView) root.findViewById(R.id.home_level_title)).setText(
+                "Level Akun · " + com.altomedia.herbalindo.level.Levels.title(level));
+
+        ProgressBar pb = root.findViewById(R.id.home_level_progress);
+        pb.setProgress((int) Math.round(com.altomedia.herbalindo.level.Levels.progress(u.xp) * 100));
+
+        ((TextView) root.findViewById(R.id.home_level_detail)).setText(
+                Util.num(into) + " / " + Util.num(need) + " XP menuju Lv" + (level + 1)
+                        + " · total " + Util.num(u.xp) + " XP");
+
+        ((TextView) root.findViewById(R.id.home_level_how)).setText(
+                "Naik level: belanja (1 XP per " + Util.rupiah(com.altomedia.herbalindo.core.Config.XP_PER_RUPIAH_UNIT)
+                        + "), undang teman (" + com.altomedia.herbalindo.core.Config.XP_REFERRAL
+                        + " XP), dan aktif setiap hari ("
+                        + com.altomedia.herbalindo.core.Config.XP_DAILY_CHECKIN + " XP check-in + "
+                        + com.altomedia.herbalindo.core.Config.XP_AD + " XP per iklan).");
+    }
+
     void refresh() {
         if (root == null) return;
         Models.User u = a.repo().user(a.user.userId);
@@ -57,6 +83,8 @@ class HomeTab {
         int orders = a.repo().userOrders(u.userId).size();
         int refs = a.repo().myReferrals(u.userId).size();
         ((TextView) root.findViewById(R.id.home_orders)).setText("Pesanan: " + orders + " · Referral: " + refs);
+
+        renderLevel(u);
 
         LinearLayout list = root.findViewById(R.id.home_products);
         list.removeAllViews();

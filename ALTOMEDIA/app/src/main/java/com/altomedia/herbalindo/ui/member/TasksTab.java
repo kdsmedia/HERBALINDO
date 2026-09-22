@@ -45,16 +45,23 @@ class TasksTab {
         Models.Settings s = a.repo().settings();
         Models.DailyTask t = a.repo().todayTask(u.userId);
 
-        ((TextView) root.findViewById(R.id.task_date)).setText("Tanggal " + t.date + " · hanya berlaku hari ini");
+        int level = com.altomedia.herbalindo.level.Levels.levelFor(u.xp);
+        ((TextView) root.findViewById(R.id.task_date)).setText(
+                "Tanggal " + t.date + " · hanya berlaku hari ini · " + com.altomedia.herbalindo.level.Levels.label(level)
+                        + " · " + Util.num(u.xp) + " XP");
 
         ((TextView) root.findViewById(R.id.task_checkin_sub)).setText(
-                t.checkin ? "Sudah diambil hari ini" : "Bonus +" + s.checkinPoints + " poin");
+                t.checkin ? "Sudah diambil hari ini"
+                        : "Bonus +" + s.checkinPoints + " poin dan +"
+                        + com.altomedia.herbalindo.level.Levels.xpForCheckin(a.repo().checkinStreak(u.userId) + 1)
+                        + " XP level");
         Button ci = root.findViewById(R.id.task_checkin_btn);
         ci.setEnabled(!t.checkin);
         ci.setText(t.checkin ? "Selesai" : "Ambil");
 
         ((TextView) root.findViewById(R.id.task_ads_sub)).setText(
-                "Rewarded Ads +" + s.adPoints + " poin · maksimal " + s.adMaxPerDay + " per hari");
+                "Rewarded Ads +" + s.adPoints + " poin dan +" + com.altomedia.herbalindo.core.Config.XP_AD
+                        + " XP level · maksimal " + s.adMaxPerDay + " per hari");
         ((TextView) root.findViewById(R.id.task_ads_note)).setText(
                 "Poin diberikan hanya setelah iklan ditonton sampai selesai. "
                         + "Maksimal " + s.adMaxPerDay + " iklan berhadiah per hari.");
@@ -68,14 +75,17 @@ class TasksTab {
 
         ((TextView) root.findViewById(R.id.task_ref_sub)).setText(
                 "Referral ID " + u.referralId + " · bonus " + Util.num(s.referralBonus)
-                        + " poin untuk pesanan pertama teman (minimal " + Util.rupiah(s.referralMinOrder) + ")");
+                        + " poin dan +" + com.altomedia.herbalindo.core.Config.XP_REFERRAL
+                        + " XP level untuk pesanan pertama teman (minimal "
+                        + Util.rupiah(s.referralMinOrder) + ")");
 
         int terverifikasi = a.repo().verifiedReferralCount(u.userId);
         ((TextView) root.findViewById(R.id.task_ref_status)).setText(
                 "Referral " + terverifikasi + " Verified");
 
         ((TextView) root.findViewById(R.id.task_buy_sub)).setText(
-                "Poin dari pembelian hari ini · total belanja " + Util.rupiah(a.repo().purchaseTotal(u.userId)));
+                "Poin dari pembelian hari ini · total belanja " + Util.rupiah(a.repo().purchaseTotal(u.userId))
+                        + " · belanja menambah level secara otomatis");
         ((TextView) root.findViewById(R.id.task_buy_points)).setText(
                 (a.repo().purchasePointsOn(u.userId, t.date) > 0 ? "+" : "")
                         + Util.num(a.repo().purchasePointsOn(u.userId, t.date)) + " Poin");
@@ -87,7 +97,13 @@ class TasksTab {
                         + ", menonton " + s.adMaxPerDay + " iklan berhadiah pada hari yang sama, akun aktif, "
                         + "dan maksimal " + s.maxWithdrawPerDay + " pengajuan per hari.\n"
                         + "3. Konversi poin: " + Util.num(s.pointsPerUnit) + " poin = " + Util.rupiah(s.rupiahPerUnit) + ".\n"
-                        + "4. Aktivitas mencurigakan dapat dikenakan pembatasan dan tercatat pada audit log.");
+                        + "4. Level akun naik dari XP dan tidak pernah turun. Belanja memberi 1 XP per "
+                        + Util.rupiah(com.altomedia.herbalindo.core.Config.XP_PER_RUPIAH_UNIT) + " nilai pesanan, undangan "
+                        + "yang terverifikasi " + com.altomedia.herbalindo.core.Config.XP_REFERRAL + " XP, check-in "
+                        + com.altomedia.herbalindo.core.Config.XP_DAILY_CHECKIN + " XP ditambah "
+                        + com.altomedia.herbalindo.core.Config.XP_DAILY_STREAK + " XP per hari beruntun, dan setiap iklan "
+                        + com.altomedia.herbalindo.core.Config.XP_AD + " XP.\n"
+                        + "5. Aktivitas mencurigakan dapat dikenakan pembatasan dan tercatat pada audit log.");
     }
 
     private void checkin() {

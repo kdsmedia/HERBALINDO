@@ -110,6 +110,14 @@
                         <TextView android:id="@+id/prof_row_status" android:textColor="@color/text_primary" android:textSize="13sp" />
                     </TableRow>
                     <TableRow>
+                        <TextView android:text="Level" android:textColor="@color/text_secondary" android:textSize="13sp" />
+                        <TextView android:id="@+id/prof_row_level" android:textColor="@color/text_primary" android:textSize="13sp" android:textStyle="bold" />
+                    </TableRow>
+                    <TableRow>
+                        <TextView android:text="Total XP" android:textColor="@color/text_secondary" android:textSize="13sp" />
+                        <TextView android:id="@+id/prof_row_xp" android:textColor="@color/text_primary" android:textSize="13sp" />
+                    </TableRow>
+                    <TableRow>
                         <TextView android:text="Terdaftar" android:textColor="@color/text_secondary" android:textSize="13sp" />
                         <TextView android:id="@+id/prof_row_created" android:textColor="@color/text_primary" android:textSize="13sp" />
                     </TableRow>
@@ -157,6 +165,21 @@
 
         <LinearLayout
             android:id="@+id/prof_ledger"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:orientation="vertical" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Riwayat XP (Level)"
+            android:textColor="@color/text_primary"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/prof_xp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"

@@ -27,6 +27,11 @@ public final class Util {
         return new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
     }
 
+    /** Kunci tanggal yang sama seperti {@link #todayKey()} untuk waktu tertentu. */
+    public static String dayKey(Date when) {
+        return new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(when);
+    }
+
     public static String nowIso() {
         return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US).format(new Date());
     }

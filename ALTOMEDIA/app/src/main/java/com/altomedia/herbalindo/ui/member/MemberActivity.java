@@ -26,7 +26,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class MemberActivity extends BaseActivity {
 
     private ViewGroup container;
-    private TextView headerName, headerSub, headerCart;
+    private TextView headerName, headerSub, headerCart, headerLevel;
     private BottomNavigationView nav;
     private String activeTab = "home";
 
@@ -50,6 +50,7 @@ public class MemberActivity extends BaseActivity {
         headerName = findViewById(R.id.hdr_name);
         headerSub = findViewById(R.id.hdr_sub);
         headerCart = findViewById(R.id.hdr_cart);
+        headerLevel = findViewById(R.id.hdr_level);
         nav = findViewById(R.id.bottom_nav);
 
         homeTab = new HomeTab(this);
@@ -78,10 +79,22 @@ public class MemberActivity extends BaseActivity {
 
     @Override protected void onSessionReady(Models.User u) {
         if (headerName == null) return;
+        // XP keaktifan harian diberikan sekali saat layar member dibuka.
+        repo.grantDailyActive(u.userId);
+        u = repo.user(u.userId);
+        user = u;
         headerName.setText(u.name);
         headerSub.setText("REF " + u.referralId + " · " + Util.rupiah(repo.pointsToRupiah(u.points)));
         headerCart.setText("Keranjang " + repo.cart().size());
+        refreshLevelBadge(u);
         refreshActiveTab();
+    }
+
+    /** Badge level di header ikut berubah setiap kali XP bertambah. */
+    private void refreshLevelBadge(Models.User u) {
+        if (headerLevel == null) return;
+        int level = com.altomedia.herbalindo.level.Levels.levelFor(u.xp);
+        headerLevel.setText("Lv" + level);
     }
 
     @Override protected void onResume() {

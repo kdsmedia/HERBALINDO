@@ -27,6 +27,26 @@ public final class Config {
     public static final int DEFAULT_MAX_WITHDRAW_PER_DAY = 1;
     public static final long DEFAULT_SHIPPING_FLAT = 15000L;
 
+    /*
+     * Level akun. Poin (rupiah) dan XP (naik level) dipisah: poin dipakai untuk
+     * saldo dan withdrawal, XP hanya mengukur keaktifan. XP tidak pernah
+     * berkurang sehingga level anggota tidak turun saat pesanan dibatalkan.
+     *
+     * Tiga jalur kenaikan sesuai kebutuhan bisnis:
+     *   - Pembelian  : jalur tercepat, 1 XP per Rp1.000 nilai pesanan.
+     *   - Undang teman: 250 XP, baru dihitung setelah pesanan pertama teman lunas.
+     *   - Aktif harian: 15 XP check-in plus 5 XP per hari beruntun, dan 5 XP
+     *                   setiap iklan berhadiah yang ditonton sampai selesai.
+     */
+    public static final long XP_PER_RUPIAH_UNIT = 1000L;
+    public static final long XP_PURCHASE_PER_UNIT = 1L;
+    public static final long XP_REFERRAL = 250L;
+    public static final long XP_DAILY_CHECKIN = 15L;
+    public static final long XP_DAILY_STREAK = 5L;
+    public static final long XP_AD = 5L;
+    public static final long XP_STREAK_MAX_DAYS = 30L;
+    public static final long XP_LEVEL_BASE = 100L;
+
     // QRIS merchant (statis) — nominal ditambahkan dinamis via tag 54 + CRC16
     public static final String QRIS_BASE =
         "00020101021126610014COM.GO-JEK.WWW01189360091439663050810210G9663050810303UMI51440014ID.CO.QRIS.WWW0215ID10254671365660303UMI5204549953033605802ID5917ALTOMEDIA, Grosir6008KARAWANG61054136162070703A016304D21A";
@@ -71,6 +91,7 @@ public final class Config {
     public static final String C_REFERRALS = "referrals";
     public static final String C_AD_REWARDS = "ad_rewards";
     public static final String C_DAILY_TASKS = "daily_tasks";
+    public static final String C_XP_EVENTS = "xp_events";
     public static final String C_WITHDRAWALS = "withdrawals";
     public static final String C_SETTINGS = "settings";
     public static final String C_ADMIN_LOGS = "admin_logs";

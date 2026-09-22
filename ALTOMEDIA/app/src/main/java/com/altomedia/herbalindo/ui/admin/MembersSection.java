@@ -53,6 +53,9 @@ class MembersSection {
             ((TextView) card.findViewById(R.id.ac_body)).setText(
                     "Poin " + Util.num(u.points) + " (" + Util.rupiah(a.repo().pointsToRupiah(u.points)) + ")"
                             + " · " + (u.verified ? "terverifikasi" : "belum terverifikasi")
+                            + "\nLevel " + com.altomedia.herbalindo.level.Levels.label(
+                                    com.altomedia.herbalindo.level.Levels.levelFor(u.xp))
+                            + " · " + Util.num(u.xp) + " XP"
                             + "\nDiundang oleh: " + (inviter == null ? "—" : inviter.name + " (" + inviter.referralId + ")")
                             + "\nReferral aktif: " + a.repo().myReferrals(u.userId).size()
                             + " · Pesanan: " + a.repo().userOrders(u.userId).size());
