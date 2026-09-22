@@ -4,10 +4,22 @@ Rilis perdana aplikasi HERBALINDO — toko produk herbal diet alami dengan siste
 
 | Berkas | Ukuran | Kegunaan |
 | --- | --- | --- |
-| `HERBALINDO-1.0.0.aab` | 5,9 MB | Untuk diunggah ke Google Play Console |
-| `HERBALINDO-1.0.0.apk` | 3,3 MB | Untuk pemasangan langsung pada perangkat |
+| `HERBALINDO-1.0.0.aab` | 6,2 MB | Untuk diunggah ke Google Play Console |
+| `HERBALINDO-1.0.0.apk` | 3,5 MB | Untuk pemasangan langsung pada perangkat |
 
 Nilai pemeriksaan berkas tersedia pada `SHA256SUMS.txt`.
+
+## Perbaikan pada rilis ini
+
+- Halaman Saldo tidak lagi keluar sendiri saat dibuka. Penyebabnya kode mengambil
+  wadah isian nomor tujuan dengan tipe tampilan yang keliru, sehingga Android
+  melempar kesalahan tipe saat tab Saldo ditampilkan
+- Header aplikasi kini tahan pada layar sempit: nama pengguna dipotong rapi satu
+  baris, tombol keranjang memiliki ukuran tetap, dan tinggi header lebih ringkas
+- Seluruh tombol memakai ikon dua dimensi yang sesuai dengan aksinya, termasuk
+  tombol tambah dan kurang jumlah yang kini hanya berupa ikon
+- Katalog produk disusun empat kartu ringkas dalam dua kolom agar tampilan lebih
+  rapi; kartu pada baris terakhir tidak lagi melebar sendiri
 
 Paket rilis ditandatangani dengan sertifikat ALTOMEDIA:
 
