@@ -32,42 +32,18 @@ class MembersSection {
             scan.setText("Cek Fraud");
             scan.setOnClickListener(v -> openFraudReport());
 
-            // Kotak pencarian disisipkan di atas daftar. Diletakkan pada kode
-            // agar tata letak bagian lain tidak perlu diubah.
-            LinearLayout host = (LinearLayout) root.findViewById(R.id.sec_list).getParent();
-            int listIndex = host.indexOfChild(root.findViewById(R.id.sec_list));
-            host.addView(buildSearchBar(), listIndex);
+            // Kolom pencarian sudah tersedia pada tata letak bagian dan
+            // ditampilkan hanya untuk daftar member.
+            search = root.findViewById(R.id.sec_search);
+            search.setVisibility(View.VISIBLE);
+            search.setHint("Cari ID / nomor HP / email / nama");
+            search.addTextChangedListener(new android.text.TextWatcher() {
+                @Override public void beforeTextChanged(CharSequence s, int st, int c, int af) { }
+                @Override public void onTextChanged(CharSequence s, int st, int b, int c) { }
+                @Override public void afterTextChanged(android.text.Editable s) { render(); }
+            });
         }
         return root;
-    }
-
-    /** Kotak pencarian member berdasarkan ID, nomor HP, atau email. */
-    private View buildSearchBar() {
-        LinearLayout wrap = new LinearLayout(a);
-        wrap.setOrientation(LinearLayout.VERTICAL);
-        wrap.setPadding(0, 0, 0, 8);
-
-        search = new EditText(a);
-        search.setHint("Cari ID / nomor HP / email / nama");
-        search.setSingleLine(true);
-        search.setInputType(android.text.InputType.TYPE_CLASS_TEXT);
-        search.setBackgroundResource(R.drawable.bg_box);
-        search.setPadding(24, 18, 24, 18);
-        search.addTextChangedListener(new android.text.TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int st, int c, int af) { }
-            @Override public void onTextChanged(CharSequence s, int st, int b, int c) { }
-            @Override public void afterTextChanged(android.text.Editable s) { render(); }
-        });
-
-        TextView hint = new TextView(a);
-        hint.setText("Kosongkan untuk menampilkan semua member.");
-        hint.setTextSize(11);
-        hint.setTextColor(androidx.core.content.ContextCompat.getColor(a, R.color.text_secondary));
-        hint.setPadding(4, 6, 0, 0);
-
-        wrap.addView(search);
-        wrap.addView(hint);
-        return wrap;
     }
 
     void refresh() { if (root != null) render(); }
