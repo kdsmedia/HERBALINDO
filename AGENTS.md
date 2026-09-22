@@ -218,8 +218,11 @@ Hal yang mudah salah:
 ## Rilis
 
 - Versi saat ini: **1.0.1**, versionCode **2**, minSdk **21**, targetSdk **36**.
-- Rilis GitHub: `v1.0.1` pada `github.com/kdsmedia/HERBALINDO`, berisi APK, AAB,
-  dan SHA256SUMS.txt.
+- Tag `v1.0.1` sudah ada pada `github.com/kdsmedia/HERBALINDO`, berisi APK, AAB,
+  dan SHA256SUMS.txt di `ALTOMEDIA/release/`. Objek GitHub Release `v1.0.1`
+  belum dibuat karena `GITHUB_TOKEN` yang tersedia tidak bercakupan `repo`
+  (HTTP 403); buat rilisnya dengan token bercakupan `repo` lalu lampirkan ketiga
+  berkas tersebut.
 - Sebelum setiap rilis: naikkan `versionCode`, jalankan unit test dan
   `verify_project.py`, lalu bangun ulang paket.
 - Kredensial signing dibaca dari `keystore/keystore.properties`
