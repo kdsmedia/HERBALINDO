@@ -282,3 +282,34 @@ masuk/daftar. String `role_hint` dan `referral_hint` sudah dihapus dari
 
 Slogan aplikasi adalah "Herbal Diet Alami Tanpa Bahan Kimia" (`app_tagline`),
 tampil di layar splash dan layar masuk.
+
+## Tombol memakai `app:icon`, bukan `android:icon`
+
+Seluruh tombol adalah `MaterialButton` (lewat `Widget.Herbalindo.Button`).
+Atribut ikonnya `app:icon` pada namespace `res-auto`; `android:icon` diabaikan
+sehingga tombol tampil tanpa ikon. Sebaliknya `android:insetLeft` dan
+`android:insetRight` memang milik namespace `android` dan build gagal bila
+ditulis sebagai `app:`.
+
+Ikon berupa vector drawable dua dimensi di `res/drawable/ic_*.xml` dengan
+`fillColor="#FF000000"` agar mengikuti warna teks tombol.
+
+## Saldo: `bal_dest` isian, `bal_dest_label` wadahnya
+
+Tab Saldo pernah menjatuhkan aplikasi karena `findViewById(R.id.bal_dest)`
+di-cast ke `TextInputLayout`, padahal id itu milik `TextInputEditText`. Wadah
+`TextInputLayout` untuk isian tujuan memakai id `bal_dest_label`. Jangan
+menyatukan kembali kedua id tersebut.
+
+## Katalog produk adalah grid dua kolom
+
+`ProductsTab` menyusun empat kartu ringkas dalam dua kolom memakai
+`item_product_card.xml` dan pembantu `Grid` berbasis `LinearLayout`. Setiap sel
+memakai bobot 1; sisa baris terakhir diisi penyeimbang kosong agar kartu tidak
+melebar.
+
+Data awal memuat empat produk (`HBA-001` sampai `HBA-003` dan `HBA-005`).
+`HBA-004` sengaja dibiarkan kosong karena dipakai pengujian penambahan produk
+baru. Menambah produk awal baru berarti menyesuaikan hitungan pada
+`RepositoryTest.seedingIsIdempotentAcrossRestarts` dan
+`RepositoryTest.dashboardStatsReflectReality`.

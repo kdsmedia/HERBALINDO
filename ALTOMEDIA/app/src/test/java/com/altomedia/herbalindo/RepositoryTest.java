@@ -355,7 +355,7 @@ public class RepositoryTest {
 
         Repository.Stats s = repo.stats();
         assertEquals(2, s.totalMember);
-        assertEquals(3, s.totalProducts);
+        assertEquals(4, s.totalProducts);
         assertEquals(1, s.totalOrders);
         assertEquals(1, s.orderPending);
         assertEquals(1, s.totalReferral);
@@ -470,7 +470,7 @@ public class RepositoryTest {
 
     @Test public void seedingIsIdempotentAcrossRestarts() {
         Repository again = Repository.with(repo.store());
-        assertEquals(3, again.allProducts().size());
+        assertEquals(4, again.allProducts().size());
         assertEquals(1, again.allUsers().size()); // hanya admin
     }
 

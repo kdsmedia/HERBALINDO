@@ -120,6 +120,12 @@ public class Repository {
                 "Seduh 1 sachet dengan 150 ml air panas, diminum sebelum tidur.",
                 "Tidak untuk ibu hamil, menyusui, anak di bawah 12 tahun, dan penderita gangguan ginjal. Bukan obat.",
                 95000, 79000, 35, 200, 450);
+            createProduct("Herbal Diet D", "HBA-005", "Herbal Diet",
+                "Ramuan herbal pagi untuk membantu menjaga energi saat menjalani pola makan sehat.",
+                "Ekstrak daun stevia, jahe, serai, kayu manis, jeruk nipis.",
+                "Seduh 1 sachet dengan 200 ml air hangat, diminum 1 kali sehari sebelum makan pagi.",
+                "Tidak untuk ibu hamil, menyusui, dan anak di bawah 12 tahun. Bukan obat dan tidak untuk menyembuhkan penyakit.",
+                110000, 89000, 45, 250, 550);
         } catch (Exception e) {
             throw new IllegalStateException("Gagal menyiapkan data awal", e);
         }
