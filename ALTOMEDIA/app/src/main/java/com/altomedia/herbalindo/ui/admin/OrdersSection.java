@@ -210,24 +210,27 @@ class OrdersSection {
         box.addView(amount);
         box.addView(from);
 
-        new androidx.appcompat.app.AlertDialog.Builder(a)
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(a)
                 .setTitle("Data transfer " + o.orderNumber)
                 .setView(new android.widget.ScrollView(a) {{ addView(box); }})
                 .setNegativeButton("Batal", null)
-                .setPositiveButton("Simpan", (d, w) -> {
-                    String n = name.getText().toString().trim();
-                    long amt;
-                    try { amt = Long.parseLong(amount.getText().toString().trim()); }
-                    catch (Exception e) { Ui.error(a, "Nominal harus berupa angka"); return; }
-                    try {
-                        a.repo().submitPayment(o.orderId, n, amt, from.getText().toString(), o.paidNote);
-                        a.refreshActive();
-                        Ui.ok(a, "Data pembayaran tersimpan");
-                    } catch (Repository.RuleException e) {
-                        Ui.error(a, e.getMessage());
-                    }
-                })
-                .show();
+                .setPositiveButton("Simpan", null)
+                .create();
+        dialog.show();
+        Ui.submit(dialog, () -> {
+            String n = name.getText().toString().trim();
+            long amt;
+            try { amt = Long.parseLong(amount.getText().toString().trim()); }
+            catch (Exception e) { return "Nominal harus berupa angka"; }
+            try {
+                a.repo().submitPayment(o.orderId, n, amt, from.getText().toString(), o.paidNote);
+            } catch (Repository.RuleException e) {
+                return e.getMessage();
+            }
+            a.refreshActive();
+            Ui.ok(a, "Data pembayaran tersimpan");
+            return null;
+        });
     }
 
     private void askTracking(Models.Order o) {
@@ -240,25 +243,28 @@ class OrdersSection {
         resi.setHint("Nomor resi");
         box.addView(courier);
         box.addView(resi);
-        new androidx.appcompat.app.AlertDialog.Builder(a)
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(a)
                 .setTitle("Kirim " + o.orderNumber)
                 .setView(box)
                 .setNegativeButton("Batal", null)
-                .setPositiveButton("Simpan & Kirim", (d, w) -> {
-                    String c = courier.getText().toString().trim();
-                    String r = resi.getText().toString().trim();
-                    if (c.isEmpty() || r.isEmpty()) { Ui.error(a, "Kurir dan resi wajib diisi"); return; }
-                    try {
-                        o.shippingCourier = c;
-                        o.trackingNumber = r;
-                        a.repo().saveOrder(o);
-                        a.repo().markStatus(o, "SHIPPED", a.user.userId, "Resi " + c + " " + r);
-                        a.refreshActive();
-                        Ui.ok(a, "Resi tersimpan, status DIKIRIM");
-                    } catch (Repository.RuleException e) {
-                        Ui.error(a, e.getMessage());
-                    }
-                })
-                .show();
+                .setPositiveButton("Simpan & Kirim", null)
+                .create();
+        dialog.show();
+        Ui.submit(dialog, () -> {
+            String c = courier.getText().toString().trim();
+            String r = resi.getText().toString().trim();
+            if (c.isEmpty() || r.isEmpty()) return "Kurir dan resi wajib diisi";
+            try {
+                o.shippingCourier = c;
+                o.trackingNumber = r;
+                a.repo().saveOrder(o);
+                a.repo().markStatus(o, "SHIPPED", a.user.userId, "Resi " + c + " " + r);
+            } catch (Repository.RuleException e) {
+                return e.getMessage();
+            }
+            a.refreshActive();
+            Ui.ok(a, "Resi tersimpan, status DIKIRIM");
+            return null;
+        });
     }
 }

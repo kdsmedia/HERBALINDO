@@ -167,4 +167,141 @@ public class AdminMembersRealStoreTest {
         repo.adminDeleteMember(u.userId, "uji hapus", admin.userId);
         assertNull(repo.user(u.userId));
     }
+
+    /* ---------- Dialog Ubah Saldo: validasi dan penyimpanan ---------- */
+
+    /** Mengumpulkan seluruh kotak isian pada tampilan dialog. */
+    private static void collectEdits(View v, java.util.List<android.widget.EditText> out) {
+        if (v instanceof android.widget.EditText) out.add((android.widget.EditText) v);
+        if (v instanceof android.view.ViewGroup) {
+            android.view.ViewGroup g = (android.view.ViewGroup) v;
+            for (int i = 0; i < g.getChildCount(); i++) collectEdits(g.getChildAt(i), out);
+        }
+    }
+
+    /** Mengumpulkan seluruh tombol radio pada tampilan dialog. */
+    private static void collectRadios(View v, java.util.List<android.widget.RadioButton> out) {
+        if (v instanceof android.widget.RadioButton) out.add((android.widget.RadioButton) v);
+        if (v instanceof android.view.ViewGroup) {
+            android.view.ViewGroup g = (android.view.ViewGroup) v;
+            for (int i = 0; i < g.getChildCount(); i++) collectRadios(g.getChildAt(i), out);
+        }
+    }
+
+    /** Membuka tombol "Ubah Saldo" pada kartu member pertama. */
+    private AdminActivity bukaUbahSaldo() {
+        ActivityController<AdminActivity> c = Robolectric.buildActivity(AdminActivity.class).setup();
+        AdminActivity a = c.get();
+        a.findViewById(R.id.adm_nav_members).performClick();
+        org.robolectric.shadows.ShadowLooper.idleMainLooper();
+        android.widget.LinearLayout list = a.findViewById(R.id.sec_list);
+        assertTrue("Kartu member tidak tampil", list.getChildCount() > 0);
+        android.widget.LinearLayout actions = list.getChildAt(0).findViewById(R.id.ac_actions);
+        actions.getChildAt(1).performClick();
+        org.robolectric.shadows.ShadowLooper.idleMainLooper();
+        return a;
+    }
+
+    private static android.app.Dialog dialogTerakhir() {
+        android.app.Dialog d = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        assertNotNull("Dialog Ubah Saldo tidak muncul", d);
+        return d;
+    }
+
+    /**
+     * Mencari tombol positif lewat id bawaannya.
+     *
+     * Dialog memakai {@code androidx.appcompat.app.AlertDialog} yang bukan
+     * turunan {@code android.app.AlertDialog}, sehingga {@code getButton}
+     * tidak dapat dipakai dari tipe dasar ini.
+     */
+    private static android.widget.Button tombolPositif(android.app.Dialog d) {
+        java.util.List<View> all = new java.util.ArrayList<>();
+        collectAll(d.getWindow().getDecorView(), all);
+        for (View v : all) if (v.getId() == android.R.id.button1) return (android.widget.Button) v;
+        fail("Tombol simpan tidak ditemukan");
+        return null;
+    }
+
+    private static void collectAll(View v, java.util.List<View> out) {
+        out.add(v);
+        if (v instanceof android.view.ViewGroup) {
+            android.view.ViewGroup g = (android.view.ViewGroup) v;
+            for (int i = 0; i < g.getChildCount(); i++) collectAll(g.getChildAt(i), out);
+        }
+    }
+
+    /**
+     * Alasan yang kosong harus menahan simpan tanpa menutup dialog.
+     *
+     * Tombol positif bawaan AlertDialog menutup dialog lebih dahulu, sehingga
+     * tanpa penanganan khusus isian yang ditolak tetap menghilang dan admin
+     * menyangka saldo sudah berubah.
+     */
+    @Test public void dialogUbahSaldoTetapTerbukaSaatAlasanKosong() throws Exception {
+        Models.User admin = repo.user("USR-ADMIN");
+        Session.set(ctx, admin);
+        Models.User u = repo.register("Siti Aminah", "081234567890", "rahasia1", null);
+        repo.adminSetPoints(u.userId, 5000, "saldo awal", admin.userId);
+
+        bukaUbahSaldo();
+        android.app.Dialog d = dialogTerakhir();
+        java.util.List<android.widget.EditText> edits = new java.util.ArrayList<>();
+        collectEdits(d.getWindow().getDecorView(), edits);
+        edits.get(0).setText("1000");
+        edits.get(1).setText("");
+        tombolPositif(d).performClick();
+        org.robolectric.shadows.ShadowLooper.idleMainLooper();
+
+        assertTrue("Dialog harus tetap terbuka", d.isShowing());
+        assertEquals("Saldo tidak boleh berubah", 5000, repo.user(u.userId).points);
+    }
+
+    /** Isian yang lengkap menyimpan perubahan lalu menutup dialog. */
+    @Test public void dialogUbahSaldoMenyimpanDanMenutup() throws Exception {
+        Models.User admin = repo.user("USR-ADMIN");
+        Session.set(ctx, admin);
+        Models.User u = repo.register("Siti Aminah", "081234567890", "rahasia1", null);
+        repo.adminSetPoints(u.userId, 5000, "saldo awal", admin.userId);
+
+        bukaUbahSaldo();
+        android.app.Dialog d = dialogTerakhir();
+        java.util.List<android.widget.EditText> edits = new java.util.ArrayList<>();
+        collectEdits(d.getWindow().getDecorView(), edits);
+        edits.get(0).setText("1000");
+        edits.get(1).setText("bonus kampanye");
+        tombolPositif(d).performClick();
+        org.robolectric.shadows.ShadowLooper.idleMainLooper();
+
+        assertEquals("Saldo harus bertambah", 6000, repo.user(u.userId).points);
+        assertFalse("Dialog harus tertutup setelah tersimpan", d.isShowing());
+    }
+
+    /**
+     * Pilihan "Kurangi" memotong saldo, dan pengurangan yang melebihi saldo
+     * ditolak sambil membiarkan dialog terbuka agar jumlahnya dapat diperbaiki.
+     */
+    @Test public void dialogKurangiSaldoMenolakJumlahMelebihiSaldo() throws Exception {
+        Models.User admin = repo.user("USR-ADMIN");
+        Session.set(ctx, admin);
+        Models.User u = repo.register("Siti Aminah", "081234567890", "rahasia1", null);
+        repo.adminSetPoints(u.userId, 5000, "saldo awal", admin.userId);
+
+        bukaUbahSaldo();
+        android.app.Dialog d = dialogTerakhir();
+        java.util.List<android.widget.EditText> edits = new java.util.ArrayList<>();
+        java.util.List<android.widget.RadioButton> radios = new java.util.ArrayList<>();
+        collectEdits(d.getWindow().getDecorView(), edits);
+        collectRadios(d.getWindow().getDecorView(), radios);
+        assertEquals("Pilihan arah harus tersedia", 2, radios.size());
+        for (android.widget.RadioButton rb : radios)
+            if ("Kurangi".contentEquals(rb.getText())) rb.setChecked(true);
+        edits.get(0).setText("99999");
+        edits.get(1).setText("koreksi kurang");
+        tombolPositif(d).performClick();
+        org.robolectric.shadows.ShadowLooper.idleMainLooper();
+
+        assertTrue("Dialog harus tetap terbuka", d.isShowing());
+        assertEquals("Saldo tidak boleh berubah", 5000, repo.user(u.userId).points);
+    }
 }

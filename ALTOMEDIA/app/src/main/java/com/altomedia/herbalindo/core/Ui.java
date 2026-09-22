@@ -71,6 +71,27 @@ public final class Ui {
         String onSubmit(String[] values);
     }
 
+    /**
+     * Menyambungkan tombol simpan agar validasi yang gagal tidak menutup dialog.
+     *
+     * Tombol positif pada {@code AlertDialog} menutup dialog lebih dahulu, baru
+     * memanggil pendengarnya. Akibatnya, bila validasi menolak isian, dialog
+     * sudah telanjur tertutup dan admin menyangka datanya tersimpan. Penanganan
+     * manual ini dipakai agar isian yang salah bisa diperbaiki tanpa mengulang.
+     * Handler mengembalikan pesan kesalahan, atau {@code null} bila diterima.
+     */
+    public interface SubmitHandler {
+        String onSubmit();
+    }
+
+    public static void submit(AlertDialog dialog, SubmitHandler handler) {
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String err = handler.onSubmit();
+            if (err == null) dialog.dismiss();
+            else Toast.makeText(dialog.getContext(), err, Toast.LENGTH_LONG).show();
+        });
+    }
+
     public static void form(Context ctx, String title, String[] labels, boolean[] secret,
                             FormHandler handler) {
         LinearLayout box = new LinearLayout(ctx);

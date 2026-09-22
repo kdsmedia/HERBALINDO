@@ -1,6 +1,5 @@
 package com.altomedia.herbalindo.ui.admin;
 
-import android.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -155,63 +154,66 @@ class ProductsSection {
         EditText usage = field(box, "Aturan pakai", isNew ? "" : existing.usage);
         EditText warn = field(box, "Peringatan", isNew ? "" : existing.warning);
 
-        new AlertDialog.Builder(a)
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(a)
                 .setTitle(isNew ? "Tambah produk" : "Ubah " + existing.sku)
                 .setView(new android.widget.ScrollView(a) {{ addView(box); }})
                 .setNegativeButton("Batal", null)
-                .setPositiveButton("Simpan", (d, w) -> {
-                    try {
-                        Models.Product edited = new Models.Product();
-                        edited.sku = skuField.getText().toString().trim().toUpperCase(java.util.Locale.US);
-                        edited.productId = isNew ? "PRD-" + edited.sku : existing.productId;
-                        edited.createdAt = isNew ? null : existing.createdAt;
-                        edited.status = isNew ? "ACTIVE" : existing.status;
-                        edited.name = name.getText().toString().trim();
-                        edited.imageUrl = imageUrl.getText().toString().trim();
-                        edited.category = category.getText().toString().trim();
-                        edited.price = parse(price.getText().toString());
-                        edited.promoPrice = parse(promo.getText().toString());
-                        edited.promoStart = promoStart.getText().toString().trim();
-                        edited.promoEnd = promoEnd.getText().toString().trim();
-                        edited.promoActive = promoOn.isChecked();
-                        edited.points = parse(points.getText().toString());
-                        edited.minStock = (int) parse(minStock.getText().toString());
-                        edited.weight = (int) parse(weight.getText().toString());
-                        edited.description = desc.getText().toString().trim();
-                        edited.composition = comp.getText().toString().trim();
-                        edited.usage = usage.getText().toString().trim();
-                        edited.warning = warn.getText().toString().trim();
-                        long newStock = parse(stockField.getText().toString());
+                .setPositiveButton("Simpan", null)
+                .create();
+        dialog.show();
+        Ui.submit(dialog, () -> {
+            Models.Product edited = new Models.Product();
+            edited.sku = skuField.getText().toString().trim().toUpperCase(java.util.Locale.US);
+            edited.productId = isNew ? "PRD-" + edited.sku : existing.productId;
+            edited.createdAt = isNew ? null : existing.createdAt;
+            edited.status = isNew ? "ACTIVE" : existing.status;
+            edited.name = name.getText().toString().trim();
+            edited.imageUrl = imageUrl.getText().toString().trim();
+            edited.category = category.getText().toString().trim();
+            edited.price = parse(price.getText().toString());
+            edited.promoPrice = parse(promo.getText().toString());
+            edited.promoStart = promoStart.getText().toString().trim();
+            edited.promoEnd = promoEnd.getText().toString().trim();
+            edited.promoActive = promoOn.isChecked();
+            edited.points = parse(points.getText().toString());
+            edited.minStock = (int) parse(minStock.getText().toString());
+            edited.weight = (int) parse(weight.getText().toString());
+            edited.description = desc.getText().toString().trim();
+            edited.composition = comp.getText().toString().trim();
+            edited.usage = usage.getText().toString().trim();
+            edited.warning = warn.getText().toString().trim();
+            long newStock = parse(stockField.getText().toString());
 
-                        String problem = validate(edited, newStock, isNew);
-                        if (problem != null) { Ui.error(a, problem); return; }
+            String problem = validate(edited, newStock, isNew);
+            if (problem != null) return problem;
 
-                        if (isNew) {
-                            // Stok sengaja dimulai dari nol, lalu ditambah lewat
-                            // adjustStock agar jumlah awal ikut tercatat sebagai
-                            // pergerakan stok, bukan diam-diam terisi.
-                            edited.stock = 0;
-                            a.repo().saveProduct(edited, a.user.userId);
-                            if (newStock > 0) a.repo().adjustStock(edited.productId, (int) newStock,
-                                    "Stok awal produk baru", a.user.userId);
-                            Ui.ok(a, "Produk " + edited.sku + " ditambahkan");
-                        } else {
-                            // Stok lama dibiarkan, lalu selisihnya dicatat sebagai
-                            // pergerakan stok agar riwayatnya tetap utuh.
-                            edited.stock = existing.stock;
-                            a.repo().saveProduct(edited, a.user.userId);
-                            if (newStock != existing.stock) {
-                                a.repo().adjustStock(edited.productId, (int) (newStock - existing.stock),
-                                        "Penyesuaian stok saat ubah produk", a.user.userId);
-                            }
-                            Ui.ok(a, "Produk " + edited.sku + " diperbarui");
-                        }
-                        a.refreshActive();
-                    } catch (Exception e) {
-                        Ui.error(a, e.getMessage());
+            try {
+                if (isNew) {
+                    // Stok sengaja dimulai dari nol, lalu ditambah lewat
+                    // adjustStock agar jumlah awal ikut tercatat sebagai
+                    // pergerakan stok, bukan diam-diam terisi.
+                    edited.stock = 0;
+                    a.repo().saveProduct(edited, a.user.userId);
+                    if (newStock > 0) a.repo().adjustStock(edited.productId, (int) newStock,
+                            "Stok awal produk baru", a.user.userId);
+                    Ui.ok(a, "Produk " + edited.sku + " ditambahkan");
+                } else {
+                    // Stok lama dibiarkan, lalu selisihnya dicatat sebagai
+                    // pergerakan stok agar riwayatnya tetap utuh.
+                    edited.stock = existing.stock;
+                    a.repo().saveProduct(edited, a.user.userId);
+                    if (newStock != existing.stock) {
+                        a.repo().adjustStock(edited.productId, (int) (newStock - existing.stock),
+                                "Penyesuaian stok saat ubah produk", a.user.userId);
                     }
-                })
-                .show();
+                    Ui.ok(a, "Produk " + edited.sku + " diperbarui");
+                }
+            } catch (Exception e) {
+                return e.getMessage();
+            }
+            a.refreshActive();
+            return null;
+        });
     }
 
     /**
@@ -222,20 +224,23 @@ class ProductsSection {
     private void addCategory() {
         final EditText input = new EditText(a);
         input.setHint("Nama kategori baru");
-        new AlertDialog.Builder(a)
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(a)
                 .setTitle("Tambah Kategori")
                 .setView(input)
                 .setNegativeButton("Batal", null)
-                .setPositiveButton("Simpan", (d, w) -> {
-                    try {
-                        a.repo().saveCategory(input.getText().toString(), a.user.userId);
-                        a.refreshActive();
-                        Ui.ok(a, "Kategori ditambahkan");
-                    } catch (Exception e) {
-                        Ui.error(a, e.getMessage());
-                    }
-                })
-                .show();
+                .setPositiveButton("Simpan", null)
+                .create();
+        dialog.show();
+        Ui.submit(dialog, () -> {
+            try {
+                a.repo().saveCategory(input.getText().toString(), a.user.userId);
+            } catch (Exception e) {
+                return e.getMessage();
+            }
+            a.refreshActive();
+            Ui.ok(a, "Kategori ditambahkan");
+            return null;
+        });
     }
 
     /**
@@ -298,24 +303,27 @@ class ProductsSection {
         box.addView(qty);
         box.addView(reason);
 
-        new AlertDialog.Builder(a)
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(a)
                 .setTitle((direction > 0 ? "Tambah" : "Kurangi") + " stok " + p.name)
                 .setView(box)
                 .setNegativeButton("Batal", null)
-                .setPositiveButton("Simpan", (d, w) -> {
-                    long n = parse(qty.getText().toString());
-                    String r = reason.getText().toString().trim();
-                    if (n <= 0) { Ui.error(a, "Jumlah harus lebih dari 0"); return; }
-                    if (r.isEmpty()) { Ui.error(a, "Alasan wajib diisi untuk audit"); return; }
-                    try {
-                        a.repo().adjustStock(p.productId, (int) (direction * n), r, a.user.userId);
-                        a.refreshActive();
-                        Ui.ok(a, "Stok " + p.sku + " diperbarui");
-                    } catch (Exception e) {
-                        Ui.error(a, e.getMessage());
-                    }
-                })
-                .show();
+                .setPositiveButton("Simpan", null)
+                .create();
+        dialog.show();
+        Ui.submit(dialog, () -> {
+            long n = parse(qty.getText().toString());
+            String r = reason.getText().toString().trim();
+            if (n <= 0) return "Jumlah harus lebih dari 0";
+            if (r.isEmpty()) return "Alasan wajib diisi untuk audit";
+            try {
+                a.repo().adjustStock(p.productId, (int) (direction * n), r, a.user.userId);
+            } catch (Exception e) {
+                return e.getMessage();
+            }
+            a.refreshActive();
+            Ui.ok(a, "Stok " + p.sku + " diperbarui");
+            return null;
+        });
     }
 
     private void toggle(Models.Product p) {

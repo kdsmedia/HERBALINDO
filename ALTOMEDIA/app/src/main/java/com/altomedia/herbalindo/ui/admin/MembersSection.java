@@ -1,6 +1,5 @@
 package com.altomedia.herbalindo.ui.admin;
 
-import android.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -144,30 +143,33 @@ class MembersSection {
         box.addView(points);
         box.addView(reason);
 
-        new AlertDialog.Builder(a)
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(a)
                 .setTitle("Ubah saldo " + u.name)
                 .setMessage("Saat ini " + Util.num(u.points) + " poin ("
                         + Util.rupiah(a.repo().pointsToRupiah(u.points)) + ").")
                 .setView(box)
                 .setNegativeButton("Batal", null)
-                .setPositiveButton("Simpan", (d, w) -> {
-                    long n;
-                    try { n = Long.parseLong(points.getText().toString().trim()); }
-                    catch (Exception e) { Ui.error(a, "Jumlah poin tidak valid"); return; }
-                    String r = reason.getText().toString().trim();
-                    if (n <= 0) { Ui.error(a, "Jumlah harus lebih dari 0"); return; }
-                    if (r.isEmpty()) { Ui.error(a, "Alasan wajib diisi"); return; }
-                    long delta = arah.getCheckedRadioButtonId() == kurang.getId() ? -n : n;
-                    try {
-                        a.repo().adminAdjustBalance(u.userId, delta, r, a.user.userId);
-                        a.refreshActive();
-                        Ui.ok(a, "Saldo " + u.name + " " + (delta > 0 ? "ditambah " : "dikurangi ")
-                                + Util.num(n) + " poin");
-                    } catch (Repository.RuleException e) {
-                        Ui.error(a, e.getMessage());
-                    }
-                })
-                .show();
+                .setPositiveButton("Simpan", null)
+                .create();
+        dialog.show();
+        Ui.submit(dialog, () -> {
+            long n;
+            try { n = Long.parseLong(points.getText().toString().trim()); }
+            catch (Exception e) { return "Jumlah poin tidak valid"; }
+            if (n <= 0) return "Jumlah harus lebih dari 0";
+            String r = reason.getText().toString().trim();
+            if (r.isEmpty()) return "Alasan wajib diisi";
+            long delta = arah.getCheckedRadioButtonId() == kurang.getId() ? -n : n;
+            try {
+                a.repo().adminAdjustBalance(u.userId, delta, r, a.user.userId);
+            } catch (Repository.RuleException e) {
+                return e.getMessage();
+            }
+            a.refreshActive();
+            Ui.ok(a, "Saldo " + u.name + " " + (delta > 0 ? "ditambah " : "dikurangi ")
+                    + Util.num(n) + " poin");
+            return null;
+        });
     }
 
     /**
@@ -189,27 +191,30 @@ class MembersSection {
         box.addView(target);
         box.addView(reason);
 
-        new androidx.appcompat.app.AlertDialog.Builder(a)
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(a)
                 .setTitle("Tetapkan poin " + u.name)
                 .setMessage("Saat ini " + Util.num(u.points) + " poin ("
                         + Util.rupiah(a.repo().pointsToRupiah(u.points)) + ").")
                 .setView(box)
                 .setNegativeButton("Batal", null)
-                .setPositiveButton("Simpan", (d, w) -> {
-                    long n;
-                    try { n = Long.parseLong(target.getText().toString().trim()); }
-                    catch (Exception e) { Ui.error(a, "Poin harus berupa angka"); return; }
-                    String r = reason.getText().toString().trim();
-                    if (r.length() < 3) { Ui.error(a, "Alasan minimal 3 karakter"); return; }
-                    try {
-                        a.repo().adminSetPoints(u.userId, n, r, a.user.userId);
-                        a.refreshActive();
-                        Ui.ok(a, "Poin " + u.name + " → " + Util.num(n));
-                    } catch (Repository.RuleException e) {
-                        Ui.error(a, e.getMessage());
-                    }
-                })
-                .show();
+                .setPositiveButton("Simpan", null)
+                .create();
+        dialog.show();
+        Ui.submit(dialog, () -> {
+            long n;
+            try { n = Long.parseLong(target.getText().toString().trim()); }
+            catch (Exception e) { return "Poin harus berupa angka"; }
+            String r = reason.getText().toString().trim();
+            if (r.length() < 3) return "Alasan minimal 3 karakter";
+            try {
+                a.repo().adminSetPoints(u.userId, n, r, a.user.userId);
+            } catch (Repository.RuleException e) {
+                return e.getMessage();
+            }
+            a.refreshActive();
+            Ui.ok(a, "Poin " + u.name + " → " + Util.num(n));
+            return null;
+        });
     }
 
     /**
@@ -271,23 +276,26 @@ class MembersSection {
         pass.setInputType(android.text.InputType.TYPE_CLASS_TEXT
                 | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
-        new androidx.appcompat.app.AlertDialog.Builder(a)
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(a)
                 .setTitle("Edit data " + u.name)
                 .setMessage("ID " + u.userId + " · REF " + u.referralId)
                 .setView(box)
                 .setNegativeButton("Batal", null)
-                .setPositiveButton("Simpan", (d, w) -> {
-                    try {
-                        a.repo().adminUpdateMember(u.userId, name.getText().toString(),
-                                email.getText().toString(), phone.getText().toString(),
-                                pass.getText().toString(), a.user.userId);
-                        a.refreshActive();
-                        Ui.ok(a, "Data " + u.name + " diperbarui");
-                    } catch (Repository.RuleException e) {
-                        Ui.error(a, e.getMessage());
-                    }
-                })
-                .show();
+                .setPositiveButton("Simpan", null)
+                .create();
+        dialog.show();
+        Ui.submit(dialog, () -> {
+            try {
+                a.repo().adminUpdateMember(u.userId, name.getText().toString(),
+                        email.getText().toString(), phone.getText().toString(),
+                        pass.getText().toString(), a.user.userId);
+            } catch (Repository.RuleException e) {
+                return e.getMessage();
+            }
+            a.refreshActive();
+            Ui.ok(a, "Data " + u.name + " diperbarui");
+            return null;
+        });
     }
 
     private EditText field(LinearLayout box, String hint, String value) {
@@ -310,25 +318,28 @@ class MembersSection {
         box.setPadding(28, 8, 28, 0);
         EditText reason = field(box, "Alasan penghapusan (wajib)", "");
 
-        new androidx.appcompat.app.AlertDialog.Builder(a)
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(a)
                 .setTitle("Hapus akun " + u.name)
                 .setMessage("Akun " + u.contact() + " beserta poin, pesanan, referral, "
                         + "dan riwayat withdrawal miliknya akan dihapus permanen. "
                         + "Tindakan ini tidak dapat dibatalkan.")
                 .setView(box)
                 .setNegativeButton("Batal", null)
-                .setPositiveButton("Hapus", (d, w) -> {
-                    String r = reason.getText().toString().trim();
-                    if (r.length() < 3) { Ui.error(a, "Alasan minimal 3 karakter"); return; }
-                    try {
-                        a.repo().adminDeleteMember(u.userId, r, a.user.userId);
-                        a.refreshActive();
-                        Ui.ok(a, "Akun " + u.name + " dihapus");
-                    } catch (Repository.RuleException e) {
-                        Ui.error(a, e.getMessage());
-                    }
-                })
-                .show();
+                .setPositiveButton("Hapus", null)
+                .create();
+        dialog.show();
+        Ui.submit(dialog, () -> {
+            String r = reason.getText().toString().trim();
+            if (r.length() < 3) return "Alasan minimal 3 karakter";
+            try {
+                a.repo().adminDeleteMember(u.userId, r, a.user.userId);
+            } catch (Repository.RuleException e) {
+                return e.getMessage();
+            }
+            a.refreshActive();
+            Ui.ok(a, "Akun " + u.name + " dihapus");
+            return null;
+        });
     }
 
     private void toggleFraud(Models.User u) {

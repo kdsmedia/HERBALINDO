@@ -392,6 +392,13 @@
   }
   function adminAdjustBalance(userId, amountPoints, reason, adminId) {
     if (!reason || reason.trim().length < 3) throw new Error('Alasan wajib diisi');
+    const u = db.users.find(x => x.userId === userId);
+    if (!u) throw new Error('Member tidak ditemukan');
+    // Pengurangan tidak boleh melebihi saldo: addPoints memangkasnya menjadi
+    // nol sementara ledger tetap mencatat nilai penuh, sehingga riwayat poin
+    // tidak lagi cocok dengan saldo sebenarnya.
+    if (amountPoints < 0 && -amountPoints > (u.points || 0))
+      throw new Error('Saldo tidak cukup, poin tersedia ' + num(u.points || 0));
     addPoints(userId, amountPoints, amountPoints >= 0 ? 'ADMIN_CREDIT' : 'ADMIN_DEBIT', reason, null);
     log(adminId, 'SALDO_ADJUST', userId, (amountPoints >= 0 ? '+' : '') + amountPoints + ' poin | ' + reason);
     return true;

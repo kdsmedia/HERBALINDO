@@ -1185,7 +1185,13 @@ public class Repository {
 
     public void adminAdjustBalance(String userId, long amount, String reason, String adminId) throws RuleException {
         if (Util.isBlank(reason) || reason.trim().length() < 3) throw new RuleException("Alasan wajib diisi");
-        if (user(userId) == null) throw new RuleException("Member tidak ditemukan");
+        Models.User u = user(userId);
+        if (u == null) throw new RuleException("Member tidak ditemukan");
+        // Pengurangan tidak boleh melebihi saldo. Bila dibiarkan, addPoints
+        // memangkasnya menjadi nol sementara ledger tetap mencatat nilai penuh
+        // sehingga riwayat poin tidak lagi cocok dengan saldo sebenarnya.
+        if (amount < 0 && -amount > u.points)
+            throw new RuleException("Saldo tidak cukup, poin tersedia " + Util.num(u.points));
         addPoints(userId, amount, amount >= 0 ? "ADMIN_CREDIT" : "ADMIN_DEBIT", reason, null);
         log(adminId, "SALDO_ADJUST", userId, (amount >= 0 ? "+" : "") + amount + " poin | " + reason);
     }

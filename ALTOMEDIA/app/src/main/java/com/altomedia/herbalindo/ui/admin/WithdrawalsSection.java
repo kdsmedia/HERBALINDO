@@ -1,6 +1,5 @@
 package com.altomedia.herbalindo.ui.admin;
 
-import android.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -107,7 +106,7 @@ class WithdrawalsSection {
         box.addView(note);
 
         boolean approved = "PAID".equals(status);
-        new AlertDialog.Builder(a)
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(a)
                 .setTitle(approved ? "Setujui withdrawal" : "Tolak withdrawal")
                 .setMessage(approved
                         ? "Transfer " + Util.rupiah(w.amountRupiah) + " ke " + w.method
@@ -117,17 +116,20 @@ class WithdrawalsSection {
                         : "Poin " + Util.num(w.amountPoints) + " akan dikembalikan ke saldo member. Sertakan alasan penolakan.")
                 .setView(box)
                 .setNegativeButton("Batal", null)
-                .setPositiveButton(approved ? "Ya, sudah ditransfer" : "Tolak", (d, x) -> {
-                    String n = note.getText().toString().trim();
-                    if (n.isEmpty()) { Ui.error(a, "Catatan wajib diisi"); return; }
-                    try {
-                        a.repo().processWithdrawal(w.withdrawalId, status, a.user.userId, n);
-                        a.refreshActive();
-                        Ui.ok(a, w.withdrawalId + " → " + status);
-                    } catch (Repository.RuleException e) {
-                        Ui.error(a, e.getMessage());
-                    }
-                })
-                .show();
+                .setPositiveButton(approved ? "Ya, sudah ditransfer" : "Tolak", null)
+                .create();
+        dialog.show();
+        Ui.submit(dialog, () -> {
+            String n = note.getText().toString().trim();
+            if (n.isEmpty()) return "Catatan wajib diisi";
+            try {
+                a.repo().processWithdrawal(w.withdrawalId, status, a.user.userId, n);
+            } catch (Repository.RuleException e) {
+                return e.getMessage();
+            }
+            a.refreshActive();
+            Ui.ok(a, w.withdrawalId + " → " + status);
+            return null;
+        });
     }
 }

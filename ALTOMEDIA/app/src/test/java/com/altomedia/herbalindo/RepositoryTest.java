@@ -551,6 +551,34 @@ public class RepositoryTest {
         catch (Repository.RuleException e) { assertTrue(e.getMessage().contains("Alasan")); }
     }
 
+    /**
+     * Pengurangan melebihi saldo harus ditolak.
+     *
+     * Bila dibiarkan, addPoints memangkas saldo menjadi nol sementara ledger
+     * tetap mencatat pengurangan penuh sehingga riwayat poin tidak lagi cocok
+     * dengan saldo sebenarnya.
+     */
+    @Test public void adminAdjustRejectsDebitBeyondBalance() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        repo.adminSetPoints(u.userId, 5000, "saldo awal", "USR-ADMIN");
+        try {
+            repo.adminAdjustBalance(u.userId, -50000, "koreksi kurang", "USR-ADMIN");
+            fail("harus gagal");
+        } catch (Repository.RuleException e) {
+            assertTrue(e.getMessage().contains("tidak cukup"));
+        }
+        assertEquals("Saldo tidak boleh berubah", 5000, repo.user(u.userId).points);
+        assertEquals("Tidak ada catatan audit baru", 1, repo.adminLogs(0).size());
+    }
+
+    /** Pengurangan tepat sebesar saldo tetap diterima dan saldo menjadi nol. */
+    @Test public void adminAdjustAllowsDebitUpToBalance() throws Exception {
+        Models.User u = member("Siti Aminah", "081234567890", null);
+        repo.adminSetPoints(u.userId, 5000, "saldo awal", "USR-ADMIN");
+        repo.adminAdjustBalance(u.userId, -5000, "koreksi habis", "USR-ADMIN");
+        assertEquals(0, repo.user(u.userId).points);
+    }
+
     @Test public void fraudFlagBlocksWithdrawal() throws Exception {
         Models.User u = member("Siti Aminah", "081234567890", null);
         repo.addPoints(u.userId, 600000, "ADMIN_CREDIT", "saldo uji", null);

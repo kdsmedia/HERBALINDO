@@ -1,6 +1,5 @@
 package com.altomedia.herbalindo.ui.member;
 
-import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -127,27 +126,30 @@ public class PaymentActivity extends BaseActivity {
         box.addView(from);
         box.addView(note);
 
-        new AlertDialog.Builder(this)
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle("Konfirmasi transfer")
                 .setMessage("Tagihan " + Util.rupiah(order.total)
                         + "\nIsi nominal persis seperti yang Anda transfer agar admin mudah mencocokkan.")
                 .setView(new android.widget.ScrollView(this) {{ addView(box); }})
                 .setNegativeButton("Batal", null)
-                .setPositiveButton("Kirim", (d, w) -> {
-                    long amt;
-                    try { amt = Long.parseLong(amount.getText().toString().trim()); }
-                    catch (Exception e) { Ui.error(this, "Nominal harus berupa angka"); return; }
-                    try {
-                        order = repo.submitPayment(order.orderId, sender.getText().toString().trim(), amt,
-                                from.getText().toString(), note.getText().toString());
-                        renderStatus();
-                        Ui.info(this, "Data transfer terkirim",
-                                "Admin akan memverifikasi pembayaran Anda.\nStatus: MENUNGGU VERIFIKASI");
-                    } catch (Repository.RuleException e) {
-                        Ui.error(this, e.getMessage());
-                    }
-                })
-                .show();
+                .setPositiveButton("Kirim", null)
+                .create();
+        dialog.show();
+        Ui.submit(dialog, () -> {
+            long amt;
+            try { amt = Long.parseLong(amount.getText().toString().trim()); }
+            catch (Exception e) { return "Nominal harus berupa angka"; }
+            try {
+                order = repo.submitPayment(order.orderId, sender.getText().toString().trim(), amt,
+                        from.getText().toString(), note.getText().toString());
+            } catch (Repository.RuleException e) {
+                return e.getMessage();
+            }
+            renderStatus();
+            Ui.info(this, "Data transfer terkirim",
+                    "Admin akan memverifikasi pembayaran Anda.\nStatus: MENUNGGU VERIFIKASI");
+            return null;
+        });
     }
 
     @Override protected void onSessionReady(Models.User user) { /* order sudah dimuat */ }
