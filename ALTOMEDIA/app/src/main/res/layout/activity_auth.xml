@@ -63,7 +63,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/login" />
+                        android:text="@string/login"
+    app:icon="@drawable/ic_login" />
 
                     <Button
                         android:id="@+id/tab_register"
@@ -72,7 +73,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_weight="1"
-                        android:text="@string/register" />
+                        android:text="@string/register"
+    app:icon="@drawable/ic_register" />
                 </LinearLayout>
 
                 <!-- FORM LOGIN -->
@@ -119,7 +121,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="14dp"
-                        android:text="MASUK" />
+                        android:text="MASUK"
+    app:icon="@drawable/ic_login" />
                 </LinearLayout>
 
                 <!-- FORM DAFTAR -->
@@ -198,7 +201,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="14dp"
-                        android:text="DAFTAR" />
+                        android:text="DAFTAR"
+    app:icon="@drawable/ic_register" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

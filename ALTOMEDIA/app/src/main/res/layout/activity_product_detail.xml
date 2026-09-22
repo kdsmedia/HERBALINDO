@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <include layout="@layout/component_toolbar" />
 
@@ -155,7 +156,10 @@
                     style="@style/Widget.Herbalindo.Button.Outlined"
                     android:layout_width="52dp"
                     android:layout_height="wrap_content"
-                    android:text="−" />
+    app:icon="@drawable/ic_minus" android:contentDescription="Kurangi jumlah"
+            android:minWidth="0dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp" />
 
                 <TextView
                     android:id="@+id/det_qty"
@@ -172,7 +176,10 @@
                     style="@style/Widget.Herbalindo.Button.Outlined"
                     android:layout_width="52dp"
                     android:layout_height="wrap_content"
-                    android:text="+" />
+    app:icon="@drawable/ic_plus" android:contentDescription="Tambah jumlah"
+            android:minWidth="0dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp" />
             </LinearLayout>
 
             <Button
@@ -181,7 +188,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="@string/add_to_cart" />
+                android:text="@string/add_to_cart"
+    app:icon="@drawable/ic_cart" />
 
             <com.google.android.material.card.MaterialCardView
                 style="@style/Widget.Herbalindo.Card"

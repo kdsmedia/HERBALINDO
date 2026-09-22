@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <include layout="@layout/component_toolbar" />
 
@@ -229,7 +230,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:text="Buat Pesanan &amp; Bayar" />
+                android:text="Buat Pesanan &amp; Bayar"
+    app:icon="@drawable/ic_checkout" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <include layout="@layout/component_toolbar" />
 
@@ -102,7 +103,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Salin Payload" />
+                    android:text="Salin Payload"
+    app:icon="@drawable/ic_copy" />
 
                 <Button
                     android:id="@+id/pay_share"
@@ -111,7 +113,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
                     android:layout_weight="1"
-                    android:text="Bagikan QR" />
+                    android:text="Bagikan QR"
+    app:icon="@drawable/ic_share" />
             </LinearLayout>
 
             <Button
@@ -120,7 +123,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="Konfirmasi Transfer" />
+                android:text="Konfirmasi Transfer"
+    app:icon="@drawable/ic_check" />
 
             <Button
                 android:id="@+id/pay_check"
@@ -128,7 +132,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Periksa Status Pembayaran" />
+                android:text="Periksa Status Pembayaran"
+    app:icon="@drawable/ic_refresh" />
 
             <com.google.android.material.card.MaterialCardView
                 style="@style/Widget.Herbalindo.Card"

@@ -53,7 +53,7 @@ class BalanceTab {
 
     /** Petunjuk isian tujuan menyesuaikan metode: dompet digital atau rekening bank. */
     private void updateDestinationHint() {
-        TextInputLayout til = root.findViewById(R.id.bal_dest);
+        TextInputLayout til = root.findViewById(R.id.bal_dest_label);
         if (til == null) return;
         til.setHint(Config.isEwallet(selectedMethod())
                 ? "Nomor HP terdaftar di " + selectedMethod()

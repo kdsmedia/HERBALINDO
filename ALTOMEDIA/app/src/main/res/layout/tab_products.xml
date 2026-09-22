@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -34,7 +35,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
-            android:text="Muat" />
+            android:text="Muat"
+    app:icon="@drawable/ic_refresh" />
     </LinearLayout>
 
     <TextView
@@ -51,9 +53,10 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp">
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp">
 
+        <!-- Grid katalog: baris horizontal dua kolom diisi dari ProductsTab. -->
         <LinearLayout
             android:id="@+id/prod_list"
             android:layout_width="match_parent"

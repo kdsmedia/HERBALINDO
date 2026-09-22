@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,14 +39,16 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="6dp"
             android:text="Kategori"
-            android:visibility="gone" />
+            android:visibility="gone"
+    app:icon="@drawable/ic_plus" />
 
         <Button
             android:id="@+id/sec_add"
             style="@style/Widget.Herbalindo.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tambah" />
+            android:text="Tambah"
+    app:icon="@drawable/ic_add" />
     </LinearLayout>
 
     <ScrollView

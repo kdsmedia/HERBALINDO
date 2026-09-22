@@ -6,16 +6,32 @@
     android:background="@color/bg"
     android:orientation="vertical">
 
+    <!--
+      Header tahan sempit: nama pengguna dipotong dengan elipsis (satu baris)
+      agar tidak pernah mendorong tombol keranjang keluar layar, dan tombol
+      keranjang memiliki ukuran minimum yang tetap.
+    -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/brand_green_dark"
+        android:baselineAligned="false"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="14dp"
-        android:paddingTop="12dp"
+        android:paddingTop="10dp"
         android:paddingEnd="14dp"
-        android:paddingBottom="12dp">
+        android:paddingBottom="10dp">
+
+        <ImageView
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_circle_green"
+            android:contentDescription="@string/app_name"
+            android:padding="7dp"
+            android:src="@drawable/ic_product_placeholder"
+            app:tint="@color/brand_accent" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -27,14 +43,18 @@
                 android:id="@+id/hdr_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:textColor="@color/text_on_brand"
-                android:textSize="17sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/hdr_sub"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:textColor="@color/brand_green_pale"
                 android:textSize="11sp" />
         </LinearLayout>
@@ -43,7 +63,11 @@
             android:id="@+id/hdr_cart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:background="@drawable/bg_accent_pill"
+            android:drawablePadding="4dp"
+            android:gravity="center_vertical"
+            android:minHeight="34dp"
             android:paddingStart="12dp"
             android:paddingTop="6dp"
             android:paddingEnd="12dp"

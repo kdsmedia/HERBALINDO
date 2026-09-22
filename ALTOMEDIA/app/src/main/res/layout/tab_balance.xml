@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -121,6 +122,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/bal_dest_label"
             style="@style/Widget.Herbalindo.Input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -141,7 +143,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="@string/withdraw" />
+            android:text="@string/withdraw"
+    app:icon="@drawable/ic_wallet" />
 
         <TextView
             android:layout_width="match_parent"

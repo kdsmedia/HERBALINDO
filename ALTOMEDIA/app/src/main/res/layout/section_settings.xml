@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -99,7 +100,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="@string/save" />
+            android:text="@string/save"
+    app:icon="@drawable/ic_save" />
 
         <Button
             android:id="@+id/set_reset"
@@ -107,7 +109,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Kembalikan Default" />
+            android:text="Kembalikan Default"
+    app:icon="@drawable/ic_restore" />
 
         <TextView
             android:layout_width="match_parent"

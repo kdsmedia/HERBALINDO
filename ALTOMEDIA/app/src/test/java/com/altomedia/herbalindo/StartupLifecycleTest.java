@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import android.content.Context;
 import android.content.Intent;
@@ -192,6 +193,77 @@ public class StartupLifecycleTest {
 
         assertNotNull("Data pesanan uji tidak boleh hilang", Repository.get(ctx).order(milikSaya.orderId));
         assertEquals(1, Repository.get(ctx).verifiedReferralCount(u.userId));
+    }
+
+    /**
+     * Tab Saldo harus dapat dibuka tanpa menjatuhkan aplikasi. Sebelumnya kode
+     * mengambil wadah isian tujuan dengan tipe yang salah, sehingga membuka tab
+     * ini melempar ClassCastException.
+     */
+    @Test public void tabSaldoDapatDibukaTanpaCrash() throws Exception {
+        Models.User u = Repository.get(ctx).register("Siti Aminah", "081234567890", "rahasia1", null);
+        Session.set(ctx, u);
+
+        ActivityController<MemberActivity> c = Robolectric.buildActivity(MemberActivity.class).setup();
+        MemberActivity a = c.get();
+        ((com.google.android.material.bottomnavigation.BottomNavigationView)
+                a.findViewById(R.id.bottom_nav)).setSelectedItemId(R.id.nav_balance);
+
+        android.widget.TextView saldo = a.findViewById(R.id.bal_saldo);
+        assertNotNull("Kartu saldo tidak tampil", saldo);
+        assertEquals("Tab Saldo harus menjadi tab aktif",
+                R.id.nav_balance, ((com.google.android.material.bottomnavigation.BottomNavigationView)
+                        a.findViewById(R.id.bottom_nav)).getSelectedItemId());
+        // Isian tujuan wajib memiliki petunjuk yang menyesuaikan metode terpilih.
+        com.google.android.material.textfield.TextInputLayout label =
+                a.findViewById(R.id.bal_dest_label);
+        assertNotNull("Label tujuan tidak ditemukan", label);
+        assertNotNull("Petunjuk tujuan harus terisi", label.getHint());
+        c.pause().stop().destroy();
+    }
+
+    /**
+     * Katalog produk harus tersusun grid dua kolom. Jumlah baris mengikuti
+     * jumlah produk yang lolos saring, dan sel yang tidak terpakai pada baris
+     * terakhir harus berupa penyeimbang kosong agar kartu tidak melebar.
+     */
+    @Test public void katalogProdukTersusunDuaKolom() throws Exception {
+        Models.User u = Repository.get(ctx).register("Siti Aminah", "081234567890", "rahasia1", null);
+        Session.set(ctx, u);
+
+        ActivityController<MemberActivity> c = Robolectric.buildActivity(MemberActivity.class).setup();
+        MemberActivity a = c.get();
+        ((com.google.android.material.bottomnavigation.BottomNavigationView)
+                a.findViewById(R.id.bottom_nav)).setSelectedItemId(R.id.nav_products);
+
+        android.widget.LinearLayout list = a.findViewById(R.id.prod_list);
+        assertNotNull("Grid produk tidak ditemukan", list);
+
+        int totalProduk = Repository.get(ctx).activeProducts().size();
+        assertTrue("Data uji harus memiliki produk", totalProduk > 0);
+
+        int expectedRows = (totalProduk + 1) / 2;
+        assertEquals("Jumlah baris grid harus mengikuti dua kolom per baris",
+                expectedRows, list.getChildCount());
+
+        int kartuDilihat = 0;
+        for (int r = 0; r < list.getChildCount(); r++) {
+            android.view.ViewGroup row = (android.view.ViewGroup) list.getChildAt(r);
+            assertEquals("Setiap baris harus memuat tepat dua sel", 2, row.getChildCount());
+            for (int col = 0; col < 2; col++) {
+                android.view.View cell = row.getChildAt(col);
+                android.widget.LinearLayout.LayoutParams lp =
+                        (android.widget.LinearLayout.LayoutParams) cell.getLayoutParams();
+                assertEquals("Sel harus menempati satu kolom berbobot", 1f, lp.weight, 0.01f);
+                if (cell.findViewById(R.id.item_name) != null) {
+                    kartuDilihat++;
+                } else if (col == 0) {
+                    fail("Sel pertama pada baris harus berupa kartu produk");
+                }
+            }
+        }
+        assertEquals("Semua produk harus tergambar pada grid", totalProduk, kartuDilihat);
+        c.pause().stop().destroy();
     }
 
     /** Membuat pesanan satu produk lalu menandainya lunas. */
