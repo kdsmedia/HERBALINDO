@@ -202,8 +202,8 @@ BAGIAN 4 — KEBERLANGSUNGAN APLIKASI DAN PERSYARATAN TEKNIS
 4.1 Konfigurasi Build
 
     Nama paket          : com.altomedia.herbalindo
-    Version code        : 2
-    Version name        : 1.0.1
+    Version code        : 3
+    Version name        : 1.0.2
     Minimum SDK         : 21 (Android 5.0 Lollipop)
     Target SDK          : 36
     Format unggahan     : Android App Bundle (.aab)

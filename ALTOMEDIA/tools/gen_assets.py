@@ -429,7 +429,7 @@ def screen_balance(s):
     s.card(12, y, s.W - 12, y + 40, 10)
     draw_text(s.img, 22, y + 8, "NOMINAL PENARIKAN", 1, TEXT_SEC)
     draw_text(s.img, 22, y + 20, "RP20.000", 3, TEXT)
-    draw_text(s.img, 22, y + 34, "DIPILIH DARI DAFTAR - TIDAK DIKETIK BEBAS", 1, TEXT_SEC)
+    draw_text(s.img, 22, y + 34, "BCA MINIMAL RP50.000 - DOMPET DIGITAL DARI RP100", 1, TEXT_SEC)
     y += 50
     s.card(12, y, s.W - 12, y + 34, 10)
     draw_text(s.img, 22, y + 7, "METODE", 1, TEXT_SEC)

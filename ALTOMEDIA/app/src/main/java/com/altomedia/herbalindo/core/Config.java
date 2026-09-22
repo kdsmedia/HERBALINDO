@@ -29,9 +29,19 @@ public final class Config {
      * Nominal penarikan saldo yang tersedia. Member hanya memilih salah satu
      * nilai ini; isian bebas dihapus agar jumlah yang dicairkan selalu sama
      * dengan nilai yang disetujui admin.
+     *
+     * Daftar ini berlaku untuk seluruh metode. Metode dengan biaya transfer
+     * lebih tinggi dapat menaikkan batas bawahnya lewat {@link #minWithdrawFor}.
      */
     public static final long[] WITHDRAW_OPTIONS_RUPIAH = {
-            100L, 200L, 500L, 1000L, 2000L, 5000L, 10000L, 20000L};
+            100L, 200L, 500L, 1000L, 2000L, 5000L, 10000L, 20000L, 50000L};
+
+    /*
+     * Transfer ke rekening bank dikenakan biaya admin yang membuat nominal
+     * kecil tidak ekonomis, sehingga BCA memakai batas bawah tersendiri.
+     * Akibatnya hanya nominal Rp50.000 yang tersedia untuk BCA.
+     */
+    public static final long WITHDRAW_MIN_BCA = 50000L;
     public static final int DEFAULT_MAX_WITHDRAW_PER_DAY = 1;
     public static final long DEFAULT_SHIPPING_FLAT = 15000L;
 
@@ -111,6 +121,15 @@ public final class Config {
     /** Metode pencairan berjenis dompet digital memakai nomor HP sebagai tujuan. */
     public static boolean isEwallet(String method) {
         return "DANA".equals(method) || "OVO".equals(method) || "GOPAY".equals(method);
+    }
+
+    /**
+     * Batas bawah pencairan untuk sebuah metode. Nilai bawaan
+     * {@code settingsMin} berlaku untuk dompet digital; BCA memakai batas
+     * tersendiri agar ongkos transfer bank tidak melebihi nominalnya.
+     */
+    public static long minWithdrawFor(String method, long settingsMin) {
+        return "BCA".equals(method) ? Math.max(settingsMin, WITHDRAW_MIN_BCA) : settingsMin;
     }
 
     /** Status pembayaran. VERIFYING dipakai saat pembeli mengirim data transfer. */

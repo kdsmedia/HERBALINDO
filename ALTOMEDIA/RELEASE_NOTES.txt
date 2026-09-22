@@ -13,6 +13,46 @@ saja.
 
 
 ================================================================================
+VERSI 1.0.2 (versionCode 3)
+Tanggal: 20 September 2026
+================================================================================
+
+PEMBARUAN
+
+Ringkasan untuk Play Console (salin bagian ini):
+
+    Pembaruan HERBALINDO.
+
+    - Pencairan BCA minimal Rp50.000 karena biaya transfer bank; dompet
+      digital tetap mulai Rp100
+    - Nominal Rp50.000 ditambahkan ke daftar pilihan pencairan
+    - Pilihan yang tidak memenuhi batas metode tidak lagi ditawarkan
+
+Rincian lengkap:
+
+Perubahan
+    - Daftar nominal penarikan bertambah Rp50.000 agar batas bawah BCA dapat
+      dipenuhi.
+    - Daftar nominal disusun ulang saat metode berganti: BCA hanya menampilkan
+      Rp50.000, dompet digital menampilkan seluruh nominal yang terjangkau
+      saldo.
+    - Teks aturan pada tab Tugas dan keterangan di panel admin menyebutkan
+      batas bawah BCA Rp50.000.
+
+Perbaikan
+    - Pengajuan BCA di bawah Rp50.000 ditolak dengan pesan yang menyebut
+      batas metode, bukan pesan minimum umum yang menyesatkan.
+    - Pemeriksaan kelayakan pada tab Saldo menampilkan batas bawah tiap metode.
+    - Pengujian bertambah menjadi 140 unit test dan seluruhnya lulus.
+
+Catatan teknis
+    - Batas BCA tersimpan pada Config.WITHDRAW_MIN_BCA dan dihitung sebagai
+      max(nilai minimum admin, batas BCA), sehingga admin tidak dapat
+      menurunkannya.
+    - Skema penyimpanan SQLite tidak berubah.
+    - Paket tetap ditandatangani dengan sertifikat ALTOMEDIA (alias kdsmedia).
+
+================================================================================
 VERSI 1.0.1 (versionCode 2)
 Tanggal: 20 September 2026
 ================================================================================

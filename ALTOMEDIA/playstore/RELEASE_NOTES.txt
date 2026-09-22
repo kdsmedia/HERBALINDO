@@ -35,6 +35,85 @@ CARA BERKAS INI DIKELOLA (WAJIB DIBACA SEBELUM MENAMBAH CATATAN)
    catatan versi lama tanpa penyesuaian.
 
 ================================================================================
+VERSI 1.0.2 — 20 SEPTEMBER 2026
+================================================================================
+versionName    : 1.0.2
+versionCode    : 3
+Tanggal rilis   : 20 September 2026
+Saluran         : Rilis produksi (Google Play + APK distribusi langsung)
+Status          : Pembaruan perbaikan (bug fix release)
+
+--------------------------------------------------------------------------------
+RINGKASAN PEMBARUAN
+--------------------------------------------------------------------------------
+
+Pencairan ke rekening BCA kini memakai batas bawah Rp50.000 karena transfer
+bank dikenakan biaya admin. Dompet digital (DANA, OVO, GOPAY) tetap dapat
+dicairkan mulai Rp100. Daftar nominal penarikan ditambah Rp50.000 agar batas
+BCA dapat dipenuhi, dan pilihan yang tidak memenuhi batas metode tidak lagi
+ditawarkan sehingga member tidak pernah ditolak setelah menekan tombol kirim.
+
+--------------------------------------------------------------------------------
+FITUR BARU / PERUBAHAN
+--------------------------------------------------------------------------------
+1. Tab Saldo: nominal Rp50.000 ditambahkan ke daftar pilihan, sehingga
+   pencairan BCA dapat dipilih langsung dari daftar.
+2. Tab Saldo: daftar nominal disusun ulang saat metode berganti. BCA hanya
+   menampilkan Rp50.000, sedangkan dompet digital menampilkan seluruh nominal
+   yang terjangkau saldo.
+3. Tab Tugas: aturan pencairan menyebutkan batas bawah BCA Rp50.000.
+4. Panel admin > Pengaturan: keterangan "Minimum saldo" menjelaskan bahwa
+   batas BCA selalu Rp50.000 dan tidak mengikuti nilai minimum admin.
+
+--------------------------------------------------------------------------------
+PERBAIKAN & KUALITAS
+--------------------------------------------------------------------------------
+1. Pengajuan di bawah Rp50.000 dengan metode BCA ditolak dengan pesan
+   "Minimum withdrawal BCA Rp50.000", menggantikan pesan minimum umum yang
+   menyesatkan.
+2. Pemeriksaan kelayakan pada tab Saldo menampilkan batas bawah masing-masing
+   metode, bukan hanya nilai minimum umum.
+3. Pengujian bertambah menjadi 140 unit test dan seluruhnya lulus, mencakup
+   batas bawah BCA, penolakan setelah saldo turun, dan keadaan ketika nilai
+   minimum admin dinaikkan.
+
+--------------------------------------------------------------------------------
+KEAMANAN
+--------------------------------------------------------------------------------
+1. Batas bawah BCA ditegakkan di `Repository.requestWithdrawal`, sehingga
+   aturan tidak dapat dilewati dari sisi antarmuka.
+2. Nilai minimum admin tidak dapat menurunkan batas BCA karena perhitungan
+   memakai `max(nilai admin, batas BCA)`.
+
+--------------------------------------------------------------------------------
+KOMPATIBILITAS
+--------------------------------------------------------------------------------
+- minSdk : 21 (Android 5.0 Lollipop)
+- targetSdk : 36 (Android 16)
+- Tidak ada perubahan kompatibilitas perangkat atau pustaka pada versi ini.
+
+--------------------------------------------------------------------------------
+CATATAN TEKNIS
+--------------------------------------------------------------------------------
+- Batas BCA tersimpan sebagai `Config.WITHDRAW_MIN_BCA`, dan
+  `Config.WITHDRAW_OPTIONS_RUPIAH` bertambah satu nilai (Rp50.000).
+- `Repository.withdrawOptionsFor(user, method)` menerima metode sebagai
+  penyaring tambahan; versi tanpa metode tetap ada untuk pemanggil lama.
+- Skema penyimpanan SQLite tidak berubah.
+- Tanda tangan rilis tetap memakai keystore ALTOMEDIA.jks, alias "kdsmedia".
+
+--------------------------------------------------------------------------------
+ARTEFAK RILIS
+--------------------------------------------------------------------------------
+APK (distribusi langsung) : app-release.apk
+AAB (Google Play)         : app-release.aab
+versionCode artefak        : 3
+================================================================================
+                          AKHIR CATATAN VERSI 1.0.2
+================================================================================
+
+
+================================================================================
 VERSI 1.0.1 — 20 SEPTEMBER 2026
 ================================================================================
 versionName    : 1.0.1
@@ -344,7 +423,7 @@ di Google Play.
 
 
 ================================================================================
-TEMPLATE CATATAN RILIS BERIKUTNYA (SALIN FORMAT INI UNTUK v1.0.2 DAN SETERUSNYA)
+TEMPLATE CATATAN RILIS BERIKUTNYA (SALIN FORMAT INI UNTUK v1.0.3 DAN SETERUSNYA)
 ================================================================================
 Tambahkan blok baru DI ATAS blok v1.0.0 (tepat di bawah blok header "CARA BERKAS
 INI DIKELOLA"), lalu isi setiap subbagian. Hapus subbagian yang benar-benar tidak
@@ -352,10 +431,10 @@ ada perubahannya dengan menulis "Tidak ada perubahan pada versi ini." — jangan
 mengosongkan subbagian tanpa keterangan.
 
 ================================================================================
-VERSI 1.0.2 — <TANGGAL RILIS, contoh: 5 Oktober 2026>
+VERSI 1.0.3 — <TANGGAL RILIS, contoh: 5 Oktober 2026>
 ================================================================================
-versionName    : 1.0.2
-versionCode    : 3
+versionName    : 1.0.3
+versionCode    : 4
 Tanggal rilis   : <tanggal>
 Saluran         : <Rilis produksi / Rilis beta / Uji internal>
 Status          : <Pembaruan pemeliharaan / Pembaruan fitur / Perbaikan bug>
@@ -407,5 +486,5 @@ APK (distribusi langsung) : app-release.apk
 AAB (Google Play)         : app-release.aab
 versionCode artefak        : <angka versionCode pada build ini>
 ================================================================================
-                           AKHIR CATATAN VERSI 1.0.2
+                           AKHIR CATATAN VERSI 1.0.3
 ================================================================================

@@ -47,7 +47,12 @@ class BalanceTab {
                     android.R.layout.simple_spinner_dropdown_item, Config.WITHDRAW_METHODS);
             method.setAdapter(ad);
             method.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) { updateDestinationHint(); }
+                @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
+                    updateDestinationHint();
+                    // Batas bawah berbeda per metode, jadi daftar nominal ikut
+                    // disusun ulang saat metode berganti.
+                    bindAmountSpinner();
+                }
                 @Override public void onNothingSelected(AdapterView<?> p) { }
             });
             root.findViewById(R.id.bal_submit).setOnClickListener(v -> submit());
@@ -71,15 +76,17 @@ class BalanceTab {
         return item == null ? "" : item.toString();
     }
 
-    /** Daftar nominal pada dropdown; hanya yang terjangkau saldo yang ditampilkan. */
+    /** Daftar nominal pada dropdown; hanya yang layak saldo dan metode ini. */
     private List<Long> shownAmounts() {
-        return new ArrayList<>(a.repo().withdrawOptionsFor(a.user));
+        return new ArrayList<>(a.repo().withdrawOptionsFor(a.user, selectedMethod()));
     }
 
     private void updateConversion() {
         TextView tv = root.findViewById(R.id.bal_amount_rp);
         if (selectedAmount <= 0) {
-            tv.setText("Saldo belum cukup untuk nominal penarikan mana pun");
+            tv.setText("Belum ada nominal yang bisa dipilih untuk metode ini. "
+                    + "Saldo minimal untuk " + selectedMethod() + " adalah "
+                    + Util.rupiah(Config.minWithdrawFor(selectedMethod(), a.repo().settings().minWithdrawRupiah)));
             return;
         }
         tv.setText("Poin terpotong " + Util.num(a.repo().rupiahToPoints(selectedAmount)));
@@ -160,7 +167,9 @@ class BalanceTab {
 
     private void submit() {
         if (selectedAmount <= 0) {
-            Ui.error(a, "Saldo belum cukup untuk penarikan. Selesaikan lebih banyak tugas terlebih dahulu.");
+            Ui.error(a, "Belum ada nominal yang bisa dipilih. Minimal "
+                    + Util.rupiah(Config.minWithdrawFor(selectedMethod(), a.repo().settings().minWithdrawRupiah))
+                    + " untuk " + selectedMethod() + ".");
             return;
         }
         String method = selectedMethod();

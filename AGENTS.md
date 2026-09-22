@@ -167,7 +167,15 @@ perubahan yang menyentuh layar, jalur pembukaan, atau penyimpanan, andalkan
 - Nominal withdrawal hanya boleh salah satu nilai
   `Config.WITHDRAW_OPTIONS_RUPIAH` (Rp100–Rp20.000). Parameter
   `requestWithdrawal(...)` adalah **rupiah**, bukan poin; poin yang ditahan
-  dihitung dengan `rupiahToPoints`. Isian jumlah bebas tidak boleh dikembalikan
+  dihitung dengan `rupiahToPoints`.
+- **BCA memakai batas bawah Rp50.000** (`Config.WITHDRAW_MIN_BCA`) karena
+  transfer bank dikenakan biaya admin; dompet digital mengikuti
+  `minWithdrawRupiah` admin (bawaan Rp100). Batas efektif dihitung
+  `Config.minWithdrawFor(method, minWithdrawRupiah)` = `max(nilai admin, batas
+  metode)`, sehingga admin **tidak dapat** menurunkan batas BCA. Daftar nominal
+  `withdrawOptionsFor(user, method)` menyaring dua hal sekaligus: nominal ≤
+  saldo member dan nominal ≥ batas metode. Jangan menawarkan pilihan yang tidak
+  akan lolos validasi ini. Isian jumlah bebas tidak boleh dikembalikan
   karena nilai yang diajukan harus sama dengan nilai yang disetujui admin.
 - `minWithdrawRupiah` wajib ≤ `WITHDRAW_OPTIONS_RUPIAH` tertinggi, jika tidak
   seluruh pengajuan akan ditolak aturan minimum. `SettingsSection` menolak nilai
@@ -217,9 +225,9 @@ Hal yang mudah salah:
 
 ## Rilis
 
-- Versi saat ini: **1.0.1**, versionCode **2**, minSdk **21**, targetSdk **36**.
-- Tag `v1.0.1` sudah ada pada `github.com/kdsmedia/HERBALINDO`, berisi APK, AAB,
-  dan SHA256SUMS.txt di `ALTOMEDIA/release/`. Objek GitHub Release `v1.0.1`
+- Versi saat ini: **1.0.2**, versionCode **3**, minSdk **21**, targetSdk **36**.
+- Tag `v1.0.2` sudah ada pada `github.com/kdsmedia/HERBALINDO`, berisi APK, AAB,
+  dan SHA256SUMS.txt di `ALTOMEDIA/release/`. Objek GitHub Release `v1.0.2`
   belum dibuat karena `GITHUB_TOKEN` yang tersedia tidak bercakupan `repo`
   (HTTP 403); buat rilisnya dengan token bercakupan `repo` lalu lampirkan ketiga
   berkas tersebut.
@@ -251,7 +259,7 @@ masih berisi nilai contoh (`REPLACE_WITH_YOUR_FIREBASE_PROJECT_ID` dan
 
 Merge telah diselesaikan dengan mempertahankan implementasi **Java** sebagai
 kode utama, karena implementasi inilah yang benar-benar dapat dijalankan,
-memiliki 136 unit test, dan telah menghasilkan APK serta AAB rilis.
+memiliki 140 unit test, dan telah menghasilkan APK serta AAB rilis.
 
 Spesifikasi pada Bab 12 memang menyebut Firebase. Apabila di kemudian hari
 aplikasi akan dihubungkan ke Firebase, diperlukan proyek Firebase yang nyata

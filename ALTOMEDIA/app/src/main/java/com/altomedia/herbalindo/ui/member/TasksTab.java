@@ -105,7 +105,11 @@ class TasksTab {
                         + "teman terverifikasi. Tidak ada bonus berantai.\n"
                         + "2. Withdrawal membutuhkan saldo minimal " + Util.rupiah(s.minWithdrawRupiah)
                         + ", nominal dipilih dari daftar " + daftarNominal()
-                        + ", menonton " + s.adMaxPerDay + " iklan berhadiah pada hari yang sama, akun aktif, "
+                        + ". Khusus BCA minimal "
+                        + Util.rupiah(com.altomedia.herbalindo.core.Config.minWithdrawFor(
+                                "BCA", s.minWithdrawRupiah))
+                        + " karena biaya transfer bank. Wajib menonton " + s.adMaxPerDay
+                        + " iklan berhadiah pada hari yang sama, akun aktif, "
                         + "dan maksimal " + s.maxWithdrawPerDay + " pengajuan per hari.\n"
                         + "3. Konversi poin: " + Util.num(s.pointsPerUnit) + " poin = " + Util.rupiah(s.rupiahPerUnit) + ".\n"
                         + "4. Level akun naik dari XP dan tidak pernah turun. Belanja memberi 1 XP per "

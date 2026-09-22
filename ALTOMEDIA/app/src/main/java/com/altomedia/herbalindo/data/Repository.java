@@ -964,7 +964,8 @@ public class Repository {
             if (u.userId.equals(w.userId) && Util.todayKey().equals(w.date) && !"REJECTED".equals(w.status)) usedToday++;
         }
         e.checks.add(new String[]{e.saldo >= s.minWithdrawRupiah ? "1" : "0",
-                "Saldo minimal " + Util.rupiah(s.minWithdrawRupiah) + " (sekarang " + Util.rupiah(e.saldo) + ")"});
+                "Saldo minimal " + Util.rupiah(s.minWithdrawRupiah) + " (sekarang " + Util.rupiah(e.saldo)
+                        + "); BCA minimal " + Util.rupiah(Config.minWithdrawFor("BCA", s.minWithdrawRupiah))});
         e.checks.add(new String[]{(!s.requireAdsForWithdraw || e.ads >= e.need) ? "1" : "0",
                 "Rewarded Ads hari ini " + e.ads + "/" + e.need});
         e.checks.add(new String[]{"ACTIVE".equals(u.status) ? "1" : "0", "Akun aktif"});
@@ -1001,8 +1002,9 @@ public class Repository {
             throw new RuleException("Nomor HP dompet digital tidak valid (contoh 08xxxxxxxxxx)");
         if ("BCA".equals(method) && !destination.trim().matches("^\\d{6,20}$"))
             throw new RuleException("Nomor rekening BCA harus 6-20 digit angka");
-        if (amountRupiah < s.minWithdrawRupiah)
-            throw new RuleException("Minimum withdrawal " + Util.rupiah(s.minWithdrawRupiah));
+        if (amountRupiah < Config.minWithdrawFor(method, s.minWithdrawRupiah))
+            throw new RuleException("Minimum withdrawal " + method + " "
+                    + Util.rupiah(Config.minWithdrawFor(method, s.minWithdrawRupiah)));
         if (amountRupiah > e.saldo)
             throw new RuleException("Saldo tidak cukup, saldo tersedia " + Util.rupiah(e.saldo));
         long amountPoints = rupiahToPoints(amountRupiah);
@@ -1032,11 +1034,21 @@ public class Repository {
 
     /** Nominal pencairan yang boleh dipilih, hanya yang terjangkau saldo member. */
     public List<Long> withdrawOptionsFor(Models.User u) {
+        return withdrawOptionsFor(u, null);
+    }
+
+    /**
+     * Nominal pencairan untuk sebuah metode. Bila {@code method} diisi, batas
+     * bawah metode itu ikut diterapkan sehingga pilihan yang tidak akan lolos
+     * validasi tidak ditawarkan kepada member.
+     */
+    public List<Long> withdrawOptionsFor(Models.User u, String method) {
         if (u == null) return new ArrayList<>();
         Models.User fresh = user(u.userId);
         long saldo = pointsToRupiah((fresh == null ? u : fresh).points);
+        long min = Config.minWithdrawFor(method, settings().minWithdrawRupiah);
         List<Long> out = new ArrayList<>();
-        for (long v : Config.WITHDRAW_OPTIONS_RUPIAH) if (v <= saldo) out.add(v);
+        for (long v : Config.WITHDRAW_OPTIONS_RUPIAH) if (v <= saldo && v >= min) out.add(v);
         return out;
     }
 

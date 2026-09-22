@@ -271,7 +271,7 @@ public class RepositoryTest {
         Models.User u = member("Siti Aminah", "081234567890", null);
         repo.addPoints(u.userId, 600000, "ADMIN_CREDIT", "saldo uji", null);
         for (int i = 0; i < 20; i++) repo.watchAd(u.userId);
-        Models.Withdrawal w = repo.requestWithdrawal(repo.user(u.userId), 20000, "BCA", "Siti Aminah", "1234567890");
+        Models.Withdrawal w = repo.requestWithdrawal(repo.user(u.userId), 50000, "BCA", "Siti Aminah", "1234567890");
         repo.processWithdrawal(w.withdrawalId, "PAID", "USR-ADMIN", "transfer");
 
         boolean paid = false;
@@ -306,7 +306,7 @@ public class RepositoryTest {
 
     @Test public void penarikanHanyaMenerimaNominalPilihan() throws Exception {
         Models.User u = siapTarik();
-        for (long salah : new long[]{1, 50, 99, 150, 250, 300, 7500, 15000, 25000, 50000, 100000}) {
+        for (long salah : new long[]{1, 50, 99, 150, 250, 300, 7500, 15000, 25000}) {
             try {
                 repo.requestWithdrawal(u, salah, "DANA", "Siti Aminah", "081234567890");
                 fail("nominal di luar daftar harus gagal: " + salah);
@@ -358,6 +358,68 @@ public class RepositoryTest {
         assertEquals(10100, repo.user(u.userId).points);
         assertEquals(java.util.Arrays.asList(100L, 200L, 500L, 1000L),
                 repo.withdrawOptionsFor(repo.user(u.userId)));
+    }
+
+    @Test public void bcaMemilikiBatasBawahLimaPuluhRibu() throws Exception {
+        Models.User u = siapTarik();
+        // Saldo Rp60.100: seluruh nominal dalam daftar terjangkau, tetapi BCA
+        // hanya boleh Rp50.000 karena batas bawahnya sendiri.
+        assertEquals(java.util.Arrays.asList(50000L), repo.withdrawOptionsFor(u, "BCA"));
+        assertEquals(Config.WITHDRAW_OPTIONS_RUPIAH.length,
+                repo.withdrawOptionsFor(u, "DANA").size());
+
+        for (long kecil : new long[]{100, 200, 500, 1000, 2000, 5000, 10000, 20000}) {
+            try {
+                repo.requestWithdrawal(u, kecil, "BCA", "Siti Aminah", "1234567890");
+                fail("BCA di bawah Rp50.000 harus gagal: " + kecil);
+            } catch (Repository.RuleException e) {
+                assertTrue(e.getMessage().contains("Minimum withdrawal BCA"));
+            }
+        }
+
+        Models.Withdrawal w = repo.requestWithdrawal(u, 50000, "BCA", "Siti Aminah", "1234567890");
+        assertEquals(50000, w.amountRupiah);
+        assertEquals(500000, w.amountPoints);
+    }
+
+    @Test public void bcaMenolakNominalSetelahSaldoTurun() throws Exception {
+        Models.User u = siapTarik();
+        Models.Withdrawal w = repo.requestWithdrawal(u, 50000, "BCA", "Siti Aminah", "1234567890");
+        repo.processWithdrawal(w.withdrawalId, "REJECTED", "USR-ADMIN", "uji");
+        repo.adminSetPoints(u.userId, 200000, "koreksi saldo", "USR-ADMIN");
+
+        // Saldo Rp20.000: memenuhi minimum dompet digital, tetapi tidak BCA.
+        assertTrue(repo.withdrawOptionsFor(repo.user(u.userId), "BCA").isEmpty());
+        assertFalse(repo.withdrawOptionsFor(repo.user(u.userId), "DANA").isEmpty());
+        try {
+            repo.requestWithdrawal(repo.user(u.userId), 20000, "BCA", "Siti Aminah", "1234567890");
+            fail("harus gagal");
+        } catch (Repository.RuleException e) {
+            assertTrue(e.getMessage().contains("Minimum withdrawal BCA"));
+        }
+    }
+
+    @Test public void minimumAdminTidakMenurunkanBatasBca() throws Exception {
+        Models.Settings s = repo.settings();
+        s.minWithdrawRupiah = 100;
+        repo.saveSettings(s, "USR-ADMIN");
+        // Nilai minimum admin terendah pun tidak menurunkan batas BCA.
+        assertEquals(50000, Config.minWithdrawFor("BCA", repo.settings().minWithdrawRupiah));
+        assertEquals(100, Config.minWithdrawFor("DANA", repo.settings().minWithdrawRupiah));
+        assertEquals(100, Config.minWithdrawFor(null, repo.settings().minWithdrawRupiah));
+    }
+
+    @Test public void minWithdrawMengikutiMetodeBukanNilaiAdmin() throws Exception {
+        Models.Settings s = repo.settings();
+        s.minWithdrawRupiah = 50000;
+        repo.saveSettings(s, "USR-ADMIN");
+        // Minimum admin dinaikkan: dompet digital ikut naik, BCA tetap 50.000.
+        assertEquals(50000, Config.minWithdrawFor("DANA", repo.settings().minWithdrawRupiah));
+        assertEquals(50000, Config.minWithdrawFor("BCA", repo.settings().minWithdrawRupiah));
+        // Saldo Rp60.100: hanya Rp50.000 yang memenuhi minimum, untuk kedua metode.
+        Models.User u = siapTarik();
+        assertEquals(java.util.Arrays.asList(50000L), repo.withdrawOptionsFor(u, "DANA"));
+        assertEquals(java.util.Arrays.asList(50000L), repo.withdrawOptionsFor(u, "BCA"));
     }
 
     /* ---------------- Bab 6: order & stok ---------------- */
@@ -656,10 +718,12 @@ public class RepositoryTest {
 
         for (String benar : Config.WITHDRAW_METHODS) {
             String tujuan = Config.isEwallet(benar) ? "081234567890" : "1234567890";
-            Models.Withdrawal w = repo.requestWithdrawal(u, 20000, benar, "Siti Aminah", tujuan);
+            long nominal = Config.minWithdrawFor(benar, repo.settings().minWithdrawRupiah);
+            Models.Withdrawal w = repo.requestWithdrawal(u, nominal, benar, "Siti Aminah", tujuan);
             assertEquals(benar, w.method);
             assertEquals("Siti Aminah", w.accountName);
             assertEquals("PENDING", w.status);
+            assertEquals(nominal, w.amountRupiah);
             repo.processWithdrawal(w.withdrawalId, "REJECTED", "USR-ADMIN", "uji");
         }
     }
