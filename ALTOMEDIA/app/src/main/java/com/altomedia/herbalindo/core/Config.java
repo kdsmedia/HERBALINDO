@@ -43,6 +43,37 @@ public final class Config {
      */
     public static final long WITHDRAW_MIN_BCA = 50000L;
     public static final int DEFAULT_MAX_WITHDRAW_PER_DAY = 1;
+
+    /*
+     * Tautan grup WhatsApp resmi beserta teks ajakannya. Dipakai sebagai nilai
+     * awal; admin dapat menggantinya dari menu Pengaturan panel admin.
+     */
+    public static final String DEFAULT_WHATSAPP_URL =
+            "https://chat.whatsapp.com/EpNPDp3LCTo1eFFVeGbKXW";
+    public static final String WHATSAPP_TITLE = "BERGABUNG WHATSAPP RESMI HERBALINDO";
+
+    /**
+     * Memeriksa tautan ajakan bergabung.
+     *
+     * Hanya alamat http/https yang diterima. Tautan dengan skema lain
+     * ({@code intent://}, {@code javascript:}, dsb.) dapat mengarahkan pengguna
+     * ke aplikasi atau aksi tak terduga, jadi ditolak lebih dulu — nilainya
+     * berasal dari pengaturan yang dapat diubah admin.
+     */
+    public static boolean isValidWhatsappUrl(String url) {
+        if (url == null) return false;
+        String v = url.trim();
+        if (v.length() < 12 || v.length() > 300) return false;
+        if (v.contains(" ") || v.contains("\n")) return false;
+        String lower = v.toLowerCase(java.util.Locale.US);
+        if (!lower.startsWith("https://") && !lower.startsWith("http://")) return false;
+        // Alamat tanpa titik sesudah skema bukan alamat yang dapat dibuka.
+        String host = lower.substring(lower.indexOf("://") + 3);
+        int slash = host.indexOf('/');
+        if (slash >= 0) host = host.substring(0, slash);
+        return host.contains(".") && !host.startsWith(".") && !host.endsWith(".");
+    }
+
     public static final long DEFAULT_SHIPPING_FLAT = 15000L;
 
     /*

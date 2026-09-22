@@ -94,6 +94,41 @@
             android:layout_marginTop="4dp"
             android:text="Tampilkan iklan banner AdMob" />
 
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="Grup WhatsApp" android:textColor="@color/brand_green_dark" android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Popup ajakan bergabung tampil setiap aplikasi dibuka. Ubah tautannya di sini bila grup berganti."
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp" />
+
+        <com.google.android.material.textfield.TextInputLayout style="@style/Widget.Herbalindo.Input" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:hint="@string/wa_setting_label">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/set_wa_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/wa_setting_hint"
+                android:inputType="textUri"
+                android:maxLines="1" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Switch
+            android:id="@+id/set_wa_popup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/wa_popup_label" />
+
+        <Button
+            android:id="@+id/set_wa_test"
+            style="@style/Widget.Herbalindo.Button.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Pratinjau Popup WhatsApp" />
+
         <Button
             android:id="@+id/set_save"
             style="@style/Widget.Herbalindo.Button"

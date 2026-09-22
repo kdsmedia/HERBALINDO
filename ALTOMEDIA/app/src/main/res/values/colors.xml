@@ -28,4 +28,10 @@
     <color name="status_cancel">#C62828</color>
 
     <color name="splash_bg">#1B5E20</color>
+
+    <!-- Ajakan bergabung grup WhatsApp -->
+    <color name="wa_green_dark">#128C4B</color>
+    <color name="wa_green">#25D366</color>
+    <color name="wa_banner_end">#0B6E3A</color>
+    <color name="scrim">#66000000</color>
 </resources>

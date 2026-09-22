@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.altomedia.herbalindo.R;
 import com.altomedia.herbalindo.core.Session;
 import com.altomedia.herbalindo.data.Models;
+import com.altomedia.herbalindo.data.Repository;
 import com.altomedia.herbalindo.ui.admin.AdminActivity;
 import com.altomedia.herbalindo.ui.member.MemberActivity;
 
@@ -38,6 +39,9 @@ public class SplashActivity extends AppCompatActivity {
                 Toast.makeText(this, "Kode referral " + code + " akan dipakai saat mendaftar", Toast.LENGTH_LONG).show();
             }
         }
+        // Popup ajakan bergabung ditampilkan saat aplikasi dibuka, sebelum
+        // pengguna berpindah ke layar berikutnya.
+        WhatsappPromo.maybeShow(this, Repository.get(this));
         // Jeda singkat agar merek terbaca, lalu lanjut ke layar berikutnya.
         findViewById(R.id.splash_root).postDelayed(this::route, 900);
     }

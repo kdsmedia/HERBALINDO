@@ -1175,6 +1175,141 @@ public class Repository {
         log(adminId, "MEMBER_FRAUD", userId, flag ? "DITANDAI" : "DIBERSIHKAN");
     }
 
+    /* ================= KELOLA MEMBER (ADMIN) ================= */
+
+    /**
+     * Mencari member berdasarkan Referral ID, User ID, nomor HP, atau email.
+     *
+     * Pencarian mengabaikan huruf besar/kecil dan spasi di ujung, karena admin
+     * sering menempelkan data dari sumber lain. Hanya akun berperan MEMBER yang
+     * dikembalikan agar akun admin tidak dapat diubah dari daftar member.
+     */
+    public List<Models.User> searchMembers(String query) {
+        List<Models.User> out = new ArrayList<>();
+        String q = query == null ? "" : query.trim().toLowerCase(java.util.Locale.US);
+        if (q.isEmpty()) return members();
+        for (Models.User u : members()) {
+            if (matches(u.userId, q) || matches(u.referralId, q) || matches(u.email, q)
+                    || matches(u.phone, q) || matches(u.name, q)) out.add(u);
+        }
+        return out;
+    }
+
+    private static boolean matches(String value, String query) {
+        return value != null && value.toLowerCase(java.util.Locale.US).contains(query);
+    }
+
+    /**
+     * Menyunting data pokok member dari panel admin.
+     *
+     * Nomor HP dan email wajib tetap unik antar akun: bila duplikat dibiarkan,
+     * satu nomor dapat dipakai dua akun dan proses masuk menjadi tidak jelas
+     * akun mana yang dibuka. Kata sandi hanya diganti bila diisi.
+     */
+    public void adminUpdateMember(String userId, String name, String email, String phone,
+                                  String newPassword, String adminId) throws RuleException {
+        Models.User u = user(userId);
+        if (u == null) throw new RuleException("Member tidak ditemukan");
+        String n = name == null ? "" : name.trim();
+        if (n.length() < 3) throw new RuleException("Nama minimal 3 karakter");
+
+        String e = email == null ? "" : email.trim();
+        String p = phone == null ? "" : phone.trim();
+        if (!e.isEmpty() && !Util.isEmail(e)) throw new RuleException("Format email tidak valid");
+        if (!p.isEmpty() && !Util.isPhone(p)) throw new RuleException("Nomor HP tidak valid (contoh 08xxxxxxxxxx)");
+        if (e.isEmpty() && p.isEmpty()) throw new RuleException("Email atau nomor HP wajib diisi");
+
+        for (Models.User other : allUsers()) {
+            if (other.userId.equals(userId)) continue;
+            if (!e.isEmpty() && other.email != null && other.email.toLowerCase(java.util.Locale.US)
+                    .equals(e.toLowerCase(java.util.Locale.US)))
+                throw new RuleException("Email sudah dipakai akun lain");
+            if (!p.isEmpty() && p.equals(other.phone))
+                throw new RuleException("Nomor HP sudah dipakai akun lain");
+        }
+
+        StringBuilder changes = new StringBuilder();
+        if (!n.equals(u.name)) changes.append("nama; ");
+        if (!e.equals(u.email)) changes.append("email; ");
+        if (!p.equals(u.phone)) changes.append("HP; ");
+
+        u.name = n;
+        u.email = e;
+        u.phone = p;
+        if (!Util.isBlank(newPassword)) {
+            if (newPassword.length() < 6) throw new RuleException("Password minimal 6 karakter");
+            String salt = PasswordHasher.newSalt();
+            u.salt = salt;
+            u.passwordHash = PasswordHasher.hash(newPassword, salt);
+            changes.append("password; ");
+        }
+        saveUser(u);
+        log(adminId, "MEMBER_EDIT", userId,
+                changes.length() == 0 ? "tanpa perubahan" : changes.toString().trim());
+    }
+
+    /**
+     * Menghapus akun member beserta seluruh data yang menjadi miliknya.
+     *
+     * Data yang dihapus meliputi keranjang tersimpan, ledger poin, reward iklan,
+     * tugas harian, event XP, pengajuan withdrawal, order beserta itemnya,
+     * pembayaran, dan catatan referral — baik sebagai pengundang maupun yang
+     * diundang. Tanpa pembersihan ini, sisa dokumen akan merujuk ke akun yang
+     * sudah tidak ada dan membuat laporan admin salah hitung.
+     */
+    public void adminDeleteMember(String userId, String reason, String adminId) throws RuleException {
+        Models.User u = user(userId);
+        if (u == null) throw new RuleException("Member tidak ditemukan");
+        if ("ADMIN".equals(u.role)) throw new RuleException("Akun admin tidak dapat dihapus");
+        if (Util.isBlank(reason) || reason.trim().length() < 3) throw new RuleException("Alasan wajib diisi");
+
+        // Order milik member dihapus lebih dulu; item pesanan tersimpan di
+        // dalam dokumen order, jadi cukup dokumen ordernya.
+        for (Models.Order o : allOrders()) {
+            if (!userId.equals(o.userId)) continue;
+            db.delete(Config.C_ORDERS, o.orderId);
+        }
+        for (String id : db.all(Config.C_PAYMENTS)) removeIfOwner(Config.C_PAYMENTS, id, "orderId", orderIdsOf(userId));
+        for (String id : db.all(Config.C_POINTS_LEDGER)) removeIfOwner(Config.C_POINTS_LEDGER, id, "userId", userId);
+        for (String id : db.all(Config.C_AD_REWARDS)) removeIfOwner(Config.C_AD_REWARDS, id, "userId", userId);
+        for (String id : db.all(Config.C_DAILY_TASKS)) removeIfOwner(Config.C_DAILY_TASKS, id, "userId", userId);
+        for (String id : db.all(Config.C_XP_EVENTS)) removeIfOwner(Config.C_XP_EVENTS, id, "userId", userId);
+        for (Models.Withdrawal w : allWithdrawals()) {
+            if (userId.equals(w.userId)) db.delete(Config.C_WITHDRAWALS, w.withdrawalId);
+        }
+        for (Models.Referral r : allReferrals()) {
+            if (userId.equals(r.inviterId) || userId.equals(r.invitedUserId)) {
+                db.delete(Config.C_REFERRALS, r.referralId);
+            }
+        }
+
+        db.delete(Config.C_USERS, userId);
+        log(adminId, "MEMBER_DELETE", userId, u.name + " | " + u.contact() + " | " + reason.trim());
+    }
+
+    /** Daftar orderId milik seorang member, dipakai untuk menelusuri pembayaran. */
+    private java.util.Set<String> orderIdsOf(String userId) {
+        java.util.Set<String> ids = new java.util.HashSet<>();
+        for (Models.Order o : allOrders()) if (userId.equals(o.userId)) ids.add(o.orderId);
+        return ids;
+    }
+
+    /** Menghapus dokumen bila kolom penanda pada JSON-nya cocok dengan nilai. */
+    private void removeIfOwner(String collection, String docId, String field, String value) {
+        try {
+            JSONObject o = new JSONObject(db.get(collection, docId));
+            if (value != null && value.equals(o.optString(field))) db.delete(collection, docId);
+        } catch (Exception ignored) { }
+    }
+
+    /** Menghapus dokumen bila kolom penanda pada JSON-nya ada di dalam himpunan. */
+    private void removeIfOwner(String collection, String docId, String field, java.util.Set<String> values) {
+        try {
+            JSONObject o = new JSONObject(db.get(collection, docId));
+            if (values.contains(o.optString(field))) db.delete(collection, docId);
+        } catch (Exception ignored) { }
+    }
+
     /* ================= DETEKSI FRAUD (BAB 13.4) ================= */
 
     /** Satu temuan pemeriksaan anti-fraud beserta alasan yang dapat dibaca admin. */

@@ -18,6 +18,7 @@ class MembersSection {
 
     private final AdminActivity a;
     private View root;
+    private EditText search;
 
     MembersSection(AdminActivity a) { this.a = a; }
 
@@ -30,8 +31,43 @@ class MembersSection {
             scan.setVisibility(View.VISIBLE);
             scan.setText("Cek Fraud");
             scan.setOnClickListener(v -> openFraudReport());
+
+            // Kotak pencarian disisipkan di atas daftar. Diletakkan pada kode
+            // agar tata letak bagian lain tidak perlu diubah.
+            LinearLayout host = (LinearLayout) root.findViewById(R.id.sec_list).getParent();
+            int listIndex = host.indexOfChild(root.findViewById(R.id.sec_list));
+            host.addView(buildSearchBar(), listIndex);
         }
         return root;
+    }
+
+    /** Kotak pencarian member berdasarkan ID, nomor HP, atau email. */
+    private View buildSearchBar() {
+        LinearLayout wrap = new LinearLayout(a);
+        wrap.setOrientation(LinearLayout.VERTICAL);
+        wrap.setPadding(0, 0, 0, 8);
+
+        search = new EditText(a);
+        search.setHint("Cari ID / nomor HP / email / nama");
+        search.setSingleLine(true);
+        search.setInputType(android.text.InputType.TYPE_CLASS_TEXT);
+        search.setBackgroundResource(R.drawable.bg_box);
+        search.setPadding(24, 18, 24, 18);
+        search.addTextChangedListener(new android.text.TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int st, int c, int af) { }
+            @Override public void onTextChanged(CharSequence s, int st, int b, int c) { }
+            @Override public void afterTextChanged(android.text.Editable s) { render(); }
+        });
+
+        TextView hint = new TextView(a);
+        hint.setText("Kosongkan untuk menampilkan semua member.");
+        hint.setTextSize(11);
+        hint.setTextColor(androidx.core.content.ContextCompat.getColor(a, R.color.text_secondary));
+        hint.setPadding(4, 6, 0, 0);
+
+        wrap.addView(search);
+        wrap.addView(hint);
+        return wrap;
     }
 
     void refresh() { if (root != null) render(); }
@@ -39,11 +75,14 @@ class MembersSection {
     private void render() {
         LinearLayout list = root.findViewById(R.id.sec_list);
         list.removeAllViews();
-        for (Models.User u : a.repo().members()) {
+        String q = search == null || search.getText() == null ? "" : search.getText().toString();
+        java.util.List<Models.User> found = a.repo().searchMembers(q);
+        for (Models.User u : found) {
             View card = LayoutInflater.from(a).inflate(R.layout.item_admin_card, null, false);
             ((TextView) card.findViewById(R.id.ac_title)).setText(u.name);
             ((TextView) card.findViewById(R.id.ac_sub)).setText(
-                    u.contact() + " · REF " + u.referralId + "\nDaftar " + Util.dateOnly(u.createdAt));
+                    u.contact() + " · REF " + u.referralId + "\nID " + u.userId
+                            + " · Daftar " + Util.dateOnly(u.createdAt));
             TextView badge = card.findViewById(R.id.ac_badge);
             badge.setText(u.status + (u.fraudFlag ? " · FRAUD" : ""));
             badge.setTextColor(androidx.core.content.ContextCompat.getColor(a, u.fraudFlag ? R.color.danger
@@ -62,16 +101,20 @@ class MembersSection {
 
             LinearLayout actions = card.findViewById(R.id.ac_actions);
             actions.removeAllViews();
+            actions.addView(action("Edit Data", R.color.info, v -> editMember(u)));
             actions.addView(action("+ Saldo", R.color.success, v -> adjustBalance(u, 1)));
             actions.addView(action("− Saldo", R.color.warning, v -> adjustBalance(u, -1)));
             actions.addView(action("Tetapkan Poin", R.color.brand_accent_dark, v -> setPoints(u)));
-            actions.addView(action(u.fraudFlag ? "Hapus Fraud" : "Tandai Fraud", R.color.danger, v -> toggleFraud(u)));
-            actions.addView(action("ACTIVE".equals(u.status) ? "Suspend" : "Aktifkan",
+            actions.addView(action("ACTIVE".equals(u.status) ? "Blokir" : "Aktifkan",
                     R.color.info, v -> toggleStatus(u)));
+            actions.addView(action(u.fraudFlag ? "Hapus Fraud" : "Tandai Fraud", R.color.danger, v -> toggleFraud(u)));
+            actions.addView(action("Hapus Akun", R.color.danger, v -> deleteMember(u)));
             list.addView(card);
         }
-        if (a.repo().members().isEmpty()) {
-            list.addView(AdminActivity.row(a, "Belum ada member terdaftar", "-", R.color.text_secondary));
+        if (found.isEmpty()) {
+            list.addView(AdminActivity.row(a, q.trim().isEmpty()
+                    ? "Belum ada member terdaftar"
+                    : "Tidak ada member yang cocok dengan \"" + q.trim() + "\"", "-", R.color.text_secondary));
         }
     }
 
@@ -203,6 +246,87 @@ class MembersSection {
                 .setMessage(sb.toString())
                 .setNeutralButton("Tutup", null)
                 .setPositiveButton("Tandai Blokir", aksiBlokir)
+                .show();
+    }
+
+    /**
+     * Menyunting data pokok member: nama, email, nomor HP, dan kata sandi.
+     *
+     * Kata sandi dikosongkan secara bawaan — dibiarkan berarti tidak diganti,
+     * sehingga admin tidak perlu mengetik ulang sandi lama yang memang tidak
+     * dapat dibaca dari basis data.
+     */
+    private void editMember(Models.User u) {
+        LinearLayout box = new LinearLayout(a);
+        box.setOrientation(LinearLayout.VERTICAL);
+        box.setPadding(28, 8, 28, 0);
+
+        EditText name = field(box, "Nama lengkap", u.name);
+        EditText email = field(box, "Email (boleh dikosongkan)", u.email);
+        email.setInputType(android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        EditText phone = field(box, "Nomor HP (boleh dikosongkan)", u.phone);
+        phone.setInputType(android.text.InputType.TYPE_CLASS_PHONE);
+        EditText pass = field(box, "Password baru (kosongkan bila tidak diganti)", "");
+        pass.setInputType(android.text.InputType.TYPE_CLASS_TEXT
+                | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+
+        new androidx.appcompat.app.AlertDialog.Builder(a)
+                .setTitle("Edit data " + u.name)
+                .setMessage("ID " + u.userId + " · REF " + u.referralId)
+                .setView(box)
+                .setNegativeButton("Batal", null)
+                .setPositiveButton("Simpan", (d, w) -> {
+                    try {
+                        a.repo().adminUpdateMember(u.userId, name.getText().toString(),
+                                email.getText().toString(), phone.getText().toString(),
+                                pass.getText().toString(), a.user.userId);
+                        a.refreshActive();
+                        Ui.ok(a, "Data " + u.name + " diperbarui");
+                    } catch (Repository.RuleException e) {
+                        Ui.error(a, e.getMessage());
+                    }
+                })
+                .show();
+    }
+
+    private EditText field(LinearLayout box, String hint, String value) {
+        EditText et = new EditText(a);
+        et.setHint(hint);
+        et.setSingleLine(true);
+        et.setText(value == null ? "" : value);
+        box.addView(et);
+        return et;
+    }
+
+    /**
+     * Menghapus akun member. Alasan wajib diisi karena penghapusan bersifat
+     * permanen dan tercatat pada audit log; konfirmasi menyebutkan akibatnya
+     * agar tidak dilakukan karena salah tekan.
+     */
+    private void deleteMember(Models.User u) {
+        LinearLayout box = new LinearLayout(a);
+        box.setOrientation(LinearLayout.VERTICAL);
+        box.setPadding(28, 8, 28, 0);
+        EditText reason = field(box, "Alasan penghapusan (wajib)", "");
+
+        new androidx.appcompat.app.AlertDialog.Builder(a)
+                .setTitle("Hapus akun " + u.name)
+                .setMessage("Akun " + u.contact() + " beserta poin, pesanan, referral, "
+                        + "dan riwayat withdrawal miliknya akan dihapus permanen. "
+                        + "Tindakan ini tidak dapat dibatalkan.")
+                .setView(box)
+                .setNegativeButton("Batal", null)
+                .setPositiveButton("Hapus", (d, w) -> {
+                    String r = reason.getText().toString().trim();
+                    if (r.length() < 3) { Ui.error(a, "Alasan minimal 3 karakter"); return; }
+                    try {
+                        a.repo().adminDeleteMember(u.userId, r, a.user.userId);
+                        a.refreshActive();
+                        Ui.ok(a, "Akun " + u.name + " dihapus");
+                    } catch (Repository.RuleException e) {
+                        Ui.error(a, e.getMessage());
+                    }
+                })
                 .show();
     }
 

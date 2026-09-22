@@ -46,6 +46,9 @@ class SettingsSection {
         ((Switch) root.findViewById(R.id.set_require_ads)).setChecked(draft.requireAdsForWithdraw);
         ((Switch) root.findViewById(R.id.set_purchase_points)).setChecked(draft.purchasePointsEnabled);
         ((Switch) root.findViewById(R.id.set_admob)).setChecked(draft.admobEnabled);
+        text(R.id.set_wa_url, draft.whatsappUrl);
+        ((Switch) root.findViewById(R.id.set_wa_popup)).setChecked(draft.whatsappPopupEnabled);
+        root.findViewById(R.id.set_wa_test).setOnClickListener(v -> previewWhatsapp());
 
         root.findViewById(R.id.set_save).setOnClickListener(v -> save());
         root.findViewById(R.id.set_reset).setOnClickListener(v -> Ui.confirm(a, "Kembalikan ke default",
@@ -72,6 +75,38 @@ class SettingsSection {
     private void set(int id, long value) {
         EditText et = root.findViewById(id);
         if (et != null) et.setText(String.valueOf(value));
+    }
+
+    private void text(int id, String value) {
+        EditText et = root.findViewById(id);
+        if (et != null) et.setText(value == null ? "" : value);
+    }
+
+    private String text(int id) {
+        EditText et = root.findViewById(id);
+        return et == null || et.getText() == null ? "" : et.getText().toString().trim();
+    }
+
+    /**
+     * Menampilkan popup WhatsApp memakai nilai yang sedang diisi admin.
+     *
+     * Tujuannya agar admin dapat memeriksa tampilan dan tautannya sebelum
+     * disimpan, tanpa perlu menutup lalu membuka ulang aplikasi.
+     */
+    private void previewWhatsapp() {
+        String url = text(R.id.set_wa_url);
+        if (!com.altomedia.herbalindo.core.Config.isValidWhatsappUrl(url)) {
+            Ui.error(a, a.getString(R.string.wa_setting_invalid));
+            return;
+        }
+        Models.Settings s = a.repo().settings();
+        s.whatsappUrl = url;
+        s.whatsappPopupEnabled = ((Switch) root.findViewById(R.id.set_wa_popup)).isChecked();
+        if (!s.whatsappPopupEnabled) {
+            Ui.error(a, "Popup sedang dinonaktifkan, aktifkan dulu untuk melihat pratinjau");
+            return;
+        }
+        com.altomedia.herbalindo.ui.WhatsappPromo.preview(a, s.whatsappUrl);
     }
 
     private long get(int id) {
@@ -109,6 +144,9 @@ class SettingsSection {
         if (freeShipping < 0) errors.add(new String[]{"Gratis ongkir mulai", "tidak boleh negatif"});
         if (freeShipping > 0 && freeShipping < shipping)
             errors.add(new String[]{"Gratis ongkir mulai", "harus ≥ ongkir, jika tidak akan selalu gratis"});
+        String waUrl = text(R.id.set_wa_url);
+        if (!com.altomedia.herbalindo.core.Config.isValidWhatsappUrl(waUrl))
+            errors.add(new String[]{"Tautan grup WhatsApp", a.getString(R.string.wa_setting_invalid)});
 
         if (!errors.isEmpty()) {
             StringBuilder sb = new StringBuilder("Perbaiki nilai berikut:\n");
@@ -126,6 +164,8 @@ class SettingsSection {
         s.requireAdsForWithdraw = ((Switch) root.findViewById(R.id.set_require_ads)).isChecked();
         s.purchasePointsEnabled = ((Switch) root.findViewById(R.id.set_purchase_points)).isChecked();
         s.admobEnabled = ((Switch) root.findViewById(R.id.set_admob)).isChecked();
+        s.whatsappUrl = waUrl;
+        s.whatsappPopupEnabled = ((Switch) root.findViewById(R.id.set_wa_popup)).isChecked();
 
         try {
             a.repo().saveSettings(s, a.user.userId);

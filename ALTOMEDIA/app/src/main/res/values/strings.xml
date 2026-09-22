@@ -39,6 +39,27 @@
 
     <!-- Admin -->
     <string name="admin_panel">Panel Admin</string>
+    <string name="admin_menu_open">Buka menu panel admin</string>
+    <string name="admin_section_dash">Ringkasan</string>
+    <string name="admin_section_orders">Pesanan</string>
+    <string name="admin_section_products">Produk &amp; Stok</string>
+    <string name="admin_section_members">Member</string>
+    <string name="admin_section_withdrawals">Withdrawal</string>
+    <string name="admin_section_settings">Pengaturan</string>
+    <string name="admin_section_logs">Audit Log</string>
+
+    <!-- Ajakan bergabung grup WhatsApp -->
+    <string name="wa_title">BERGABUNG WHATSAPP RESMI HERBALINDO</string>
+    <string name="wa_subtitle">Grup resmi untuk informasi produk, promo, dan pendampingan</string>
+    <string name="wa_benefits">Dapatkan info promo terbaru, tips herbal diet, dan bantuan langsung dari tim HERBALINDO. Gratis, tanpa biaya apa pun.</string>
+    <string name="wa_join">JOIN SEKARANG</string>
+    <string name="wa_later">Nanti saja</string>
+    <string name="wa_unavailable">Tautan grup WhatsApp belum tersedia. Hubungi admin.</string>
+    <string name="wa_no_app">Tidak ada aplikasi yang dapat membuka tautan ini</string>
+    <string name="wa_setting_label">Tautan Grup WhatsApp</string>
+    <string name="wa_setting_hint">https://chat.whatsapp.com/…</string>
+    <string name="wa_popup_label">Tampilkan popup WhatsApp saat aplikasi dibuka</string>
+    <string name="wa_setting_invalid">Tautan harus berupa alamat http/https yang sah</string>
 
     <!-- Umum -->
     <string name="loading">Memuat…</string>

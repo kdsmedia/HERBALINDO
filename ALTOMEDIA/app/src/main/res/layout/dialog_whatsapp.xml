@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Popup ajakan bergabung ke grup WhatsApp resmi. Ditampilkan setiap aplikasi
+  dibuka, dengan banner, keterangan singkat, tombol bergabung, dan tombol
+  penutup. Tautan berasal dari pengaturan yang dikelola admin.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_box"
+        android:orientation="vertical">
+
+        <!-- ===================== Banner ===================== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_whatsapp_banner"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingTop="22dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="22dp">
+
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_circle_whatsapp"
+                android:contentDescription="@string/wa_title"
+                android:padding="13dp"
+                android:src="@drawable/ic_whatsapp" />
+
+            <TextView
+                android:id="@+id/wa_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:gravity="center"
+                android:text="@string/wa_title"
+                android:textColor="@color/text_on_brand"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/wa_subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:text="@string/wa_subtitle"
+                android:textColor="#EAFBF0"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- ===================== Isi ===================== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingTop="18dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="18dp">
+
+            <TextView
+                android:id="@+id/wa_benefits"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="3dp"
+                android:text="@string/wa_benefits"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/wa_join"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_whatsapp_button"
+                android:drawableStart="@drawable/ic_whatsapp"
+                android:drawablePadding="8dp"
+                android:gravity="center"
+                android:text="@string/wa_join"
+                android:textAllCaps="false"
+                android:textColor="@color/text_on_brand"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/wa_later"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginTop="8dp"
+                android:background="?attr/selectableItemBackground"
+                android:text="@string/wa_later"
+                android:textAllCaps="false"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

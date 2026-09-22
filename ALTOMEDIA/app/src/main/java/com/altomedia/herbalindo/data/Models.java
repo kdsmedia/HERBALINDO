@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.altomedia.herbalindo.core.Config;
 import com.altomedia.herbalindo.core.Util;
 
 /** Model dokumen. Serialisasi JSON agar sepadan dengan dokumen Firestore (Bab 12). */
@@ -401,6 +402,15 @@ public final class Models {
         public long shippingFlat = 15000, freeShippingMin = 0;
         public boolean admobEnabled = true;
 
+        /*
+         * Ajakan bergabung ke grup WhatsApp resmi. Tautan disimpan pada
+         * pengaturan, bukan ditanam di kode, agar admin dapat menggantinya
+         * tanpa menerbitkan versi baru. Popup hanya tampil bila tautannya
+         * berupa alamat http/https yang sah.
+         */
+        public String whatsappUrl = Config.DEFAULT_WHATSAPP_URL;
+        public boolean whatsappPopupEnabled = true;
+
         public JSONObject toJson() throws JSONException {
             JSONObject o = new JSONObject();
             o.put("pointsPerUnit", pointsPerUnit); o.put("rupiahPerUnit", rupiahPerUnit);
@@ -412,6 +422,8 @@ public final class Models {
             o.put("purchasePointsEnabled", purchasePointsEnabled);
             o.put("shippingFlat", shippingFlat); o.put("freeShippingMin", freeShippingMin);
             o.put("admobEnabled", admobEnabled);
+            o.put("whatsappUrl", whatsappUrl);
+            o.put("whatsappPopupEnabled", whatsappPopupEnabled);
             return o;
         }
         public static Settings from(String json) {
@@ -433,6 +445,8 @@ public final class Models {
                 s.shippingFlat = o.optLong("shippingFlat", 15000);
                 s.freeShippingMin = o.optLong("freeShippingMin", 0);
                 s.admobEnabled = o.optBoolean("admobEnabled", true);
+                s.whatsappUrl = o.optString("whatsappUrl", Config.DEFAULT_WHATSAPP_URL);
+                s.whatsappPopupEnabled = o.optBoolean("whatsappPopupEnabled", true);
             } catch (JSONException ignored) { }
             return s;
         }
