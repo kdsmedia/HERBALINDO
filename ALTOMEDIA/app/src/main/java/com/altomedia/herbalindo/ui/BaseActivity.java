@@ -33,6 +33,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override protected void onResume() {
         super.onResume();
+        // Popup ajakan bergabung dijadwalkan dari layar yang sedang tampil.
+        // Layar pembuka selesai jauh sebelum jedanya berakhir, sehingga layar
+        // berikutnya yang melanjutkan penjadwalan dengan sisa waktu yang sama.
+        WhatsappPromo.schedule(this, repo);
         if (!requiresSession()) return;
         Models.User u = Session.current(this);
         if (u == null) {

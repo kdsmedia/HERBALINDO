@@ -39,9 +39,10 @@ public class SplashActivity extends AppCompatActivity {
                 Toast.makeText(this, "Kode referral " + code + " akan dipakai saat mendaftar", Toast.LENGTH_LONG).show();
             }
         }
-        // Popup ajakan bergabung ditampilkan saat aplikasi dibuka, sebelum
-        // pengguna berpindah ke layar berikutnya.
-        WhatsappPromo.maybeShow(this, Repository.get(this));
+        // Popup ajakan bergabung dijadwalkan satu menit sejak aplikasi dibuka.
+        // Penjadwalan dilakukan di sini karena layar ini pasti dilewati saat
+        // aplikasi dibuka; penampilannya menyusul sesuai jeda.
+        WhatsappPromo.schedule(this, Repository.get(this));
         // Jeda singkat agar merek terbaca, lalu lanjut ke layar berikutnya.
         findViewById(R.id.splash_root).postDelayed(this::route, 900);
     }

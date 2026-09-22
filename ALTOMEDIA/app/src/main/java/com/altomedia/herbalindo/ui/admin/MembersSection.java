@@ -78,8 +78,7 @@ class MembersSection {
             LinearLayout actions = card.findViewById(R.id.ac_actions);
             actions.removeAllViews();
             actions.addView(action("Edit Data", R.color.info, v -> editMember(u)));
-            actions.addView(action("+ Saldo", R.color.success, v -> adjustBalance(u, 1)));
-            actions.addView(action("− Saldo", R.color.warning, v -> adjustBalance(u, -1)));
+            actions.addView(action("Ubah Saldo", R.color.success, v -> adjustBalance(u)));
             actions.addView(action("Tetapkan Poin", R.color.brand_accent_dark, v -> setPoints(u)));
             actions.addView(action("ACTIVE".equals(u.status) ? "Blokir" : "Aktifkan",
                     R.color.info, v -> toggleStatus(u)));
@@ -112,19 +111,43 @@ class MembersSection {
         return b;
     }
 
-    private void adjustBalance(Models.User u, int direction) {
+    /**
+     * Menambah atau mengurangi saldo poin member.
+     *
+     * Arah ditentukan oleh pilihan admin pada dialog, bukan oleh tombol yang
+     * ditekan, supaya tambah dan kurang berada di satu jalur yang sama dan
+     * tidak ada nilai arah yang bisa tertukar.
+     */
+    private void adjustBalance(Models.User u) {
         LinearLayout box = new LinearLayout(a);
         box.setOrientation(LinearLayout.VERTICAL);
         box.setPadding(28, 8, 28, 0);
+
+        android.widget.RadioGroup arah = new android.widget.RadioGroup(a);
+        arah.setOrientation(android.widget.RadioGroup.HORIZONTAL);
+        android.widget.RadioButton tambah = new android.widget.RadioButton(a);
+        tambah.setText("Tambah");
+        tambah.setId(android.view.View.generateViewId());
+        android.widget.RadioButton kurang = new android.widget.RadioButton(a);
+        kurang.setText("Kurangi");
+        kurang.setId(android.view.View.generateViewId());
+        arah.addView(tambah);
+        arah.addView(kurang);
+        arah.check(tambah.getId());
+
         EditText points = new EditText(a);
         points.setHint("Jumlah poin");
+        points.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
         EditText reason = new EditText(a);
         reason.setHint("Alasan (wajib, tercatat di audit log)");
+        box.addView(arah);
         box.addView(points);
         box.addView(reason);
 
         new AlertDialog.Builder(a)
-                .setTitle((direction > 0 ? "Tambah" : "Kurangi") + " poin " + u.name)
+                .setTitle("Ubah saldo " + u.name)
+                .setMessage("Saat ini " + Util.num(u.points) + " poin ("
+                        + Util.rupiah(a.repo().pointsToRupiah(u.points)) + ").")
                 .setView(box)
                 .setNegativeButton("Batal", null)
                 .setPositiveButton("Simpan", (d, w) -> {
@@ -134,10 +157,12 @@ class MembersSection {
                     String r = reason.getText().toString().trim();
                     if (n <= 0) { Ui.error(a, "Jumlah harus lebih dari 0"); return; }
                     if (r.isEmpty()) { Ui.error(a, "Alasan wajib diisi"); return; }
+                    long delta = arah.getCheckedRadioButtonId() == kurang.getId() ? -n : n;
                     try {
-                        a.repo().adminAdjustBalance(u.userId, direction * n, r, a.user.userId);
+                        a.repo().adminAdjustBalance(u.userId, delta, r, a.user.userId);
                         a.refreshActive();
-                        Ui.ok(a, "Saldo " + u.name + " disesuaikan");
+                        Ui.ok(a, "Saldo " + u.name + " " + (delta > 0 ? "ditambah " : "dikurangi ")
+                                + Util.num(n) + " poin");
                     } catch (Repository.RuleException e) {
                         Ui.error(a, e.getMessage());
                     }

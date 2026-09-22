@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +24,16 @@ import com.altomedia.herbalindo.data.Repository;
 /**
  * Popup ajakan bergabung ke grup WhatsApp resmi HERBALINDO.
  *
- * <p>Popup tampil sekali setiap aplikasi dibuka, bukan setiap layar dibuka.
- * Penandanya disimpan pada variabel statis sehingga bertahan selama proses
- * aplikasi hidup dan otomatis kembali bersih ketika proses dimulai ulang.</p>
+ * <p>Popup muncul satu menit setelah aplikasi dibuka, bukan seketika, agar
+ * pengguna sempat melihat layar yang sedang dibuka lebih dulu.</p>
+ *
+ * <p>Jadwalnya disimpan pada variabel statis sehingga bertahan selama proses
+ * aplikasi hidup: begitu dijadwalkan, layar lain tidak menjadwalkan ulang, dan
+ * penandanya otomatis bersih ketika proses dimulai ulang. Waktu tunggunya
+ * dilekatkan pada layar yang menjadwalkan; bila layar itu sudah tidak aktif
+ * saat waktunya tiba — misalnya pengguna sudah berpindah layar — popup dijadwalkan
+ * ulang pada layar yang sedang tampil, dan dibatalkan bila aplikasi sudah
+ * tidak terlihat sama sekali.</p>
  *
  * <p>Tautan dibaca dari pengaturan yang dikelola admin. Bila admin
  * mengosongkan atau mematikan tautannya, popup tidak ditampilkan sama sekali —
@@ -32,29 +41,87 @@ import com.altomedia.herbalindo.data.Repository;
  */
 public final class WhatsappPromo {
 
-    /** Penanda sekali pakai untuk satu kali hidup proses aplikasi. */
-    private static boolean shownThisLaunch = false;
+    /** Keadaan popup selama satu kali hidup proses aplikasi. */
+    private enum State { BELUM, TERJADWAL, SELESAI }
+
+    private static final Handler HANDLER = new Handler(Looper.getMainLooper());
+    private static State state = State.BELUM;
+    private static Runnable pending;
+    /** Waktu aplikasi dibuka, dipakai agar jeda tetap dihitung dari awal. */
+    private static long dibukaPada;
+    /** Layar yang sedang tampil, menjadi sasaran popup bila layar penjadwal selesai. */
+    private static java.lang.ref.WeakReference<Activity> layarAktif;
 
     private WhatsappPromo() { }
 
     /** Dipakai pengujian agar tiap kasus uji dapat menguji tampilnya popup. */
-    public static void resetForTest() { shownThisLaunch = false; }
+    public static void resetForTest() {
+        if (pending != null) HANDLER.removeCallbacks(pending);
+        pending = null;
+        state = State.BELUM;
+        dibukaPada = 0L;
+        layarAktif = null;
+    }
 
-    static boolean hasShown() { return shownThisLaunch; }
+    /** {@code true} bila popup sudah pernah ditampilkan pada proses ini. */
+    public static boolean hasShown() { return state == State.SELESAI; }
+
+    /** Mencatat layar yang sedang tampil sebagai sasaran popup. */
+    public static void onActivityResumed(Activity a) {
+        layarAktif = new java.lang.ref.WeakReference<>(a);
+    }
+
+    /** Melepas catatan layar saat layar itu tidak lagi tampil. */
+    public static void onActivityPaused(Activity a) {
+        if (layarAktif != null && layarAktif.get() == a) layarAktif = null;
+    }
 
     /**
-     * Menampilkan popup bila aturannya terpenuhi.
+     * Menjadwalkan popup satu menit sejak aplikasi dibuka.
      *
-     * @return {@code true} bila popup benar-benar ditampilkan.
+     * <p>Perlu dipanggil berulang karena layar yang menjadwalkan bisa berpindah —
+     * layar pembuka selesai jauh sebelum satu menit berlalu. Waktu aplikasi
+     * dibuka dicatat sekali, sehingga jeda tetap dihitung sejak awal walau
+     * penjadwalan berpindah layar. Bila waktunya tiba saat layar penjadwal
+     * sudah selesai, popup ditampilkan pada layar yang sedang tampil.</p>
+     *
+     * @return {@code true} bila popup dijadwalkan pada pemanggilan ini.
      */
-    public static boolean maybeShow(Activity a, Repository repo) {
-        if (a == null || a.isFinishing() || shownThisLaunch) return false;
-        Models.Settings s = repo == null ? new Models.Settings() : repo.settings();
-        if (!s.whatsappPopupEnabled) return false;
-        if (!Config.isValidWhatsappUrl(s.whatsappUrl)) return false;
-        shownThisLaunch = true;
-        show(a, s.whatsappUrl);
+    public static boolean schedule(Activity a, Repository repo) {
+        if (a == null || a.isFinishing()) return false;
+        if (state != State.BELUM) return false;
+        if (!isDiizinkan(repo)) return false;
+
+        if (dibukaPada == 0L) dibukaPada = android.os.SystemClock.elapsedRealtime();
+        long sisa = Config.WHATSAPP_POPUP_DELAY_MS
+                - (android.os.SystemClock.elapsedRealtime() - dibukaPada);
+        if (sisa < 0L) sisa = 0L;
+
+        state = State.TERJADWAL;
+        final Repository r = repo;
+        pending = () -> {
+            pending = null;
+            Activity sasaran = a;
+            if (sasaran.isFinishing() || sasaran.isDestroyed()) {
+                sasaran = layarAktif == null ? null : layarAktif.get();
+            }
+            if (sasaran == null || sasaran.isFinishing() || sasaran.isDestroyed()) {
+                // Aplikasi tidak sedang terlihat; biarkan layar berikutnya yang
+                // menampilkan, dan jedanya sudah terlewati.
+                state = State.BELUM;
+                return;
+            }
+            state = State.SELESAI;
+            show(sasaran, r.settings().whatsappUrl);
+        };
+        HANDLER.postDelayed(pending, sisa);
         return true;
+    }
+
+    /** Popup ditampilkan hanya bila diaktifkan admin dan tautannya sah. */
+    private static boolean isDiizinkan(Repository repo) {
+        Models.Settings s = repo == null ? new Models.Settings() : repo.settings();
+        return s.whatsappPopupEnabled && Config.isValidWhatsappUrl(s.whatsappUrl);
     }
 
     /**
@@ -96,7 +163,13 @@ public final class WhatsappPromo {
         Window shown = dialog.getWindow();
         if (shown != null) {
             shown.setBackgroundDrawableResource(android.R.color.transparent);
-            shown.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            // Lebar dibatasi agar popup tidak melebar penuh pada layar besar
+            // maupun tablet; pada layar sempit nilai ini tetap dipakai apa adanya.
+            android.util.DisplayMetrics m = a.getResources().getDisplayMetrics();
+            int lebar = (int) (m.widthPixels * 0.88f);
+            int batas = (int) (320 * m.density);
+            if (lebar > batas) lebar = batas;
+            shown.setLayout(lebar, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
     }
 

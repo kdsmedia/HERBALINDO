@@ -13,6 +13,46 @@ saja.
 
 
 ================================================================================
+VERSI 1.0.4 (versionCode 5)
+Tanggal: 20 September 2026
+================================================================================
+
+PEMBARUAN
+
+Ringkasan untuk Play Console (salin bagian ini):
+
+    Pembaruan HERBALINDO.
+
+    - Perbaikan menu Member pada panel admin agar tidak berhenti
+    - Popup ajakan bergabung ke grup WhatsApp muncul satu menit setelah aplikasi dibuka
+    - Ukuran popup WhatsApp diperkecil agar tidak menutupi isi layar
+
+Rincian lengkap:
+
+Perbaikan
+    - Menu Member pada panel admin tidak lagi berhenti saat menampilkan daftar.
+      Penyebabnya pencarian akun pengundang memakai nomor kosong pada member
+      yang mendaftar sendiri; pencarian dengan nilai kosong kini dikembalikan
+      sebagai "tidak ditemukan", bukan menghentikan aplikasi.
+    - Kartu member tanpa pengundang menampilkan tanda pisah "—" pada keterangan
+      "Diundang oleh", bukan nilai kosong.
+
+Perubahan
+    - Popup ajakan bergabung ke grup WhatsApp kini muncul satu menit setelah
+      aplikasi dibuka, bukan seketika, sehingga isi layar sempat terbaca lebih
+      dulu. Waktu tunggunya dihitung sejak aplikasi dibuka dan tetap berjalan
+      walau layar pembuka sudah selesai; popup menyusul pada layar yang sedang
+      tampil.
+    - Ukuran popup WhatsApp diperkecil: banner, ikon, teks, tombol, dan jarak
+      antar bagian dikurangi, serta lebarnya dibatasi pada layar besar.
+
+PENGUJIAN
+    - 198 pengujian otomatis lulus, tanpa lint error.
+    - Pengujian regresi khusus membuka menu Member pada basis data SQLite nyata,
+      termasuk member tanpa pengundang dan member dengan pengundang.
+
+================================================================================
+
 VERSI 1.0.3 (versionCode 4)
 Tanggal: 20 September 2026
 ================================================================================

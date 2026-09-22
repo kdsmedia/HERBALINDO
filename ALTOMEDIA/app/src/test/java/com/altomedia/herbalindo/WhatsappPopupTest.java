@@ -17,6 +17,7 @@ import com.altomedia.herbalindo.data.Models;
 import com.altomedia.herbalindo.data.Repository;
 import com.altomedia.herbalindo.ui.SplashActivity;
 import com.altomedia.herbalindo.ui.WhatsappPromo;
+import com.altomedia.herbalindo.ui.member.MemberActivity;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -52,13 +53,20 @@ public class WhatsappPopupTest {
         assertEquals(com.altomedia.herbalindo.core.Config.DEFAULT_WHATSAPP_URL, Repository.get(ctx).settings().whatsappUrl);
     }
 
-    /** Popup tampil saat aplikasi dibuka dan berisi judul serta tombol JOIN. */
-    @Test public void popupTampilSaatAplikasiDibuka() {
-        ActivityController<SplashActivity> c = Robolectric.buildActivity(SplashActivity.class).setup();
-        SplashActivity a = c.get();
+    /** Popup muncul satu menit setelah aplikasi dibuka, bukan seketika. */
+    @Test public void popupTampilSatuMenitSetelahAplikasiDibuka() {
+        ActivityController<MemberActivity> c = launchMember();
+        MemberActivity a = c.get();
 
+        assertEquals("Popup tampil terlalu cepat", null, lastDialog(a));
+
+        // Belum genap satu menit: popup tetap belum muncul.
+        ShadowLooper.idleMainLooper(59, java.util.concurrent.TimeUnit.SECONDS);
+        assertNull("Popup tampil sebelum jeda satu menit", lastDialog(a));
+
+        ShadowLooper.idleMainLooper(2, java.util.concurrent.TimeUnit.SECONDS);
         android.app.Dialog dialog = lastDialog(a);
-        assertNotNull("Popup WhatsApp tidak tampil saat aplikasi dibuka", dialog);
+        assertNotNull("Popup tidak tampil setelah jeda satu menit", dialog);
         assertTrue(dialog.isShowing());
 
         TextView title = dialog.findViewById(R.id.wa_title);
@@ -72,14 +80,31 @@ public class WhatsappPopupTest {
         c.pause().stop().destroy();
     }
 
+    /** Popup tetap muncul walau layar pembuka sudah selesai jauh sebelumnya. */
+    @Test public void popupTetapMunculSetelahLayarPembukaSelesai() {
+        ActivityController<SplashActivity> splash =
+                Robolectric.buildActivity(SplashActivity.class).setup();
+        assertNull("Popup tampil seketika di layar pembuka", lastDialog(splash.get()));
+        splash.pause().stop().destroy();
+
+        ActivityController<MemberActivity> c = launchMember();
+        MemberActivity a = c.get();
+        ShadowLooper.idleMainLooper(61, java.util.concurrent.TimeUnit.SECONDS);
+        assertNotNull("Popup hilang karena layar pembuka sudah selesai", lastDialog(a));
+        lastDialog(a).dismiss();
+        c.pause().stop().destroy();
+    }
+
     /** Popup hanya sekali per proses, bukan setiap layar dibuka. */
     @Test public void popupHanyaSekaliPerProses() {
-        ActivityController<SplashActivity> c1 = Robolectric.buildActivity(SplashActivity.class).setup();
+        ActivityController<MemberActivity> c1 = launchMember();
+        ShadowLooper.idleMainLooper(61, java.util.concurrent.TimeUnit.SECONDS);
         assertNotNull(lastDialog(c1.get()));
         lastDialog(c1.get()).dismiss();
         c1.pause().stop().destroy();
 
-        ActivityController<SplashActivity> c2 = Robolectric.buildActivity(SplashActivity.class).setup();
+        ActivityController<MemberActivity> c2 = launchMember();
+        ShadowLooper.idleMainLooper(61, java.util.concurrent.TimeUnit.SECONDS);
         assertNull("Popup muncul lagi padahal proses aplikasi belum dimulai ulang",
                 lastDialog(c2.get()));
         c2.pause().stop().destroy();
@@ -92,8 +117,9 @@ public class WhatsappPopupTest {
         s.whatsappUrl = "https://chat.whatsapp.com/GrupBaruSetelahGanti";
         r.saveSettings(s, null);
 
-        ActivityController<SplashActivity> c = Robolectric.buildActivity(SplashActivity.class).setup();
-        SplashActivity a = c.get();
+        ActivityController<MemberActivity> c = launchMember();
+        MemberActivity a = c.get();
+        ShadowLooper.idleMainLooper(61, java.util.concurrent.TimeUnit.SECONDS);
         android.app.Dialog dialog = lastDialog(a);
         assertNotNull(dialog);
         dialog.findViewById(R.id.wa_join).performClick();
@@ -112,7 +138,8 @@ public class WhatsappPopupTest {
         s.whatsappPopupEnabled = false;
         r.saveSettings(s, null);
 
-        ActivityController<SplashActivity> c = Robolectric.buildActivity(SplashActivity.class).setup();
+        ActivityController<MemberActivity> c = launchMember();
+        ShadowLooper.idleMainLooper(61, java.util.concurrent.TimeUnit.SECONDS);
         assertNull("Popup masih tampil padahal dimatikan admin", lastDialog(c.get()));
         c.pause().stop().destroy();
     }
@@ -134,9 +161,18 @@ public class WhatsappPopupTest {
         s.whatsappUrl = "javascript:alert(1)";
         r.saveSettings(s, null);
 
-        ActivityController<SplashActivity> c = Robolectric.buildActivity(SplashActivity.class).setup();
+        ActivityController<MemberActivity> c = launchMember();
+        ShadowLooper.idleMainLooper(61, java.util.concurrent.TimeUnit.SECONDS);
         assertNull("Popup dibuka memakai tautan tidak sah", lastDialog(c.get()));
         c.pause().stop().destroy();
+    }
+
+    /** Layar member dengan sesi aktif, dipakai sebagai layar tempat popup menyusul. */
+    private ActivityController<MemberActivity> launchMember() {
+        Repository r = Repository.get(ctx);
+        Models.User u = r.user("USR-ADMIN");
+        Session.set(ctx, u);
+        return Robolectric.buildActivity(MemberActivity.class).setup();
     }
 
     /** Pengaturan WhatsApp bertahan setelah disimpan dan dibaca ulang. */
@@ -152,19 +188,19 @@ public class WhatsappPopupTest {
         assertFalse(again.whatsappPopupEnabled);
     }
 
-    /** Popup tetap dapat ditampilkan setelah penanda direset (pratinjau admin). */
+    /** Pratinjau admin menampilkan popup walau jeda satu menit belum lewat. */
     @Test public void pratinjauAdminMenampilkanPopup() {
         ActivityController<SplashActivity> c = Robolectric.buildActivity(SplashActivity.class).setup();
         SplashActivity a = c.get();
-        android.app.Dialog first = lastDialog(a);
-        assertNotNull(first);
-        first.dismiss();
 
         WhatsappPromo.preview(a, "https://chat.whatsapp.com/PratinjauAdmin");
-        android.app.Dialog second = lastDialog(a);
-        assertNotNull("Pratinjau admin tidak menampilkan popup", second);
-        assertTrue(second.isShowing());
-        second.dismiss();
+        android.app.Dialog shown = lastDialog(a);
+        assertNotNull("Pratinjau admin tidak menampilkan popup", shown);
+        assertTrue(shown.isShowing());
+
+        // Pratinjau tidak boleh menghabiskan jatah popup saat aplikasi dibuka.
+        assertFalse("Pratinjau menandai popup sebagai sudah tampil", WhatsappPromo.hasShown());
+        shown.dismiss();
         c.pause().stop().destroy();
     }
 

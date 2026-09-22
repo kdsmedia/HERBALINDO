@@ -36,7 +36,11 @@ public class DbStoreTest {
 
     @Before public void setUp() {
         ctx = ApplicationProvider.getApplicationContext();
-        ctx.deleteDatabase(Config.DB_NAME);
+        // Repository dan basis data adalah instans tunggal yang bertahan lintas
+        // berkas uji, sehingga isinya perlu dikosongkan pada penyimpanan yang
+        // sedang dipakai, bukan pada berkas basis data.
+        Db.get(ctx).wipeAll();
+        Repository.with(Db.get(ctx));
     }
 
     /** Aplikasi menyiapkan aturan bisnis dan data awal sebelum layar pertama tampil. */

@@ -53,6 +53,14 @@ public final class Config {
     public static final String WHATSAPP_TITLE = "BERGABUNG WHATSAPP RESMI HERBALINDO";
 
     /**
+     * Jeda sebelum popup WhatsApp muncul sejak aplikasi dibuka.
+     *
+     * Popup sengaja tidak tampil seketika agar pengguna sempat melihat layar
+     * yang sedang dibuka lebih dulu, baru kemudian ditawari bergabung.
+     */
+    public static final long WHATSAPP_POPUP_DELAY_MS = 60_000L;
+
+    /**
      * Memeriksa tautan ajakan bergabung.
      *
      * Hanya alamat http/https yang diterima. Tautan dengan skema lain

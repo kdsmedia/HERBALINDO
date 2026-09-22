@@ -63,6 +63,11 @@ public class Db extends SQLiteOpenHelper implements Store {
 
     @Override
     public String get(String collection, String docId) {
+        // Nilai null muncul dari data yang saling merujuk, misalnya member yang
+        // tidak punya pengundang. SQLite menolak mengikat null sebagai argumen
+        // kueri, sehingga harus ditangani di sini agar hasilnya sama dengan
+        // penyimpanan memori, yaitu tidak ditemukan.
+        if (docId == null || collection == null) return null;
         Cursor c = getReadableDatabase().query("docs", new String[]{"data"},
                 "collection = ? AND doc_id = ?", new String[]{collection, docId}, null, null, null);
         try {
