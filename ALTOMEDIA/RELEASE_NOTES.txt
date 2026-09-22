@@ -13,6 +13,55 @@ saja.
 
 
 ================================================================================
+VERSI 1.0.5 (versionCode 6)
+Tanggal: 20 September 2026
+================================================================================
+
+PEMBARUAN
+
+Ringkasan untuk Play Console (salin bagian ini):
+
+    Pembaruan HERBALINDO.
+
+    - Status akun terverifikasi kini cukup dari pembelian minimal Rp50.000
+    - Bonus referral baru diberikan setelah akun bawahan aktif terverifikasi
+    - Status akun ditampilkan seragam, misalnya "AKTIF TERVERIFIKASI"
+
+PERUBAHAN ATURAN
+
+    - Syarat verifikasi akun hanya nilai pembelian. Pesanan lunas yang totalnya
+      mencapai ambang (bawaan Rp50.000) membuat akun berstatus aktif
+      terverifikasi. Pengundang tidak lagi diperlukan, sehingga member yang
+      mendaftar sendiri pun dapat terverifikasi.
+    - Bonus referral bagi pengundang baru dibayarkan setelah akun bawahan
+      berstatus aktif terverifikasi. Akun yang ditangguhkan atau belum mencapai
+      ambang pembelian tidak dianggap terverifikasi, dan bonusnya tidak
+      dibayarkan.
+    - Syarat verifikasi dievaluasi ulang dari seluruh pesanan. Refund satu
+      pesanan tidak lagi otomatis mencabut status terverifikasi selama masih
+      ada pesanan lunas lain yang memenuhi ambang.
+    - Ambang verifikasi dapat diubah Admin pada menu Pengaturan, dengan label
+      "Minimum pembelian agar akun terverifikasi (Rp)".
+    - Pengaturan lama pada perangkat yang sudah terpasang tetap terbaca, jadi
+      ambang yang pernah diatur Admin tidak kembali ke nilai bawaan.
+
+TAMPILAN
+
+    - Status akun pada Home dan Profil kini menampilkan nama status diikuti
+      keterangan verifikasi, misalnya "AKTIF TERVERIFIKASI", dan disamakan
+      penulisannya di seluruh layar termasuk panel Admin.
+    - Teks tugas referral dan teks undangan menjelaskan bahwa bonus diberikan
+      setelah akun teman terverifikasi.
+
+PENGUJIAN
+
+    - 200 pengujian otomatis lulus, tanpa lint error.
+    - Pengujian baru: member tanpa pengundang tetap terverifikasi setelah
+      pembelian memenuhi ambang, pesanan di bawah ambang tidak memverifikasi
+      akun dan tidak memberi bonus, serta akun bawahan yang ditangguhkan tidak
+      memberi bonus referral.
+
+================================================================================
 VERSI 1.0.4 (versionCode 5)
 Tanggal: 20 September 2026
 ================================================================================

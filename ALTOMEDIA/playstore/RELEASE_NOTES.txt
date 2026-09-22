@@ -35,6 +35,53 @@ CARA BERKAS INI DIKELOLA (WAJIB DIBACA SEBELUM MENAMBAH CATATAN)
    catatan versi lama tanpa penyesuaian.
 
 ================================================================================
+VERSI 1.0.5 — 20 SEPTEMBER 2026
+================================================================================
+versionName    : 1.0.5
+versionCode    : 6
+Tanggal rilis   : 20 September 2026
+Saluran         : Rilis produksi (Google Play + APK distribusi langsung)
+Status          : Pembaruan perubahan aturan (rule update release)
+
+--------------------------------------------------------------------------------
+RINGKASAN PEMBARUAN
+--------------------------------------------------------------------------------
+
+Status akun terverifikasi kini ditentukan semata-mata oleh nilai pembelian.
+Pesanan yang sudah lunas dan diverifikasi Admin dengan total mencapai ambang
+(bawaan Rp50.000) membuat akun berstatus aktif terverifikasi, tanpa perlu
+memiliki pengundang. Bonus referral bagi pengundang baru dibayarkan setelah
+akun bawahan berstatus aktif terverifikasi.
+
+--------------------------------------------------------------------------------
+FITUR BARU / PERUBAHAN
+--------------------------------------------------------------------------------
+1. Verifikasi akun: syaratnya hanya nilai pembelian. Member yang mendaftar
+   tanpa Kode Referral pun dapat berstatus aktif terverifikasi.
+2. Bonus referral mengikuti status bawahan. Selama akun bawahan belum
+   terverifikasi atau ditangguhkan, bonus untuk pengundang tidak dibayarkan.
+3. Panel admin > Pengaturan: ambang pembelian verifikasi dapat diubah, dengan
+   label "Minimum pembelian agar akun terverifikasi (Rp)".
+4. Home dan Profil menampilkan status lengkap, misalnya "AKTIF TERVERIFIKASI",
+   dengan penulisan yang disamakan di seluruh layar termasuk panel Admin.
+5. Teks pada tab Tugas dan teks undangan menjelaskan bahwa bonus referral
+   diberikan setelah akun teman terverifikasi.
+
+--------------------------------------------------------------------------------
+PERBAIKAN & KUALITAS
+--------------------------------------------------------------------------------
+1. Syarat verifikasi dihitung ulang dari seluruh pesanan, sehingga refund satu
+   pesanan tidak mencabut status terverifikasi selama masih ada pesanan lunas
+   lain yang memenuhi ambang.
+2. Menangguhkan akun otomatis mencabut status terverifikasinya, dan mengaktifkan
+   kembali akan memulihkannya bila syarat pembelian masih terpenuhi.
+3. Pengaturan lama pada perangkat yang sudah terpasang tetap terbaca, sehingga
+   ambang yang pernah diatur Admin tidak kembali ke nilai bawaan.
+4. Pengujian bertambah menjadi 200 unit test dan seluruhnya lulus, tanpa lint
+   error.
+
+
+================================================================================
 VERSI 1.0.2 — 20 SEPTEMBER 2026
 ================================================================================
 versionName    : 1.0.2
