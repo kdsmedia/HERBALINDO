@@ -276,11 +276,11 @@ saldo dan aturan yang sama diterapkan pada `js/store.js`.
 ## Rilis
 
 - Versi saat ini: **1.0.6**, versionCode **7**, minSdk **21**, targetSdk **36**.
-- Tag `v1.0.2` sudah ada pada `github.com/kdsmedia/HERBALINDO`, berisi APK, AAB,
-  dan SHA256SUMS.txt di `ALTOMEDIA/release/`. Objek GitHub Release `v1.0.2`
-  belum dibuat karena `GITHUB_TOKEN` yang tersedia tidak bercakupan `repo`
-  (HTTP 403); buat rilisnya dengan token bercakupan `repo` lalu lampirkan ketiga
-  berkas tersebut.
+- Paket terbaru `HERBALINDO-1.0.6.apk`/`.aab` beserta `SHA256SUMS.txt` ada di
+  `ALTOMEDIA/release/`. Objek GitHub Release untuk versi terbaru belum dibuat:
+  `GITHUB_TOKEN` yang tersedia tidak bercakupan `repo` (HTTP 403 "Resource not
+  accessible by integration" saat `POST /releases`). Buat rilis dengan token
+  bercakupan `repo`, lalu lampirkan APK, AAB, dan SHA256SUMS.txt.
 - Sebelum setiap rilis: naikkan `versionCode`, jalankan unit test dan
   `verify_project.py`, lalu bangun ulang paket.
 - Kredensial signing dibaca dari `keystore/keystore.properties`
