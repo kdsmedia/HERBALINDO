@@ -161,7 +161,7 @@ public class RepositoryTest {
 
     /* ---------------- Bab 3: bonus referral satu tingkat ---------------- */
 
-    @Test public void referralBonusPaidOnlyAfterQualifyingOrder() throws Exception {
+    @Test public void referralBonusPaidOnlyAfterDownlineVerified() throws Exception {
         Models.User inviter = member("Siti Aminah", "081234567890", null);
         Models.User invited = member("Budi", "081234567891", inviter.referralId);
 
@@ -171,15 +171,18 @@ public class RepositoryTest {
 
         repo.markStatus(o, "PAID", "USR-ADMIN", "verifikasi bayar");
 
-        assertEquals(Config.DEFAULT_REFERRAL_BONUS, repo.user(inviter.userId).points);
+        // Pembelian mencapai ambang, jadi akun bawahan aktif terverifikasi dan
+        // bonus referral untuk pengundang dibayarkan.
         assertTrue(repo.user(invited.userId).verified);
+        assertEquals("ACTIVE", repo.user(invited.userId).status);
+        assertEquals(Config.DEFAULT_REFERRAL_BONUS, repo.user(inviter.userId).points);
         assertEquals("VERIFIED", repo.allReferrals().get(0).status);
         assertEquals(500, repo.user(invited.userId).points); // poin belanja pembeli (HBA-001 = 500 poin/unit)
     }
 
-    @Test public void orderBelowMinimumDoesNotPayReferralBonus() throws Exception {
+    @Test public void orderBelowMinimumLeavesAccountUnverifiedAndNoBonus() throws Exception {
         Models.Settings s = repo.settings();
-        s.referralMinOrder = 10_000_000L;
+        s.verifyMinOrder = 10_000_000L;
         repo.saveSettings(s, null);
 
         Models.User inviter = member("Siti Aminah", "081234567890", null);
@@ -187,8 +190,39 @@ public class RepositoryTest {
         Models.Order o = buy(invited, "PRD-HBA-001", 1);
         repo.markStatus(o, "PAID", "USR-ADMIN", "");
 
+        assertFalse(repo.user(invited.userId).verified);
         assertEquals(0, repo.user(inviter.userId).points);
         assertEquals("PENDING", repo.allReferrals().get(0).status);
+    }
+
+    @Test public void memberWithoutReferrerBecomesVerifiedOnQualifyingPurchase() throws Exception {
+        Models.User solo = member("Tanpa Pengundang", "081234567899", null);
+
+        Models.Order o = buy(solo, "PRD-HBA-001", 1);
+        assertTrue(o.total >= 50000);
+        assertFalse(repo.user(solo.userId).verified);
+
+        repo.markStatus(o, "PAID", "USR-ADMIN", "verifikasi bayar");
+
+        Models.User after = repo.user(solo.userId);
+        assertTrue("pembelian memenuhi syarat walau tanpa pengundang", after.verified);
+        assertEquals("AKTIF TERVERIFIKASI", after.statusLabel());
+    }
+
+    @Test public void suspendedDownlineDoesNotEarnReferralBonus() throws Exception {
+        Models.User inviter = member("Siti Aminah", "081234567890", null);
+        Models.User invited = member("Budi", "081234567891", inviter.referralId);
+
+        Models.Order o = buy(invited, "PRD-HBA-001", 1);
+        repo.markStatus(o, "PAID", "USR-ADMIN", "verifikasi bayar");
+        assertEquals(Config.DEFAULT_REFERRAL_BONUS, repo.user(inviter.userId).points);
+
+        // Menangguhkan bawahan mencabut status terverifikasinya, sehingga bonus
+        // referral tidak lagi dianggap layak.
+        repo.setUserStatus(invited.userId, "SUSPENDED", "USR-ADMIN");
+        Models.User after = repo.user(invited.userId);
+        assertFalse("akun ditangguhkan tidak terverifikasi", after.verified);
+        assertEquals("DITANGGUHKAN BELUM VERIFIKASI", after.statusLabel());
     }
 
     @Test public void noChainedBonusForSecondLevelReferral() throws Exception {

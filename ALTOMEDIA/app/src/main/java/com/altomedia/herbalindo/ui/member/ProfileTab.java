@@ -57,8 +57,7 @@ class ProfileTab {
         ((TextView) root.findViewById(R.id.prof_row_name)).setText(u.name);
         ((TextView) root.findViewById(R.id.prof_row_contact)).setText(u.contact().isEmpty() ? "-" : u.contact());
         ((TextView) root.findViewById(R.id.prof_row_ref)).setText(u.referralId);
-        ((TextView) root.findViewById(R.id.prof_row_status)).setText(
-                u.status + (u.verified ? " · TERVERIFIKASI" : " · BELUM VERIFIED"));
+        ((TextView) root.findViewById(R.id.prof_row_status)).setText(u.statusLabel());
         ((TextView) root.findViewById(R.id.prof_row_created)).setText(Util.dateOnly(u.createdAt));
         ((TextView) root.findViewById(R.id.prof_row_level)).setText(
                 com.altomedia.herbalindo.level.Levels.label(

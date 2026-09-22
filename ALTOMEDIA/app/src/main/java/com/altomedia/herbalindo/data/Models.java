@@ -42,6 +42,21 @@ public final class Models {
             return o;
         }
 
+        /**
+         * Status akun untuk ditampilkan: nama status diikuti keterangan
+         * verifikasi, misalnya "AKTIF TERVERIFIKASI".
+         *
+         * <p>Status tersimpan dalam bahasa Inggris ("ACTIVE"), sedangkan
+         * tampilan memakai bahasa Indonesia. Penyeragaman di sini menjaga agar
+         * semua layar menuliskan status dengan cara yang sama.</p>
+         */
+        public String statusLabel() {
+            String nama = "ACTIVE".equals(status) ? "AKTIF"
+                    : "SUSPENDED".equals(status) ? "DITANGGUHKAN"
+                    : status == null ? "-" : status;
+            return nama + (verified ? " TERVERIFIKASI" : " BELUM VERIFIKASI");
+        }
+
         public static User from(String json) {
             User u = new User();
             try {
@@ -396,7 +411,15 @@ public final class Models {
     public static class Settings {
         public long pointsPerUnit = 10000, rupiahPerUnit = 1000;
         public long checkinPoints = 10, adPoints = 5, adMaxPerDay = 20;
-        public long referralBonus = 5000, referralMinOrder = 50000;
+        public long referralBonus = 5000;
+        /*
+         * Ambang pembelian untuk menjadikan akun terverifikasi. Ini satu-satunya
+         * syarat verifikasi: pesanan lunas yang mencapai nominal ini membuat
+         * akun member berstatus aktif terverifikasi, tanpa perlu punya
+         * pengundang. Bonus referral bagi pengundang menyusul dari status
+         * terverifikasi tersebut.
+         */
+        public long verifyMinOrder = 50000;
         public long minWithdrawRupiah = 100, maxWithdrawPerDay = 1;
         public boolean requireAdsForWithdraw = true, purchasePointsEnabled = true;
         public long shippingFlat = 15000, freeShippingMin = 0;
@@ -416,7 +439,7 @@ public final class Models {
             o.put("pointsPerUnit", pointsPerUnit); o.put("rupiahPerUnit", rupiahPerUnit);
             o.put("checkinPoints", checkinPoints); o.put("adPoints", adPoints);
             o.put("adMaxPerDay", adMaxPerDay); o.put("referralBonus", referralBonus);
-            o.put("referralMinOrder", referralMinOrder); o.put("minWithdrawRupiah", minWithdrawRupiah);
+            o.put("verifyMinOrder", verifyMinOrder); o.put("minWithdrawRupiah", minWithdrawRupiah);
             o.put("maxWithdrawPerDay", maxWithdrawPerDay);
             o.put("requireAdsForWithdraw", requireAdsForWithdraw);
             o.put("purchasePointsEnabled", purchasePointsEnabled);
@@ -437,7 +460,11 @@ public final class Models {
                 s.adPoints = o.optLong("adPoints", 5);
                 s.adMaxPerDay = o.optLong("adMaxPerDay", 20);
                 s.referralBonus = o.optLong("referralBonus", 5000);
-                s.referralMinOrder = o.optLong("referralMinOrder", 50000);
+                // Kunci lama "referralMinOrder" tetap dibaca agar ambang yang
+                // sudah diatur admin tidak kembali ke nilai bawaan saat
+                // pembaruan aplikasi.
+                s.verifyMinOrder = o.optLong("verifyMinOrder",
+                        o.optLong("referralMinOrder", 50000));
                 s.minWithdrawRupiah = o.optLong("minWithdrawRupiah", 100);
                 s.maxWithdrawPerDay = o.optLong("maxWithdrawPerDay", 1);
                 s.requireAdsForWithdraw = o.optBoolean("requireAdsForWithdraw", true);

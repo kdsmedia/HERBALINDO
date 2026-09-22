@@ -72,8 +72,11 @@ class HomeTab {
 
         ((TextView) root.findViewById(R.id.home_saldo)).setText(Util.rupiah(a.repo().pointsToRupiah(u.points)));
         ((TextView) root.findViewById(R.id.home_poin)).setText(Util.num(u.points) + " poin");
+        // Status akun ditampilkan lengkap: aktif, dan terverifikasi begitu
+        // pembelian mencapai ambang. Member tanpa pengundang pun dapat
+        // terverifikasi karena syaratnya hanya nilai pembelian.
         ((TextView) root.findViewById(R.id.home_ref)).setText(
-                "Referral ID · " + u.referralId + (u.verified ? "  ·  TERVERIFIKASI" : "  ·  BELUM VERIFIED"));
+                "Referral ID · " + u.referralId + "  ·  " + u.statusLabel());
 
         Models.DailyTask t = a.repo().todayTask(u.userId);
         ((TextView) root.findViewById(R.id.home_today)).setText(

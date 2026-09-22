@@ -67,7 +67,7 @@ class MembersSection {
             Models.User inviter = a.repo().user(u.referredBy);
             ((TextView) card.findViewById(R.id.ac_body)).setText(
                     "Poin " + Util.num(u.points) + " (" + Util.rupiah(a.repo().pointsToRupiah(u.points)) + ")"
-                            + " · " + (u.verified ? "terverifikasi" : "belum terverifikasi")
+                            + " · " + u.statusLabel()
                             + "\nLevel " + com.altomedia.herbalindo.level.Levels.label(
                                     com.altomedia.herbalindo.level.Levels.levelFor(u.xp))
                             + " · " + Util.num(u.xp) + " XP"

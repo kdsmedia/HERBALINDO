@@ -49,7 +49,7 @@
             <com.google.android.material.textfield.TextInputEditText android:id="@+id/set_ref_bonus" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout style="@style/Widget.Herbalindo.Input" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:hint="Minimum nilai order (Rp)">
+        <com.google.android.material.textfield.TextInputLayout style="@style/Widget.Herbalindo.Input" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:hint="Minimum pembelian agar akun terverifikasi (Rp)">
             <com.google.android.material.textfield.TextInputEditText android:id="@+id/set_ref_min" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
 

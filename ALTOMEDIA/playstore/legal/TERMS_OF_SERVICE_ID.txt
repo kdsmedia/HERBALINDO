@@ -274,13 +274,23 @@ terpenuhi:
  1. Anggota yang Anda referensikan mendaftar secara sah menggunakan Kode
  Referral Anda;
 
- 2. Anggota tersebut melakukan pembelian yang memenuhi syarat minimum sesuai
- pengaturan sistem;
+ 2. Akun anggota tersebut berstatus aktif terverifikasi, yaitu setelah ia
+ melakukan pembelian dengan nilai minimum sesuai pengaturan sistem;
 
  3. Pembayaran atas pembelian tersebut berhasil diverifikasi oleh Admin;
 
  4. Tidak terdapat refund maupun pembatalan atas pesanan yang memenuhi syarat
  tersebut.
+
+6.2.1 Verifikasi Akun
+
+Status terverifikasi ditentukan semata-mata oleh nilai pembelian yang telah
+lunas dan diverifikasi Admin, tanpa memerlukan adanya pemberi referral. Setiap
+Member, termasuk yang mendaftar tanpa Kode Referral, dapat berstatus aktif
+terverifikasi apabila pembeliannya memenuhi nilai minimum yang ditetapkan
+sistem. Apabila akun tidak berstatus aktif, misalnya karena ditangguhkan, maka
+akun tersebut tidak dianggap terverifikasi dan bonus referral bagi pemberi
+referralnya tidak dibayarkan.
 
 6.3 Larangan dalam Program Referral
 

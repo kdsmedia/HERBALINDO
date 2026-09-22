@@ -820,6 +820,9 @@ public class Repository {
 
         if ("PAID".equals(status)) {
             grantPurchasePoints(o);
+            // Verifikasi dihitung lebih dulu: bonus referral bergantung pada
+            // status bawahan yang sudah aktif terverifikasi.
+            refreshVerification(o.userId);
             qualifyReferral(o);
         }
         if (needsRevoke) revokeForOrder(o, actorId);
@@ -851,18 +854,30 @@ public class Repository {
                 "PURCHASE", "Pembelian " + o.orderNumber, o.orderId);
     }
 
-    /** Referral 1 tingkat: bonus hanya untuk pengundang langsung (Bab 3). */
+    /**
+     * Bonus referral 1 tingkat untuk pengundang langsung (Bab 3).
+     *
+     * <p>Bonus hanya dibayarkan bila akun bawahan sudah berstatus aktif
+     * terverifikasi, yaitu status akunnya ACTIVE dan syarat pembeliannya
+     * terpenuhi. Karena itu ambang pembelian tidak lagi diperiksa di sini —
+     * {@link #refreshVerification(String)} yang menentukannya, dan dipanggil
+     * lebih dulu agar status bawahan sudah mutakhir saat bonus dinilai.</p>
+     *
+     * <p>Akun yang diblokir tidak dianggap terverifikasi, sehingga bonus tidak
+     * dibayarkan walau nominal pembeliannya sudah tercapai.</p>
+     */
     private void qualifyReferral(Models.Order o) {
         Models.Referral target = null;
         for (Models.Referral r : allReferrals()) {
             if (o.userId.equals(r.invitedUserId) && "PENDING".equals(r.status)) { target = r; break; }
         }
         if (target == null) return;
-        Models.Settings s = settings();
-        if (o.total < s.referralMinOrder) return;
 
         Models.User buyer = user(o.userId);
-        if (buyer != null) { buyer.verified = true; saveUser(buyer); }
+        if (buyer == null) return;
+        if (!"ACTIVE".equals(buyer.status) || !buyer.verified) return;
+
+        Models.Settings s = settings();
         target.status = "VERIFIED";
         target.qualifyingOrderId = o.orderId;
         target.bonusPoints = s.referralBonus;
@@ -870,10 +885,44 @@ public class Repository {
         try { db.put(Config.C_REFERRALS, target.referralId, target.toJson().toString()); }
         catch (Exception e) { throw new IllegalStateException(e); }
         addPoints(target.inviterId, s.referralBonus, "REFERRAL",
-                "Bonus referral " + (buyer == null ? "" : buyer.name), target.referralId);
+                "Bonus referral " + buyer.name, target.referralId);
         addXp(target.inviterId, Config.XP_REFERRAL, "REFERRAL",
-                "Undangan terverifikasi " + (buyer == null ? "" : buyer.name), target.referralId);
+                "Undangan terverifikasi " + buyer.name, target.referralId);
         log(null, "REFERRAL_VERIFIED", target.referralId, "Bonus " + s.referralBonus + " poin");
+    }
+
+    /**
+     * Menetapkan status terverifikasi akun dari nilai pembelian yang sudah lunas.
+     *
+     * <p>Syaratnya nilai pembelian: ada pesanan lunas dengan total mencapai
+     * {@code verifyMinOrder}. Pengundang tidak diperlukan, sehingga member yang
+     * mendaftar sendiri pun dapat terverifikasi.</p>
+     *
+     * <p>Akun yang tidak aktif tidak dapat terverifikasi, sehingga bonus
+     * referral bagi pengundangnya tidak dibayarkan selama akun bawahan
+     * ditangguhkan.</p>
+     *
+     * <p>Dihitung ulang dari seluruh pesanan, bukan sekadar diset sekali, agar
+     * pembatalan atau pengembalian satu pesanan tidak mencabut status akun yang
+     * masih dipenuhi pesanan lunas lainnya.</p>
+     */
+    private void refreshVerification(String userId) {
+        if (userId == null) return;
+        Models.User u = user(userId);
+        if (u == null) return;
+        boolean layak = "ACTIVE".equals(u.status) && hasQualifyingPurchase(userId);
+        if (u.verified != layak) { u.verified = layak; saveUser(u); }
+    }
+
+    /** {@code true} bila ada pesanan lunas milik member yang mencapai ambang. */
+    private boolean hasQualifyingPurchase(String userId) {
+        long ambang = settings().verifyMinOrder;
+        for (Models.Order o : allOrders()) {
+            if (!userId.equals(o.userId)) continue;
+            if (!"PAID".equals(o.paymentStatus)) continue;
+            if (o.total >= ambang) return true;
+        }
+        return false;
     }
 
     private void revokeForOrder(Models.Order o, String actorId) {
@@ -890,11 +939,13 @@ public class Repository {
                 catch (Exception e) { throw new IllegalStateException(e); }
                 if (r.bonusPoints > 0) addPoints(r.inviterId, -r.bonusPoints, "REFERRAL_REVOKE",
                         "Bonus dibatalkan (refund " + o.orderNumber + ")", r.referralId);
-                Models.User buyer = user(r.invitedUserId);
-                if (buyer != null) { buyer.verified = false; saveUser(buyer); }
                 log(actorId, "REFERRAL_REVOKED", r.referralId, o.orderNumber);
             }
         }
+        // Status terverifikasi dihitung ulang dari pesanan lunas yang tersisa,
+        // sehingga pembatalan satu pesanan tidak mencabut status akun yang masih
+        // dipenuhi pesanan lain.
+        refreshVerification(o.userId);
         for (Models.OrderItem i : o.items) adjustStock(i.productId, i.qty, "REFUND " + o.orderNumber, actorId);
     }
 
@@ -1164,6 +1215,9 @@ public class Repository {
         if (u == null) throw new RuleException("Member tidak ditemukan");
         u.status = status;
         saveUser(u);
+        // Perubahan status menentukan kelayakan verifikasi, jadi status
+        // terverifikasi dihitung ulang agar tidak tertinggal pada nilai lama.
+        refreshVerification(userId);
         log(adminId, "MEMBER_STATUS", userId, status);
     }
 

@@ -161,6 +161,20 @@ perubahan yang menyentuh layar, jalur pembukaan, atau penyimpanan, andalkan
 - Referral ID: tepat 6 digit angka, unik, tidak dapat diubah member.
 - Referral hanya **satu tingkat** (pengundang → yang diundang). Dilarang
   menerapkan bonus berantai.
+- Verifikasi akun hanya bergantung pada nilai pembelian: pesanan berstatus
+  `PAID` yang totalnya mencapai `settings.verifyMinOrder` (bawaan Rp50.000)
+  membuat akun `ACTIVE` berstatus terverifikasi. Pengundang **tidak**
+  diperlukan, sehingga member yang mendaftar sendiri pun dapat terverifikasi.
+- Bonus referral bagi pengundang baru dibayarkan setelah akun bawahan berstatus
+  aktif terverifikasi. Urutan di `markStatus` penting: `refreshVerification`
+  dipanggil **sebelum** `qualifyReferral`, jika tidak bonus akan dinilai dari
+  status bawahan yang belum mutakhir.
+- Verifikasi selalu dihitung ulang dari seluruh pesanan (`refreshVerification`),
+  bukan diset sekali, agar refund satu pesanan tidak mencabut status akun yang
+  masih dipenuhi pesanan lunas lain. Status akun `SUSPENDED` membuat akun tidak
+  terverifikasi; `setUserStatus` memanggil ulang perhitungan ini.
+- Kunci pengaturan lama `referralMinOrder` masih dibaca sebagai cadangan
+  `verifyMinOrder` agar ambang tersimpan tidak hilang saat pembaruan.
 - Withdrawal memerlukan: saldo ≥ batas minimum, jumlah iklan harian terpenuhi
   bila diaktifkan, akun aktif, tidak ditandai curang, dan belum melewati batas
   pengajuan per hari.

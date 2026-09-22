@@ -38,7 +38,7 @@ class SettingsSection {
         set(R.id.set_ad_points, draft.adPoints);
         set(R.id.set_ad_max, draft.adMaxPerDay);
         set(R.id.set_ref_bonus, draft.referralBonus);
-        set(R.id.set_ref_min, draft.referralMinOrder);
+        set(R.id.set_ref_min, draft.verifyMinOrder);
         set(R.id.set_min_wd, draft.minWithdrawRupiah);
         set(R.id.set_max_wd, draft.maxWithdrawPerDay);
         set(R.id.set_shipping, draft.shippingFlat);
@@ -134,7 +134,7 @@ class SettingsSection {
         if (adPoints < 0) errors.add(new String[]{"Poin iklan", "tidak boleh negatif"});
         if (adMax <= 0 || adMax > 100) errors.add(new String[]{"Batas iklan harian", "harus antara 1 dan 100"});
         if (refBonus < 0) errors.add(new String[]{"Bonus referral", "tidak boleh negatif"});
-        if (refMin < 0) errors.add(new String[]{"Minimum order referral", "tidak boleh negatif"});
+        if (refMin < 0) errors.add(new String[]{"Minimum pembelian verifikasi", "tidak boleh negatif"});
         if (minWd < 0) errors.add(new String[]{"Minimum withdrawal", "tidak boleh negatif"});
         if (minWd > maxWithdrawOption())
             errors.add(new String[]{"Minimum saldo", "maksimal " + Util.rupiah(maxWithdrawOption())
@@ -158,7 +158,7 @@ class SettingsSection {
         Models.Settings s = new Models.Settings();
         s.pointsPerUnit = pointsUnit; s.rupiahPerUnit = rupiahUnit;
         s.checkinPoints = checkin; s.adPoints = adPoints; s.adMaxPerDay = adMax;
-        s.referralBonus = refBonus; s.referralMinOrder = refMin;
+        s.referralBonus = refBonus; s.verifyMinOrder = refMin;
         s.minWithdrawRupiah = minWd; s.maxWithdrawPerDay = maxWd;
         s.shippingFlat = shipping; s.freeShippingMin = freeShipping;
         s.requireAdsForWithdraw = ((Switch) root.findViewById(R.id.set_require_ads)).isChecked();

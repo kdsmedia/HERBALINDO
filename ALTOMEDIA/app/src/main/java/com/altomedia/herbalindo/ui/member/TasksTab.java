@@ -86,8 +86,8 @@ class TasksTab {
         ((TextView) root.findViewById(R.id.task_ref_sub)).setText(
                 "Referral ID " + u.referralId + " · bonus " + Util.num(s.referralBonus)
                         + " poin dan +" + com.altomedia.herbalindo.core.Config.XP_REFERRAL
-                        + " XP level untuk pesanan pertama teman (minimal "
-                        + Util.rupiah(s.referralMinOrder) + ")");
+                        + " XP level setelah akun teman terverifikasi (pembelian minimal "
+                        + Util.rupiah(s.verifyMinOrder) + ")");
 
         int terverifikasi = a.repo().verifiedReferralCount(u.userId);
         ((TextView) root.findViewById(R.id.task_ref_status)).setText(
@@ -163,8 +163,8 @@ class TasksTab {
         Models.Settings s = a.repo().settings();
         String text = "Ayo bergabung di " + Config.APP_NAME + " (" + a.user.name + ").\n\n"
                 + "Gunakan Referral ID: " + a.user.referralId + "\n"
-                + "Bonus " + Util.num(s.referralBonus) + " poin untuk pesanan pertama (minimal "
-                + Util.rupiah(s.referralMinOrder) + ").\n"
+                + "Bonus " + Util.num(s.referralBonus) + " poin setelah akun Anda terverifikasi "
+                + "(pembelian minimal " + Util.rupiah(s.verifyMinOrder) + ").\n"
                 + "Komisi dan saldo dapat ditarik sesuai syarat aplikasi.\n\n"
                 + "Herbal diet alami, poin harian, dan saldo rupiah.";
         Intent i = new Intent(Intent.ACTION_SEND);
